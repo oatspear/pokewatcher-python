@@ -46,7 +46,7 @@ DEFAULT_SLEEP_DELAY = 3.0  # seconds
 
 DEFAULT_BACKUP_NAME_FORMAT = '{rom} - lvl{level}-{time}-{location}.srm'
 
-CSV_FILE = DST_DIR / 'splits.csv'
+CSV_FILENAME = '{rom}-splits.csv'
 
 ################################################################################
 # Main Function
@@ -102,7 +102,7 @@ class GameWatcher:
             on_error=lambda err: print('[GameHook] error:', err),
         )
 
-        self.time_splitter = BattleTimeSplitter(version)
+        self.time_splitter = BattleTimeSplitter(rom, version)
 
         # connect everything
         self._connect_event_handlers()
@@ -985,7 +985,9 @@ class BattleTimeSplitter:
         ],
     }
 
-    def __init__(self, version):
+    def __init__(self, rom, version):
+        filename = CSV_FILENAME.format(rom=rom)
+        self.filepath = DST_DIR / filename
         self.dataset = self.BOSSES[version]
         self.records = []
         self.attempts = Counter()
@@ -1041,6 +1043,7 @@ class BattleTimeSplitter:
 
     CSV_HEADERS = (
         'ROM',
+        'Species',
         'Trainer',
         'Real Time',
         'Game Time',
@@ -1076,15 +1079,21 @@ class BattleTimeSplitter:
         records = self.records  # save reference because this is multithreaded
         self.records = []
 
-        if not CSV_FILE.exists():
-            text = ','.join(self.CSV_HEADERS) + '\n'
-            CSV_FILE.write_text(text, encoding='utf-8')
-        
-        contents = list(','.join(r) for r in records)
-        contents.append('')
-        text = '\n'.join(contents)
-        with CSV_FILE.open(mode='a', encoding='utf-8') as f:
-            f.write(text)
+        try:
+            if not self.filepath.exists():
+                text = ','.join(self.CSV_HEADERS) + '\n'
+                self.filepath.write_text(text, encoding='utf-8')
+            
+            contents = list(','.join(r) for r in records)
+            contents.append('')
+            text = '\n'.join(contents)
+            with self.filepath.open(mode='a', encoding='utf-8') as f:
+                f.write(text)
+        except OSError as e:
+            print('[ERROR] unable to write to splits file')
+            print(e)
+            # rollback
+            self.records.extend(records)
 
     def _reset(self):
         self.time_start = None
@@ -1106,6 +1115,7 @@ class BattleTimeSplitter:
     def _make_record(self, monitor, data, resets=0):
         return (
             data['rom'],
+            data['species'],
             self.name,
             self.time_end,
             self.game_time,
