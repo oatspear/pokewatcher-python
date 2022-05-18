@@ -46,7 +46,7 @@ DEFAULT_SLEEP_DELAY = 3.0  # seconds
 
 DEFAULT_BACKUP_NAME_FORMAT = '{rom} - lvl{level}-{time}-{location}.srm'
 
-CSV_FILENAME = '{rom}-splits.csv'
+CSV_FILENAME = '{rom}.csv'
 
 ################################################################################
 # Main Function
