@@ -574,14 +574,6 @@ class YellowBattleMonitor:
     #   set to 0xFF if all mons faint in overworld (AllPokemonFainted)
     #   set to 0 on Fly or map warp (HandleFlyWarpOrDungeonWarp)
 
-    # MUSIC_GYM_LEADER_BATTLE = 0xEA
-    # MUSIC_TRAINER_BATTLE = 0xED
-    # MUSIC_WILD_BATTLE = 0xF0
-    # MUSIC_FINAL_BATTLE = 0xF3
-    # MUSIC_DEFEATED_TRAINER = 0xF6
-    # MUSIC_DEFEATED_WILD_MON = 0xF9
-    # MUSIC_DEFEATED_GYM_LEADER = 0xFC
-
     BATTLE_TYPE_NONE = 'None'
     BATTLE_TYPE_WILD = 'Wild'
     BATTLE_TYPE_TRAINER = 'Trainer'
@@ -593,7 +585,6 @@ class YellowBattleMonitor:
     STATE_OUT_OF_BATTLE = 0
     STATE_IN_BATTLE = 1
     STATE_PLAYER_WON = 2
-    STATE_PLAYER_LOST = 3
 
     TRAINER_CLASS_NONE = 'NOBODY'
 
@@ -603,46 +594,33 @@ class YellowBattleMonitor:
         self._reset()
 
     def on_battle_type_changed(self, value):
-        prev = self.battle_type
         self.battle_type = value
 
         if self.state == self.STATE_OUT_OF_BATTLE:
             if value == self.BATTLE_TYPE_WILD:
-                self.state = self.STATE_ENTERED_BATTLE
+                self.state = self.STATE_IN_BATTLE
                 self.trainer_class = None
-                # self.trainer_id = None
+                return self.on_battle_started()
             elif value == self.BATTLE_TYPE_TRAINER:
-                self.state = self.STATE_ENTERED_BATTLE
+                self.state = self.STATE_IN_BATTLE
+                return self.on_battle_started()
 
-        elif self.state == self.STATE_ENTERED_BATTLE:
+        elif self.state == self.STATE_IN_BATTLE:
             if value == self.BATTLE_TYPE_NONE:
-                self._run_away()
+                return self._run_away()
             elif value == self.BATTLE_TYPE_LOST:
-                self._white_out()
-
-        elif self.state == self.STATE_BATTLE_STARTED:
-            if value == self.BATTLE_TYPE_NONE:
-                self._run_away()
-            elif value == self.BATTLE_TYPE_LOST:
-                self._white_out()
-
-        elif self.state == self.STATE_VICTORY_SEQUENCE:
-            msg = (
-                'unexpected battle type change',
-                'during STATE_VICTORY_SEQUENCE:',
-                f'from {prev} to {value}'
-            )
-            warnings.warn(' '.join(msg))
+                return self._white_out()
 
         elif self.state == self.STATE_PLAYER_WON:
             if value == self.BATTLE_TYPE_NONE:
                 self.state = self.STATE_OUT_OF_BATTLE
-            else:
-                assert False, f'unexpected battle type {value}'
+                return
+            print('[ERROR] The battle monitor is likely in the wrong state.')
 
-        elif self.state == self.STATE_PLAYER_LOST:
-            if value == self.BATTLE_TYPE_NONE:
-                self.state = self.STATE_OUT_OF_BATTLE
+        print('')
+        print('[Battle] resetting to initial state')
+        print('[WARN] If currently in battle, this battle will not be monitored.')
+        self._reset()
 
     def on_trainer_class_changed(self, value):
         if value == self.TRAINER_CLASS_NONE:
@@ -654,47 +632,17 @@ class YellowBattleMonitor:
         self.trainer_id = value
 
     def on_low_health_alarm_changed(self, value):
-        if value == self.ALARM_ENABLED:
+        if value == self.ALARM_DISABLED:
+            if self.state == self.STATE_IN_BATTLE:
+                return self._win_battle()
+            print("[Battle] player won but monitor is not in the correct state")
+            print("[Battle] state:", self.state)
+
+        elif value == self.ALARM_ENABLED:
+            # game reset or battle starting after a previous victory
+            # print("[Battle] game reset or battle starting")
+            # print("[Battle] state:", self.state)
             pass
-        elif value == self.ALARM_DISABLED:
-            pass
-
-    def on_music_changed(self, value):
-        if self.state == self.STATE_OUT_OF_BATTLE:
-            if value == self.MUSIC_GYM_LEADER_BATTLE:
-                self.battle_type = self.BATTLE_TYPE_TRAINER
-                self.state = self.STATE_ENTERED_BATTLE
-            elif value == self.MUSIC_TRAINER_BATTLE:
-                self.battle_type = self.BATTLE_TYPE_TRAINER
-                self.state = self.STATE_ENTERED_BATTLE
-            elif value == self.MUSIC_FINAL_BATTLE:
-                self.battle_type = self.BATTLE_TYPE_TRAINER
-                self.state = self.STATE_ENTERED_BATTLE
-            elif value == self.MUSIC_WILD_BATTLE:
-                self.battle_type = self.BATTLE_TYPE_WILD
-                self.state = self.STATE_ENTERED_BATTLE
-
-        elif self.state == self.STATE_ENTERED_BATTLE or self.state == self.STATE_BATTLE_STARTED:
-            if value == self.MUSIC_DEFEATED_WILD_MON:
-                assert self.trainer_class is None, self.trainer_class
-                # assert self.trainer_id is None, str(self.trainer_id)
-                self._win_battle()
-            elif value == self.MUSIC_DEFEATED_GYM_LEADER:
-                assert self.trainer_class is not None
-                # assert self.trainer_id is not None
-                self._win_battle()
-            elif value == self.MUSIC_DEFEATED_TRAINER:
-                assert self.trainer_class is not None
-                # assert self.trainer_id is not None
-                self._win_battle()
-
-    def on_text_prompt(self):
-        if self.state == self.STATE_ENTERED_BATTLE:
-            self.state = self.STATE_BATTLE_STARTED
-            self.on_battle_started()
-        elif self.state == self.STATE_VICTORY_SEQUENCE:
-            self.state = self.STATE_PLAYER_WON
-            self.on_battle_ended()
 
     def on_stage_attack_changed(self, value):
         self.battle_mon.stages.attack = value
@@ -747,14 +695,14 @@ class YellowBattleMonitor:
         self.on_battle_ended()
 
     def _white_out(self):
-        self.state = self.STATE_PLAYER_LOST
+        self.state = self.STATE_OUT_OF_BATTLE
         self.battle_result = False
         self.on_battle_ended()
 
     def _win_battle(self):
-        self.state = self.STATE_VICTORY_SEQUENCE
+        self.state = self.STATE_PLAYER_WON
         self.battle_result = True
-        # self.on_battle_ended()
+        self.on_battle_ended()
 
 
 # BattleIntro:
@@ -1061,6 +1009,8 @@ class BattleTimeSplitter:
                 continue
             break
         else:
+            if OATS:
+                print('[Battle] vs random trainer')
             return
         self._timestamp = time.time()
         self._stats.attack = data.slot1_attack
