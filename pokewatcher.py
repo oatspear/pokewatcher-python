@@ -596,31 +596,26 @@ class YellowBattleMonitor:
     def on_battle_type_changed(self, value):
         self.battle_type = value
 
-        if self.state == self.STATE_OUT_OF_BATTLE:
-            if value == self.BATTLE_TYPE_WILD:
-                self.state = self.STATE_IN_BATTLE
-                self.trainer_class = None
-                return self.on_battle_started()
-            elif value == self.BATTLE_TYPE_TRAINER:
-                self.state = self.STATE_IN_BATTLE
-                return self.on_battle_started()
+        if value == self.BATTLE_TYPE_NONE:
+            if self.state == self.STATE_IN_BATTLE:
+                self._run_away()
+            elif self.state == self.STATE_PLAYER_WON:
+                self._reset()
 
-        elif self.state == self.STATE_IN_BATTLE:
-            if value == self.BATTLE_TYPE_NONE:
-                return self._run_away()
-            elif value == self.BATTLE_TYPE_LOST:
-                return self._white_out()
+        elif value == self.BATTLE_TYPE_WILD:
+            self.state = self.STATE_IN_BATTLE
+            self.trainer_class = None
+            self.on_battle_started()
 
-        elif self.state == self.STATE_PLAYER_WON:
-            if value == self.BATTLE_TYPE_NONE:
-                self.state = self.STATE_OUT_OF_BATTLE
-                return
-            print('[ERROR] The battle monitor is likely in the wrong state.')
+        elif value == self.BATTLE_TYPE_TRAINER:
+            self.state = self.STATE_IN_BATTLE
+            self.on_battle_started()
 
-        print('')
-        print('[Battle] resetting to initial state')
-        print('[WARN] If currently in battle, this battle will not be monitored.')
-        self._reset()
+        elif value == self.BATTLE_TYPE_LOST:
+            self._white_out()
+
+        else:
+            print('[Battle] unknown battle type value:', value)
 
     def on_trainer_class_changed(self, value):
         if value == self.TRAINER_CLASS_NONE:
@@ -633,10 +628,10 @@ class YellowBattleMonitor:
 
     def on_low_health_alarm_changed(self, value):
         if value == self.ALARM_DISABLED:
-            if self.state == self.STATE_IN_BATTLE:
-                return self._win_battle()
-            print("[Battle] player won but monitor is not in the correct state")
-            print("[Battle] state:", self.state)
+            if self.state != self.STATE_IN_BATTLE:
+                print("[Battle] player won but monitor is not in the correct state")
+                print("[Battle] state:", self.state)
+            self._win_battle()
 
         elif value == self.ALARM_ENABLED:
             # game reset or battle starting after a previous victory
@@ -1002,17 +997,11 @@ class BattleTimeSplitter:
             if OATS:
                 print('[Battle] vs wild Pokémon')
             return
-        for c, i, name in self.dataset:
-            if c != monitor.trainer_class:
-                continue
-            if i != monitor.trainer_id:
-                continue
-            break
-        else:
+        name = self._find_key_battle(monitor.trainer_class, monitor.trainer_id)
+        if not name:
             if OATS:
                 print('[Battle] vs random trainer')
             return
-        self._timestamp = time.time()
         self._stats.attack = data.slot1_attack
         self._stats.defense = data.slot1_defense
         self._stats.sp_attack = data.slot1_sp_attack
@@ -1023,7 +1012,15 @@ class BattleTimeSplitter:
         print(f'[Battle] [{self.time_start}] started vs {name}')
 
     def on_battle_ended(self, monitor, data=None):
-        if self._timestamp is None:
+        name = self._find_key_battle(monitor.trainer_class, monitor.trainer_id)
+        if name != self.name:
+            print('[ERROR] it seems that a battle was skipped')
+            print('  was tracking:', self.name)
+            if not name:
+                print('  battle end: (untracked opponent)')
+            else:
+                print('  battle end:', name)
+        if not name:
             if OATS:
                 print('[Battle] ended (untracked)')
             return  # not tracking this battle
@@ -1032,7 +1029,6 @@ class BattleTimeSplitter:
             m = data['game_time_m']
             s = data['game_time_s']
             self.game_time = f'{h}:{m}:{s}'
-        assert monitor.trainer_class is not None
         key = (monitor.trainer_class, monitor.trainer_id)
         if not monitor.battle_result:
             print(f'[Battle] failed attempt vs {self.name}')
@@ -1094,10 +1090,18 @@ class BattleTimeSplitter:
         self.time_start = None
         self.time_end = None
         self.game_time = None
-        self.duration = None
         self.name = None
-        self._timestamp = None
         self._stats = MonStats()
+
+    def _find_key_battle(self, trainer_class, trainer_id):
+        if trainer_class is not None and trainer_id is not None:
+            for c, i, name in self.dataset:
+                if c != trainer_class:
+                    continue
+                if i != trainer_id:
+                    continue
+                return name
+        return None
 
     def _make_record(self, monitor, data, resets=0):
         return (
