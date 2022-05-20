@@ -611,7 +611,8 @@ class YellowBattleMonitor:
             if self.state == self.STATE_IN_BATTLE:
                 self._run_away()
             elif self.state == self.STATE_PLAYER_WON:
-                self._reset()
+                self.state = self.STATE_OUT_OF_BATTLE
+                self.battle_result = None
 
         elif value == self.BATTLE_TYPE_WILD:
             self.state = self.STATE_IN_BATTLE
@@ -1023,14 +1024,17 @@ class BattleTimeSplitter:
 
     def on_battle_started(self, monitor, data=None):
         logger.info('on_battle_started()')
+        logger.debug(monitor._internal_state())
         logger.debug(f'data: {data.data}')
         self._reset()
         if monitor.trainer_class is None:
+            logger.info('[Battle] vs wild Pokémon')
             if OATS:
                 print('[Battle] vs wild Pokémon')
             return
         name = self._find_key_battle(monitor.trainer_class, monitor.trainer_id)
         if not name:
+            logger.info('[Battle] vs random trainer')
             if OATS:
                 print('[Battle] vs random trainer')
             return
@@ -1046,6 +1050,7 @@ class BattleTimeSplitter:
 
     def on_battle_ended(self, monitor, data=None):
         logger.info('on_battle_ended()')
+        logger.debug(monitor._internal_state())
         logger.debug(f'data: {data.data}')
         name = self._find_key_battle(monitor.trainer_class, monitor.trainer_id)
         if name != self.name:
@@ -1057,6 +1062,7 @@ class BattleTimeSplitter:
             else:
                 print('  battle end:', name)
         if not name:
+            logger.info('[Battle] ended (untracked)')
             if OATS:
                 print('[Battle] ended (untracked)')
             return  # not tracking this battle
@@ -1138,12 +1144,15 @@ class BattleTimeSplitter:
         self._stats = MonStats()
 
     def _find_key_battle(self, trainer_class, trainer_id):
+        logger.debug(f'find_key_battle({repr(trainer_class)}, {repr(trainer_id)})')
         if trainer_class is not None and trainer_id is not None:
             for c, i, name in self.dataset:
+                logger.debug(f'trying ({repr(c)}, {repr(i)}, {repr(name)})')
                 if c != trainer_class:
                     continue
                 if i != trainer_id:
                     continue
+                logger.debug(f'found key battle: {name}')
                 return name
         return None
 
