@@ -35,6 +35,8 @@ else:
     SRC_DIR = Path(r'F:\Desktop\filming files\saves')
     DST_DIR = Path(r'F:\Desktop\filming files\backup saves')
 
+LOG_FILE = DST_DIR / 'pokewatcher.log'
+
 GAMEHOOK_SIGNALR = 'http://localhost:8085/updates'
 GAMEHOOK_REQUESTS = 'http://localhost:8085/mapper'
 
@@ -47,6 +49,8 @@ DEFAULT_SLEEP_DELAY = 3.0  # seconds
 DEFAULT_BACKUP_NAME_FORMAT = '{rom} - lvl{level}-{time}-{location}.srm'
 
 CSV_FILENAME = '{rom}.csv'
+
+logger = logging.getLogger(__name__)
 
 ################################################################################
 # Main Function
@@ -107,7 +111,11 @@ class GameWatcher:
         # connect everything
         self._connect_event_handlers()
 
+        logger.setLevel(logging.DEBUG)
+        logger.addHandler(logging.FileHandler(str(LOG_FILE)))
+
     def main_loop(self):
+        logger.info('Starting main loop.')
         self.gamehook.connect()
         while True:
             self.backup_agent.watch_once()
@@ -340,6 +348,7 @@ class YellowDataHandler(PokemonDataHandler):
         # self.data['sound'] = int(value)
         if value == self.SFX_SAVE_FILE:
             print('[Events] saved game')
+            logger.info('[SFX] saved game')
             self.events.on_save(self.data)
         # self.battle.on_music_changed(value)
 
@@ -594,6 +603,8 @@ class YellowBattleMonitor:
         self._reset()
 
     def on_battle_type_changed(self, value):
+        logger.info(f'on_battle_type_changed({value})')
+        logger.debug(self._internal_state())
         self.battle_type = value
 
         if value == self.BATTLE_TYPE_NONE:
@@ -627,6 +638,9 @@ class YellowBattleMonitor:
         self.trainer_id = value
 
     def on_low_health_alarm_changed(self, value):
+        logger.info(f'on_low_health_alarm_changed({value})')
+        logger.debug(self._internal_state())
+
         if value == self.ALARM_DISABLED:
             if self.state != self.STATE_IN_BATTLE:
                 print("[Battle] player won but monitor is not in the correct state")
@@ -698,6 +712,20 @@ class YellowBattleMonitor:
         self.state = self.STATE_PLAYER_WON
         self.battle_result = True
         self.on_battle_ended()
+
+    def _internal_state(self):
+        return '\n'.join((
+            'YellowBattleMonitor',
+            f'  state: {self.state}',
+            f'  battle_type: {self.battle_type}',
+            f'  trainer_class: {self.trainer_class}',
+            f'  trainer_id: {self.trainer_id}',
+            f'  enemy_species: {self.enemy_species}',
+            f'  battle_result: {self.battle_result}',
+            '  battle_mon:',
+            f'    stats: {self.battle_mon.stats}',
+            f'    stages: {self.battle_mon.stages}',
+        ))
 
 
 # BattleIntro:
@@ -994,6 +1022,8 @@ class BattleTimeSplitter:
         self._reset()
 
     def on_battle_started(self, monitor, data=None):
+        logger.info('on_battle_started()')
+        logger.debug(f'data: {data.data}')
         self._reset()
         if monitor.trainer_class is None:
             if OATS:
@@ -1004,6 +1034,7 @@ class BattleTimeSplitter:
             if OATS:
                 print('[Battle] vs random trainer')
             return
+        logger.info('key battle found: ' + name)
         self._stats.attack = data.slot1_attack
         self._stats.defense = data.slot1_defense
         self._stats.sp_attack = data.slot1_sp_attack
@@ -1014,8 +1045,11 @@ class BattleTimeSplitter:
         print(f'[Battle] [{self.time_start}] started vs {name}')
 
     def on_battle_ended(self, monitor, data=None):
+        logger.info('on_battle_ended()')
+        logger.debug(f'data: {data.data}')
         name = self._find_key_battle(monitor.trainer_class, monitor.trainer_id)
         if name != self.name:
+            logger.error(f'skipped battle from {self.name} to {name}')
             print('[ERROR] it seems that a battle was skipped')
             print('  was tracking:', self.name)
             if not name:
@@ -1026,6 +1060,7 @@ class BattleTimeSplitter:
             if OATS:
                 print('[Battle] ended (untracked)')
             return  # not tracking this battle
+        logger.info('key battle found: ' + name)
         if data:
             h = data['game_time_h']
             m = data['game_time_m']
