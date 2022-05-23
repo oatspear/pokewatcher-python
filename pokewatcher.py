@@ -291,6 +291,8 @@ class YellowDataHandler(PokemonDataHandler):
     P_BADGE7 = 'player.badges.volcanoBadge'
     P_BADGE8 = 'player.badges.earthBadge'
 
+    P_PLAYER_ID = 'player.playerId'
+
     def _new_battle_monitor(self):
         return YellowBattleMonitor()
 
@@ -342,6 +344,8 @@ class YellowDataHandler(PokemonDataHandler):
         self._handlers[self.P_AUDIO_CH5] = self._handle_sound_effects
         # self._handlers[self.P_AUDIO_CH6] = self._handle_sound_effects
 
+        self._handlers[self.P_PLAYER_ID] = self._handler_player_id
+
     SFX_SAVE_FILE = 0xB6
 
     def _handle_sound_effects(self, value):
@@ -356,6 +360,13 @@ class YellowDataHandler(PokemonDataHandler):
         x = int(value)
         self.data['specialAttack'] = x
         self.data['specialDefense'] = x
+
+    def _handler_player_id(self, value):
+        self.data['playerId'] = value
+        if value == 0:
+            print('[RESET] [RESET] [RESET]')
+            self.events.on_reset(self.data)
+            self.battle.on_reset()
 
     @property
     def slot1_attack(self):
@@ -601,6 +612,13 @@ class YellowBattleMonitor:
         self.on_battle_started = noop
         self.on_battle_ended = noop
         self._reset()
+
+    def on_reset(self):
+        logger.info('detected game reset')
+        if self.state != self.STATE_OUT_OF_BATTLE:
+            logger.info('battle monitor was in battle; counting as a loss')
+            logger.debug(self._internal_state())
+            self._white_out()
 
     def on_battle_type_changed(self, value):
         logger.info(f'on_battle_type_changed({value})')
@@ -945,6 +963,7 @@ class CrystalBattleMonitor:
 
 class GameEvents:
     def __init__(self):
+        self.on_reset = noop
         self.on_save = noop
         self.on_battle_started = noop
         self.on_battle_ended = noop
