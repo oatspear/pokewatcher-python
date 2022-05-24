@@ -336,6 +336,7 @@ class YellowDataHandler(PokemonDataHandler):
         self._handlers[self.P_BADGE7] = self._bool_setter('badge7')
         self._handlers[self.P_BADGE8] = self._bool_setter('badge8')
 
+        self._handlers[self.P_PLAYER_ID] = self._handler_player_id
         self._handlers[self.P_GAME_TIME_HOURS] = self._int_setter('game_time_h')
         self._handlers[self.P_GAME_TIME_MINUTES] = self._int_setter('game_time_m')
         self._handlers[self.P_GAME_TIME_SECONDS] = self._int_setter('game_time_s')
@@ -343,8 +344,6 @@ class YellowDataHandler(PokemonDataHandler):
         # self._handlers[self.P_AUDIO_SOUND] = self._handle_sound_effects
         self._handlers[self.P_AUDIO_CH5] = self._handle_sound_effects
         # self._handlers[self.P_AUDIO_CH6] = self._handle_sound_effects
-
-        self._handlers[self.P_PLAYER_ID] = self._handler_player_id
 
     SFX_SAVE_FILE = 0xB6
 
@@ -364,7 +363,7 @@ class YellowDataHandler(PokemonDataHandler):
     def _handler_player_id(self, value):
         self.data['playerId'] = value
         if value == 0:
-            print('[RESET] [RESET] [RESET]')
+            print('[Game Reset]')
             self.events.on_reset(self.data)
             self.battle.on_reset()
 
@@ -409,8 +408,10 @@ class CrystalDataHandler(PokemonDataHandler):
 
     P_MAP_GROUP = 'overworld.mapGroup'
     P_MAP_NUMBER = 'overworld.mapNumber'
+
     P_AUDIO_SOUND = 'audio.currentSound'
-    P_AUDIO_MUSIC = 'audio.musicID'
+    # P_AUDIO_MUSIC = 'audio.musicID'
+    P_AUDIO_CHANNEL5 = 'audio.channel5MusicID'
 
     P_BATTLE_MODE = 'battle.mode'
     P_BATTLE_TYPE = 'battle.type'
@@ -432,7 +433,7 @@ class CrystalDataHandler(PokemonDataHandler):
     P_BATTLE_SPATK = 'battle.yourPokemon.battleStatSpcA'
     P_BATTLE_SPDEF = 'battle.yourPokemon.battleStatSpcD'
 
-    P_TEXT_PROMPT = 'screen.text.prompt'
+    # P_TEXT_PROMPT = 'screen.text.prompt'
     P_GAME_TIME_HOURS = 'gameTime.hours'
     P_GAME_TIME_MINUTES = 'gameTime.minutes'
     P_GAME_TIME_SECONDS = 'gameTime.seconds'
@@ -446,7 +447,7 @@ class CrystalDataHandler(PokemonDataHandler):
     P_BADGE7 = 'player.badges.glacierBadge'
     P_BADGE8 = 'player.badges.risingBadge'
 
-    SFX_SAVE_FILE = 37
+    P_PLAYER_ID = 'player.playerId'
 
     def _new_battle_monitor(self):
         return CrystalBattleMonitor()
@@ -495,32 +496,28 @@ class CrystalDataHandler(PokemonDataHandler):
         self._handlers[self.P_BADGE7] = self._bool_setter('badge7')
         self._handlers[self.P_BADGE8] = self._bool_setter('badge8')
 
+        self._handlers[self.P_PLAYER_ID] = self._handler_player_id
         self._handlers[self.P_GAME_TIME_HOURS] = self._int_setter('game_time_h')
         self._handlers[self.P_GAME_TIME_MINUTES] = self._int_setter('game_time_m')
         self._handlers[self.P_GAME_TIME_SECONDS] = self._int_setter('game_time_s')
 
-        self._handlers[self.P_AUDIO_SOUND] = self._handle_sound_effects
-        self._handlers[self.P_AUDIO_MUSIC] = self._handle_music
-        self._handlers[self.P_TEXT_PROMPT] = self._handle_text_prompt
+        # self._handlers[self.P_AUDIO_SOUND] = self._handle_sound_effects
+        self._handlers[self.P_AUDIO_CHANNEL5] = self._handle_sound_effects
 
     def _set_map_group_and_location(self, value):
         self.data['map_group'] = str(value)
         self.data['location'] = str(value)
         print('[Data] new location:', value)
 
+    SFX_SAVE_FILE = 37
+    SFX_SAVE_FILE_CH5 = 9472
+
     def _handle_sound_effects(self, value):
         # self.data['sound'] = int(value)
-        if value == self.SFX_SAVE_FILE:
+        if value == self.SFX_SAVE_FILE_CH5:
             print('[Events] saved game')
+            logger.info('[SFX] saved game')
             self.events.on_save(self.data)
-
-    def _handle_music(self, value):
-        # self.data['music'] = int(value)
-        self.battle.on_music_changed(value)
-
-    def _handle_text_prompt(self, value):
-        if value:
-            self.battle.on_text_prompt()
 
     @property
     def slot1_attack(self):
