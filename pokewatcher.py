@@ -464,7 +464,7 @@ class CrystalDataHandler(PokemonDataHandler):
         self._handlers[self.P_MON_SPATK] = self._int_setter('specialAttack')
         self._handlers[self.P_MON_SPDEF] = self._int_setter('specialDefense')
         self._handlers[self.P_MAP_GROUP] = self._set_map_group_and_location
-        self._handlers[self.P_MAP_NUMBER] = self._int_setter('map_number')
+        self._handlers[self.P_MAP_NUMBER] = self._set_map_number_and_location
 
         self._handlers[self.P_BATTLE_MODE] = self.battle.on_battle_mode_changed
         self._handlers[self.P_BATTLE_TYPE] = self.battle.on_battle_type_changed
@@ -503,10 +503,108 @@ class CrystalDataHandler(PokemonDataHandler):
         # self._handlers[self.P_AUDIO_SOUND] = self._handle_sound_effects
         self._handlers[self.P_AUDIO_CHANNEL5] = self._handle_sound_effects
 
+    MAPS = {
+        'OLIVINE': { 2: 'OLIVINE_GYM' },
+        'MAHOGANY': { 2: 'MAHOGANY_GYM' },
+        'DUNGEONS': {
+            1: 'SPROUT_TOWER',
+            2: 'SPROUT_TOWER',
+            3: 'SPROUT_TOWER',
+            4: 'TIN_TOWER',
+            5: 'TIN_TOWER',
+            6: 'TIN_TOWER',
+            7: 'TIN_TOWER',
+            8: 'TIN_TOWER',
+            9: 'TIN_TOWER',
+            10: 'TIN_TOWER',
+            11: 'TIN_TOWER',
+            12: 'TIN_TOWER',
+            13: 'BURNED_TOWER',
+            14: 'BURNED_TOWER',
+            17: 'RADIO_TOWER',
+            18: 'RADIO_TOWER',
+            19: 'RADIO_TOWER',
+            20: 'RADIO_TOWER',
+            21: 'RADIO_TOWER',
+            40: 'SLOWPOKE_WELL',
+            41: 'SLOWPOKE_WELL',
+            42: 'LIGHTHOUSE',
+            43: 'LIGHTHOUSE',
+            44: 'LIGHTHOUSE',
+            45: 'LIGHTHOUSE',
+            46: 'LIGHTHOUSE',
+            47: 'LIGHTHOUSE',
+            49: 'TEAM_ROCKET_BASE',
+            50: 'TEAM_ROCKET_BASE',
+            51: 'TEAM_ROCKET_BASE',
+            52: 'ILEX_FOREST',
+            53: 'GOLDENROD_UNDERGROUND',
+            54: 'GOLDENROD_UNDERGROUND',
+            55: 'GOLDENROD_UNDERGROUND',
+            56: 'GOLDENROD_UNDERGROUND',
+            91: 'VICTORY_ROAD',
+        },
+        'ECRUTEAK': {
+            2: 'WISE_TRIOS_ROOM',
+            5: 'DANCE_THEATRE',
+            7: 'ECRUTEAK_GYM',
+        },
+        'BLACKTHORN': {
+            1: 'BLACKTHORN_GYM',
+            2: 'BLACKTHORN_GYM',
+        },
+        'CINNABAR': { 4: 'CINNABAR_GYM' },
+        'CERULEAN': { 6: 'CERULEAN_GYM' },
+        'AZALEA': { 5: 'AZALEA_GYM' },
+        'VIOLET': { 7: 'VIOLET_GYM' },
+        'GOLDENROD': { 3: 'GOLDENROD_GYM' },
+        'VERMILION': { 11: 'VERMILION_GYM' },
+        'PEWTER': { 4: 'PEWTER_GYM' },
+        'FAST SHIP': {
+            10: 'MOUNT_MOON',
+            11: 'MOUNT_MOON',
+            12: 'TIN_TOWER_ROOF'
+        },
+        'INDIGO': {
+            3: 'WILLS_ROOM',
+            4: 'KOGAS_ROOM',
+            5: 'BRUNOS_ROOM',
+            6: 'KARENS_ROOM',
+            7: 'LANCES_ROOM',
+        },
+        'FUCHSIA': { 8: 'FUCHSIA_GYM' },
+        'CELADON': { 21: 'CELADON_GYM' },
+        'CIANWOOD': {
+            5: 'CIANWOOD_GYM',
+            11: 'BATTLE_TOWER',
+            12: 'BATTLE_TOWER',
+            13: 'BATTLE_TOWER',
+            14: 'BATTLE_TOWER',
+            15: 'BATTLE_TOWER',
+            16: 'BATTLE_TOWER',
+        },
+        'VIRIDIAN': { 4: 'VIRIDIAN_GYM' },
+        'SAFFRON': { 4: 'SAFFRON_GYM' },
+    }
+
     def _set_map_group_and_location(self, value):
+        map_number = self.data.get('map_number', 0)
         self.data['map_group'] = str(value)
-        self.data['location'] = str(value)
-        print('[Data] new location:', value)
+        location = str(value)
+        map_group = self.MAPS.get(location)
+        if map_group:
+            location = map_group.get(map_number, location)
+        self.data['location'] = location
+        print('[Data] new location:', location)
+
+    def _set_map_number_and_location(self, value):
+        self.data['map_number'] = value
+        location = self.data.get('map_group', 'NULL')
+        map_group = self.MAPS.get(location)
+        if map_group:
+            location = map_group.get(value, location)
+        self.data['location'] = location
+        print('[Data] new location:', location)
 
     SFX_SAVE_FILE = 37
     SFX_SAVE_FILE_CH5 = 9472
