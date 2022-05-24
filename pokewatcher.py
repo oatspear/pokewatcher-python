@@ -846,17 +846,12 @@ class YellowBattleMonitor:
 
 
 # BattleIntro:
-#   farcall PlayBattleMusic
-#       read [wBattleType]
-#       read [wOtherTrainerClass]
-#       read [wOtherTrainerID]
 #   farcall ClearBattleRAM
 #       write [wBattleResult]
 #   call InitEnemy
 #       read [wOtherTrainerClass]
 #       write [wTrainerClass]
 #       write [wBattleMode]
-#   call BattleStartMessage
 # ExitBattle:
 #   call CleanUpBattleRAM
 #       write [wBattleType]
@@ -864,41 +859,16 @@ class YellowBattleMonitor:
 #       write [wOtherTrainerClass]
 # WinTrainerBattle:
 #   write [wBattleEnded]
-#   call PlayVictoryMusic
-
-# state machine:
-# overworld -> music -> prompt -> music -> prompt -> overworld
 
 class CrystalBattleMonitor:
-    MUSIC_KANTO_GYM_LEADER_BATTLE = 0x0600
-    MUSIC_KANTO_TRAINER_BATTLE = 0x0700
-    MUSIC_KANTO_WILD_BATTLE = 0x0800
-    MUSIC_TRAINER_VICTORY = 0x1700
-    MUSIC_WILD_VICTORY = 0x1800
-    MUSIC_GYM_VICTORY = 0x1900
-    MUSIC_JOHTO_WILD_BATTLE = 0x2900
-    MUSIC_JOHTO_TRAINER_BATTLE = 0x2A00
-    MUSIC_JOHTO_GYM_LEADER_BATTLE = 0x2E00
-    MUSIC_CHAMPION_BATTLE = 0x2F00
-    MUSIC_RIVAL_BATTLE = 0x3000
-    MUSIC_JOHTO_WILD_BATTLE_NIGHT = 0x4A00
-
-    MUSIC_BATTLE_ANY = (
-        MUSIC_KANTO_GYM_LEADER_BATTLE,
-        MUSIC_KANTO_TRAINER_BATTLE,
-        MUSIC_KANTO_WILD_BATTLE,
-        MUSIC_JOHTO_WILD_BATTLE,
-        MUSIC_JOHTO_TRAINER_BATTLE,
-        MUSIC_JOHTO_GYM_LEADER_BATTLE,
-        MUSIC_CHAMPION_BATTLE,
-        MUSIC_RIVAL_BATTLE,
-        MUSIC_JOHTO_WILD_BATTLE_NIGHT,
-    )
-    MUSIC_VICTORY_ANY = (
-        MUSIC_TRAINER_VICTORY,
-        MUSIC_WILD_VICTORY,
-        MUSIC_GYM_VICTORY,
-    )
+    # wBattleMode
+    #   set to 0 with CleanUpBattleRAM at the end of all battles
+    #   set to 1 with InitEnemy at the start of a wild battle
+    #   set to 2 with InitEnemy at the start of a trainer battle
+    # wBattleLowHealthAlarm
+    #   set to 0 with ClearBattleRAM at the start of every battle
+    #   set to 1 with UpdateBattleStateAndExperienceAfterEnemyFaint on victory against wild
+    #   set to 1 with WinTrainerBattle on victory against trainers
 
     BATTLE_TYPE_NORMAL = 'NORMAL'
     BATTLE_TYPE_CANLOSE = 'CANLOSE'
@@ -912,10 +882,8 @@ class CrystalBattleMonitor:
     BATTLE_RESULT_DRAW = 'DRAW'
 
     STATE_OUT_OF_BATTLE = 0
-    STATE_ENTERED_BATTLE = 1
-    STATE_BATTLE_STARTED = 2
-    STATE_VICTORY_SEQUENCE = 3
-    STATE_PLAYER_WON = 4
+    STATE_IN_BATTLE = 1
+    STATE_PLAYER_WON = 2
 
     TRAINER_CLASS_NONE = 'NOBODY'
 
