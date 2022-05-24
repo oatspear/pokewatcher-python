@@ -536,6 +536,10 @@ class CrystalDataHandler(PokemonDataHandler):
     @property
     def slot1_sp_defense(self):
         mult = 1.125 if self.data.get('badge7') else 1
+        # glitch
+        sp_attack = self.data.get('specialAttack', 0)
+        if sp_attack in range(0, 205) or sp_attack in range(433, 660):
+            mult = 1
         return int(self.data.get('specialDefense', 0) * mult)
 
     @property
