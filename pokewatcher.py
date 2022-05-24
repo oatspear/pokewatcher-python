@@ -394,17 +394,17 @@ class YellowDataHandler(PokemonDataHandler):
 
 
 class CrystalDataHandler(PokemonDataHandler):
-    P_SPECIES = 'team[0].species'
-    P_LEVEL = 'team[0].level'
-    P_MOVE1 = 'team[0].move1'
-    P_MOVE2 = 'team[0].move2'
-    P_MOVE3 = 'team[0].move3'
-    P_MOVE4 = 'team[0].move4'
-    P_MON_ATK = 'team[0].summaryAtk'
-    P_MON_DEF = 'team[0].summaryDef'
-    P_MON_SPD = 'team[0].summarySpd'
-    P_MON_SPATK = 'team[0].summarySpcA'
-    P_MON_SPDEF = 'team[0].summarySpcD'
+    P_SPECIES = 'player.team.0.species'
+    P_LEVEL = 'player.team.0.level'
+    P_MOVE1 = 'player.team.0.move1'
+    P_MOVE2 = 'player.team.0.move2'
+    P_MOVE3 = 'player.team.0.move3'
+    P_MOVE4 = 'player.team.0.move4'
+    P_MON_ATK = 'player.team.0.Attack'
+    P_MON_DEF = 'player.team.0.Defense'
+    P_MON_SPD = 'player.team.0.Speed'
+    P_MON_SPATK = 'player.team.0.SpecialAttack'
+    P_MON_SPDEF = 'player.team.0.SpecialDefense'
 
     P_MAP_GROUP = 'overworld.mapGroup'
     P_MAP_NUMBER = 'overworld.mapNumber'
@@ -418,20 +418,21 @@ class CrystalDataHandler(PokemonDataHandler):
     P_BATTLE_RESULT = 'battle.result'
     P_TRAINER_CLASS = 'battle.trainer.class'
     P_TRAINER_ID = 'battle.trainer.id'
+    P_BATTLE_ALARM = 'battle.lowHealthAlarm'
     
-    P_STAGE_ATK = 'battle.yourPokemon.modStageAtk'
-    P_STAGE_DEF = 'battle.yourPokemon.modStageDef'
-    P_STAGE_SPD = 'battle.yourPokemon.modStageSpd'
-    P_STAGE_SPATK = 'battle.yourPokemon.modStageSpcA'
-    P_STAGE_SPDEF = 'battle.yourPokemon.modStageSpcD'
-    P_STAGE_ACC = 'battle.yourPokemon.modStageAcc'
-    P_STAGE_EVA = 'battle.yourPokemon.modStageEva'
+    P_STAGE_ATK = 'battle.yourPokemon.modStageAttack'
+    P_STAGE_DEF = 'battle.yourPokemon.modStageDefense'
+    P_STAGE_SPD = 'battle.yourPokemon.modStageSpeed'
+    P_STAGE_SPATK = 'battle.yourPokemon.modStageSpecialAttack'
+    P_STAGE_SPDEF = 'battle.yourPokemon.modStageSpecialDefense'
+    P_STAGE_ACC = 'battle.yourPokemon.modStageAccuracy'
+    P_STAGE_EVA = 'battle.yourPokemon.modStageEvasion'
 
-    P_BATTLE_ATK = 'battle.yourPokemon.battleStatAtk'
-    P_BATTLE_DEF = 'battle.yourPokemon.battleStatDef'
-    P_BATTLE_SPD = 'battle.yourPokemon.battleStatSpd'
-    P_BATTLE_SPATK = 'battle.yourPokemon.battleStatSpcA'
-    P_BATTLE_SPDEF = 'battle.yourPokemon.battleStatSpcD'
+    P_BATTLE_ATK = 'battle.yourPokemon.battleStatAttack'
+    P_BATTLE_DEF = 'battle.yourPokemon.battleStatDefense'
+    P_BATTLE_SPD = 'battle.yourPokemon.battleStatSpeed'
+    P_BATTLE_SPATK = 'battle.yourPokemon.battleStatSpecialAttack'
+    P_BATTLE_SPDEF = 'battle.yourPokemon.battleStatSpecialDefense'
 
     P_PLAYER_ID = 'player.playerId'
     P_GAME_TIME_HOURS = 'gameTime.hours'
@@ -471,6 +472,7 @@ class CrystalDataHandler(PokemonDataHandler):
         self._handlers[self.P_BATTLE_RESULT] = self.battle.on_battle_result_changed
         self._handlers[self.P_TRAINER_CLASS] = self.battle.on_trainer_class_changed
         self._handlers[self.P_TRAINER_ID] = self.battle.on_trainer_id_changed
+        self._handlers[self.P_BATTLE_ALARM] = self.battle.on_low_health_alarm_changed
 
         self._handlers[self.P_STAGE_ATK] = self.battle.on_stage_attack_changed
         self._handlers[self.P_STAGE_DEF] = self.battle.on_stage_defense_changed
@@ -887,40 +889,59 @@ class CrystalBattleMonitor:
 
     TRAINER_CLASS_NONE = 'NOBODY'
 
+    ALARM_ENABLED = 'Enabled'
+    ALARM_DISABLED = 'Disabled'
+
     def __init__(self):
         self.on_battle_started = noop
         self.on_battle_ended = noop
         self._reset()
 
+    def on_reset(self):
+        logger.info('detected game reset')
+        if self.state != self.STATE_OUT_OF_BATTLE:
+            self.battle_result = False
+            logger.info('battle monitor was in battle; counting as a loss')
+            logger.debug(self._internal_state())
+            self._end_battle()
+
     def on_battle_mode_changed(self, value):
-        if self.battle_type == self.BATTLE_TYPE_CANLOSE:
-            if value == self.BATTLE_MODE_NONE:
-                self.battle_mode = value
-            elif value == self.BATTLE_MODE_TRAINER:
-                self.battle_mode = value
-            else:
-                return
-        else:
-            self.battle_mode = value
-
-        if self.state == self.STATE_OUT_OF_BATTLE:
-            # alternative enter event besides the music update
-            if value != self.BATTLE_MODE_NONE:
-                self.state = self.STATE_ENTERED_BATTLE
-                self.battle_result = None
-
-        elif self.state == self.STATE_ENTERED_BATTLE:
-            if value == self.BATTLE_MODE_NONE:
-                self._end_battle()
-
-        elif self.state == self.STATE_BATTLE_STARTED:
-            if value == self.BATTLE_MODE_NONE:
-                self._end_battle()
-
-        elif self.state == self.STATE_PLAYER_WON:
-            if value == self.BATTLE_MODE_NONE:
+        logger.info('transition to battle mode: ' + value)
+        self.battle_mode = value
+        if value == self.BATTLE_MODE_NONE:
+            if self.state == self.STATE_PLAYER_WON:
                 print('[Battle] back to overworld')
+                logger.info('reached the end of the battle scene')
                 self.state = self.STATE_OUT_OF_BATTLE
+            elif self.state != self.STATE_OUT_OF_BATTLE:
+                self._end_battle()
+        else:
+            logger.info('detected start of battle')
+            logger.debug(self._internal_state())
+            if self.state != self.STATE_OUT_OF_BATTLE:
+                print('[Battle] battle starting but monitor was already in battle')
+                logger.warning('battle monitor probably missed a battle')
+            self.battle_result = True
+            self.state = self.STATE_IN_BATTLE
+            self.on_battle_started()
+
+    def on_low_health_alarm_changed(self, value):
+        logger.info(f'on_low_health_alarm_changed({value})')
+        logger.debug(self._internal_state())
+
+        if value == self.ALARM_DISABLED:
+            if self.state != self.STATE_IN_BATTLE:
+                print("[Battle] player won but monitor is not in the correct state")
+                print("[Battle] state:", self.state)
+            self.battle_result = True
+            self.state = self.STATE_PLAYER_WON
+            self.on_battle_ended()
+
+        elif value == self.ALARM_ENABLED:
+            # game reset or battle ended
+            # print("[Battle] game reset or battle ended")
+            # print("[Battle] state:", self.state)
+            pass
 
     def on_battle_type_changed(self, value):
         self.battle_type = value
@@ -941,30 +962,6 @@ class CrystalBattleMonitor:
 
     def on_trainer_id_changed(self, value):
         self.trainer_id = value
-
-    def on_music_changed(self, value):
-        # print('music changed:', value)
-        # if self.state == self.STATE_OUT_OF_BATTLE:
-        #     if value in self.MUSIC_BATTLE_ANY:
-        #         print('entered via music', value)
-        #         self.state = self.STATE_ENTERED_BATTLE
-        #         self.battle_mode = self.BATTLE_MODE_NONE
-        #         self.battle_result = None
-
-        #el
-        if self.state == self.STATE_BATTLE_STARTED:
-            if value in self.MUSIC_VICTORY_ANY:
-                self.state = self.STATE_VICTORY_SEQUENCE
-                self.battle_result = True
-
-    def on_text_prompt(self):
-        if self.state == self.STATE_ENTERED_BATTLE:
-            self.state = self.STATE_BATTLE_STARTED
-            self.on_battle_started()
-
-        elif self.state == self.STATE_VICTORY_SEQUENCE:
-            self.state = self.STATE_PLAYER_WON
-            self.on_battle_ended()
 
     def on_stage_attack_changed(self, value):
         self.battle_mon.stages.attack = value
@@ -1021,6 +1018,21 @@ class CrystalBattleMonitor:
         self.on_battle_ended()
         print('[Battle] back to overworld')
 
+    def _internal_state(self):
+        return '\n'.join((
+            'CrystalBattleMonitor',
+            f'  state: {self.state}',
+            f'  battle_type: {self.battle_type}',
+            f'  battle_mode: {self.battle_mode}',
+            f'  trainer_class: {self.trainer_class}',
+            f'  trainer_id: {self.trainer_id}',
+            f'  enemy_species: {self.enemy_species}',
+            f'  battle_result: {self.battle_result}',
+            '  battle_mon:',
+            f'    stats: {self.battle_mon.stats}',
+            f'    stages: {self.battle_mon.stages}',
+        ))
+
 
 ################################################################################
 # Game Events
@@ -1069,8 +1081,8 @@ class BattleTimeSplitter:
         ],
         'Pokemon Crystal': [
             # CLASS,    ID,  NAME
-            # ('YOUNGSTER', 1, 'YOUNGSTER JOEY'),
-            # ('YOUNGSTER', 2, 'YOUNGSTER MIKEY'),
+            ('YOUNGSTER', 1, 'YOUNGSTER JOEY'),
+            ('YOUNGSTER', 2, 'YOUNGSTER MIKEY'),
             # ('RIVAL1',   1, 'RIVAL'),
             # ('RIVAL1',   2, 'RIVAL'),
             # ('RIVAL1',   3, 'RIVAL'),
@@ -1396,6 +1408,7 @@ class SaveFileBackupAgent:
             'level': 0,
             'location': 'NULL',
         }
+        self._timestamp = 0
 
     def watch(self):
         while True:
@@ -1440,6 +1453,11 @@ class SaveFileBackupAgent:
         print('[Save File] backup complete')
 
     def save(self, params: Dict[str, Any]):
+        if self.save_signal:
+            t = time.time()
+            if (t - self._timestamp) < 1.0:
+                return  # discard too many requests in a short period
+
         self.saved_data.update(params)
 
         location = params.get('location', 'NULL')
@@ -1458,6 +1476,7 @@ class SaveFileBackupAgent:
 
         print("[Save File] requesting backup")
         self.save_signal = True
+        self._timestamp = time.time()
 
 
 ################################################################################
