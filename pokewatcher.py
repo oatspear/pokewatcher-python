@@ -213,6 +213,13 @@ class PokemonDataHandler:
             self.data[attr] = bool(value)
         return handle
 
+    def _handle_player_id(self, value):
+        self.data['playerId'] = value
+        if value == 0:
+            print('[Game Reset]')
+            self.events.on_reset(self.data)
+            self.battle.on_reset()
+
     def _new_battle_monitor(self):
         raise NotImplementedError('_new_battle_monitor')
 
@@ -336,7 +343,7 @@ class YellowDataHandler(PokemonDataHandler):
         self._handlers[self.P_BADGE7] = self._bool_setter('badge7')
         self._handlers[self.P_BADGE8] = self._bool_setter('badge8')
 
-        self._handlers[self.P_PLAYER_ID] = self._handler_player_id
+        self._handlers[self.P_PLAYER_ID] = self._handle_player_id
         self._handlers[self.P_GAME_TIME_HOURS] = self._int_setter('game_time_h')
         self._handlers[self.P_GAME_TIME_MINUTES] = self._int_setter('game_time_m')
         self._handlers[self.P_GAME_TIME_SECONDS] = self._int_setter('game_time_s')
@@ -359,13 +366,6 @@ class YellowDataHandler(PokemonDataHandler):
         x = int(value)
         self.data['specialAttack'] = x
         self.data['specialDefense'] = x
-
-    def _handler_player_id(self, value):
-        self.data['playerId'] = value
-        if value == 0:
-            print('[Game Reset]')
-            self.events.on_reset(self.data)
-            self.battle.on_reset()
 
     @property
     def slot1_attack(self):
@@ -409,7 +409,7 @@ class CrystalDataHandler(PokemonDataHandler):
     P_MAP_GROUP = 'overworld.mapGroup'
     P_MAP_NUMBER = 'overworld.mapNumber'
 
-    P_AUDIO_SOUND = 'audio.currentSound'
+    # P_AUDIO_SOUND = 'audio.currentSound'
     # P_AUDIO_MUSIC = 'audio.musicID'
     P_AUDIO_CHANNEL5 = 'audio.channel5MusicID'
 
@@ -433,10 +433,11 @@ class CrystalDataHandler(PokemonDataHandler):
     P_BATTLE_SPATK = 'battle.yourPokemon.battleStatSpcA'
     P_BATTLE_SPDEF = 'battle.yourPokemon.battleStatSpcD'
 
-    # P_TEXT_PROMPT = 'screen.text.prompt'
+    P_PLAYER_ID = 'player.playerId'
     P_GAME_TIME_HOURS = 'gameTime.hours'
     P_GAME_TIME_MINUTES = 'gameTime.minutes'
     P_GAME_TIME_SECONDS = 'gameTime.seconds'
+    # P_TEXT_PROMPT = 'screen.text.prompt'
 
     P_BADGE1 = 'player.badges.zephyrBadge'
     P_BADGE2 = 'player.badges.hiveBadge'
@@ -446,8 +447,6 @@ class CrystalDataHandler(PokemonDataHandler):
     P_BADGE6 = 'player.badges.mineralBadge'
     P_BADGE7 = 'player.badges.glacierBadge'
     P_BADGE8 = 'player.badges.risingBadge'
-
-    P_PLAYER_ID = 'player.playerId'
 
     def _new_battle_monitor(self):
         return CrystalBattleMonitor()
@@ -496,7 +495,7 @@ class CrystalDataHandler(PokemonDataHandler):
         self._handlers[self.P_BADGE7] = self._bool_setter('badge7')
         self._handlers[self.P_BADGE8] = self._bool_setter('badge8')
 
-        self._handlers[self.P_PLAYER_ID] = self._handler_player_id
+        self._handlers[self.P_PLAYER_ID] = self._handle_player_id
         self._handlers[self.P_GAME_TIME_HOURS] = self._int_setter('game_time_h')
         self._handlers[self.P_GAME_TIME_MINUTES] = self._int_setter('game_time_m')
         self._handlers[self.P_GAME_TIME_SECONDS] = self._int_setter('game_time_s')
