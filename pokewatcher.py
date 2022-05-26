@@ -112,7 +112,7 @@ class GameWatcher:
         self._connect_event_handlers()
 
         logger.setLevel(logging.DEBUG)
-        logger.addHandler(logging.FileHandler(str(LOG_FILE)))
+        logger.addHandler(logging.FileHandler(str(LOG_FILE), mode='w'))
 
     def main_loop(self):
         logger.info('Starting main loop.')
