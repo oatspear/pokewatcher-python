@@ -1323,7 +1323,11 @@ def request_real_time() -> str:
             print('[Time Server] request current time')
             s.send(b'getcurrenttime\r\n')
             timevalue = s.recv(1024)
-            return timevalue.decode('utf-8').strip()
+            timevalue = timevalue.decode('utf-8').strip()
+            timevalue = timevalue.split('.')[0]  # omit frames
+            if timevalue.count(':') < 2:
+                return f'0:{timevalue}'
+            return timevalue
 
 
 def request_gamehook_data() -> Tuple[str, Any]:
