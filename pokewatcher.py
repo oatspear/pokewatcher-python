@@ -1324,7 +1324,6 @@ def request_real_time() -> str:
             s.send(b'getcurrenttime\r\n')
             timevalue = s.recv(1024)
             timevalue = timevalue.decode('utf-8').strip()
-            timevalue = timevalue.split('.')[0]  # omit frames
             if timevalue.count(':') < 2:
                 return f'0:{timevalue}'
             return timevalue
