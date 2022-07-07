@@ -15,6 +15,7 @@ from pathlib import Path
 import requests
 import shutil
 import socket
+import subprocess
 import sys
 import time
 from types import SimpleNamespace
@@ -49,6 +50,11 @@ DEFAULT_SLEEP_DELAY = 3.0  # seconds
 DEFAULT_BACKUP_NAME_FORMAT = '{rom} - lvl{level}-{time}-{location}.srm'
 
 CSV_FILENAME = '{rom}.csv'
+
+HERE = Path(__file__).parent
+AHK_SAVE_STATE = HERE / 'save_state.ahk'
+AHK_TOGGLE_TIMER = HERE / 'toggle_timer.ahk'
+AHK_RECORD_VIDEO = HERE / 'record_video.ahk'
 
 logger = logging.getLogger(__name__)
 
@@ -1350,6 +1356,20 @@ def request_gamehook_data() -> Tuple[str, Any]:
 
 
 ################################################################################
+# External Processes
+################################################################################
+
+def autohotkey(script: Path) -> bool:
+    cmd = f'AutoHotkey.exe {script}'
+    try:
+        subprocess.run(cmd, shell=True, check=True)
+    except subprocess.CalledProcessError as e:
+        warnings.warn(str(e))
+        return False
+    return True
+
+
+################################################################################
 # GameHook Watcher
 ################################################################################
 
@@ -1481,9 +1501,12 @@ class SaveFileBackupAgent:
         except FileNotFoundError:
             self._cached_stamp = 0
 
-        print("[Save File] requesting backup")
+        print('[Save File] requesting backup')
         self.save_signal = True
         self._timestamp = time.time()
+
+        print('[AutoHotkey] running "save state" script')
+        autohotkey(AHK_SAVE_STATE)
 
 
 ################################################################################
