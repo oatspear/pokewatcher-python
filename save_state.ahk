@@ -1,0 +1,4 @@
+#SingleInstance Ignore
+
+Send, {`}
+Exit
