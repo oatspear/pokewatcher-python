@@ -1188,6 +1188,10 @@ class BattleTimeSplitter:
         self.time_end = request_real_time()
         print(f'[Battle] [{self.time_end}] [{self.game_time}] won vs {self.name}')
         self.records.append(self._make_record(monitor, data, resets=self.attempts[key]))
+        if name == 'CHAMPION':
+            logger.info('[AutoHotkey] toggle timer')
+            print('[AutoHotkey] toggle timer')
+            autohotkey(AHK_TOGGLE_TIMER)
 
     CSV_HEADERS = (
         'ROM',
