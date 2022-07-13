@@ -27,7 +27,7 @@ from signalrcore.hub_connection_builder import HubConnectionBuilder
 # Constants
 ################################################################################
 
-OATS = True
+OATS = False
 
 if OATS:
     SRC_DIR = Path(r'C:\RetroArch-Win64\saves')
@@ -1211,9 +1211,10 @@ class BattleTimeSplitter:
         print(f'[Battle] [{self.time_end}] [{self.game_time}] won vs {self.name}')
         self.records.append(self._make_record(monitor, data, resets=self.attempts[key]))
         if name == 'CHAMPION':
-            logger.info('[AutoHotkey] toggle timer')
-            print('[AutoHotkey] toggle timer')
-            autohotkey(AHK_TOGGLE_TIMER)
+            # logger.info('[AutoHotkey] toggle timer')
+            # print('[AutoHotkey] toggle timer')
+            # autohotkey(AHK_TOGGLE_TIMER)
+            request_pause_timer()
 
     CSV_HEADERS = (
         'ROM',
@@ -1349,6 +1350,24 @@ def request_retroarch_status() -> str:
     raise DataRequestError.get_rom()
 
 
+def request_save_state():
+    print('[RetroArch] connecting')
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+            s.connect(RETROARCH_HOST)
+            with SleepLoop(DEFAULT_LOOP_ITERATIONS) as loop:
+                while loop.iterate():
+                    print('[RetroArch] request save state')
+                    s.send(b'SAVE_STATE\n')
+                    # no reply
+                    print('[RetroArch] request increment save slot')
+                    s.send(b'STATE_SLOT_PLUS\n')
+                    # no reply
+    except ConnectionError as e:
+        print('[RetroArch] failed to save state')
+        logger.error(f'[RetroArch] {e}')
+
+
 def request_real_time() -> str:
     print('[Time Server] connecting')
     try:
@@ -1368,6 +1387,38 @@ def request_real_time() -> str:
         warnings.warn('[Time Server] failed to connect')
         logger.error('[Time Server] failed to connect')
         return time.strftime("%H:%M:%S", time.localtime())
+
+
+def request_start_timer():
+    print('[Time Server] connecting')
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect(TIME_SERVER)
+            print('[Time Server] request start timer')
+            s.send(b'starttimer\r\n')
+            # no reply
+    except ConnectionError as e:
+        print('[Time Server] failed to connect')
+        print('[Time Server] failed to connect')
+        print('[Time Server] failed to connect')
+        warnings.warn('[Time Server] failed to connect')
+        logger.error(f'[Time Server] {e}')
+
+
+def request_pause_timer():
+    print('[Time Server] connecting')
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect(TIME_SERVER)
+            print('[Time Server] request pause timer')
+            s.send(b'pause\r\n')
+            # no reply
+    except ConnectionError as e:
+        print('[Time Server] failed to connect')
+        print('[Time Server] failed to connect')
+        print('[Time Server] failed to connect')
+        warnings.warn('[Time Server] failed to connect')
+        logger.error(f'[Time Server] {e}')
 
 
 def request_gamehook_data() -> Tuple[str, Any]:
@@ -1391,11 +1442,14 @@ def request_gamehook_data() -> Tuple[str, Any]:
 ################################################################################
 
 def autohotkey(script: Path) -> bool:
+    logger.info(f'[AutoHotkey] running {script}')
     cmd = f'start autohotkey {script}'
     try:
         subprocess.run(cmd, shell=True, check=True)
     except subprocess.CalledProcessError as e:
+        print('[AutoHotkey] failed to run script')
         warnings.warn(str(e))
+        logger.error(f'[AutoHotkey] {e}')
         return False
     return True
 
@@ -1536,8 +1590,9 @@ class SaveFileBackupAgent:
         self.save_signal = True
         self._timestamp = time.time()
 
-        print('[AutoHotkey] running "save state" script')
-        autohotkey(AHK_SAVE_STATE)
+        #print('[AutoHotkey] running "save state" script')
+        #autohotkey(AHK_SAVE_STATE)
+        request_save_state()
 
 
 ################################################################################
