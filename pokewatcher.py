@@ -1383,7 +1383,7 @@ def request_gamehook_data() -> Tuple[str, Any]:
 ################################################################################
 
 def autohotkey(script: Path) -> bool:
-    cmd = f'AutoHotkey.exe {script}'
+    cmd = f'start autohotkey {script}'
     try:
         subprocess.run(cmd, shell=True, check=True)
     except subprocess.CalledProcessError as e:
