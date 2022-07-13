@@ -98,6 +98,9 @@ class GameWatcher:
         self.time_splitter = None
 
     def setup(self):
+        # test real-time server status
+        request_real_time()
+
         rom = request_retroarch_status()
         print('[Watcher] got ROM:', rom)
         self.backup_agent = SaveFileBackupAgent(rom)
@@ -1347,10 +1350,8 @@ def request_retroarch_status() -> str:
 
 
 def request_real_time() -> str:
-    if OATS:
-        return time.strftime("%H:%M:%S", time.localtime())
-    else:
-        print('[Time Server] connecting')
+    print('[Time Server] connecting')
+    try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.connect(TIME_SERVER)
             print('[Time Server] request current time')
@@ -1360,6 +1361,13 @@ def request_real_time() -> str:
             if timevalue.count(':') < 2:
                 return f'0:{timevalue}'
             return timevalue
+    except ConnectionError:
+        print('[Time Server] failed to connect')
+        print('[Time Server] failed to connect')
+        print('[Time Server] failed to connect')
+        warnings.warn('[Time Server] failed to connect')
+        logger.error('[Time Server] failed to connect')
+        return time.strftime("%H:%M:%S", time.localtime())
 
 
 def request_gamehook_data() -> Tuple[str, Any]:
