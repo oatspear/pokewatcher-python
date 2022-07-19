@@ -331,7 +331,7 @@ class YellowDataHandler(PokemonDataHandler):
         self._handlers[self.P_MON_DEF] = self._int_setter('defense')
         self._handlers[self.P_MON_SPD] = self._int_setter('speed')
         self._handlers[self.P_MON_SPC] = self._set_special
-        self._handlers[self.P_LOCATION] = self._string_setter('location', quiet=False)
+        self._handlers[self.P_LOCATION] = self._handle_location
 
         self._handlers[self.P_BATTLE_TYPE] = self.battle.on_battle_type_changed
         self._handlers[self.P_TRAINER_CLASS] = self.battle.on_trainer_class_changed
@@ -383,6 +383,29 @@ class YellowDataHandler(PokemonDataHandler):
         x = int(value)
         self.data['specialAttack'] = x
         self.data['specialDefense'] = x
+
+    CRITICAL_LOCATIONS = (
+        'Viridian City - Gym',
+        'Pewter City - Gym',
+        'Cerulean City - Gym',
+        'Vermilion City - Gym',
+        'Celadon City - Celadon Gym',
+        'Fuchsia City - Gym',
+        'Saffron City - Gym',
+        'Cinnabar Island - Gym',
+        "Lorelei's Room",
+        "Bruno's Room",
+        "Agatha's Room",
+        "Lance's Room",
+        'Champions Room',
+    )
+
+    def _handle_location(self, value):
+        print(f'[Data] new {attr}:', value)
+        value = str(value)
+        self.data['location'] = value
+        if value in self.CRITICAL_LOCATIONS:
+            request_save_state()
 
     @property
     def slot1_attack(self):
