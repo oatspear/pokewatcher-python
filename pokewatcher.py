@@ -104,10 +104,11 @@ class GameWatcher:
         rom = request_retroarch_status()
         print('[Watcher] got ROM:', rom)
         self.backup_agent = SaveFileBackupAgent(rom)
+        is_new_game = not self.backup_agent.file.exists()
 
         version, data = request_gamehook_data()
         print('[Watcher] got game version:', version)
-        self._build_data_handler(rom, version, data)
+        self._build_data_handler(rom, version, data, is_new_game)
 
         self.gamehook = GameHookBridge(
             on_connect=lambda: print('[GameHook] stream connected'),
@@ -138,7 +139,7 @@ class GameWatcher:
         self.backup_agent = None
         self.data_handler = None
 
-    def _build_data_handler(self, rom, version, data):
+    def _build_data_handler(self, rom, version, data, is_new_game):
         game_string = version.lower()
         if 'yellow' in game_string:
             self.data_handler = YellowDataHandler(rom, version, data)
@@ -146,6 +147,7 @@ class GameWatcher:
             self.data_handler = CrystalDataHandler(rom, version, data)
         else:
             raise ValueError(f'[Watcher] unknown game version: {version}')
+        self.data_handler.is_new_game = is_new_game
 
     def _connect_event_handlers(self):
         # connect in-game save events to save file backup agent
@@ -173,6 +175,7 @@ class PokemonDataHandler:
         self.battle = self._new_battle_monitor()
         self.battle.on_battle_started = self._emit_battle_started
         self.battle.on_battle_ended = self._emit_battle_ended
+        self.is_new_game = True
         self._handlers = {}
         self._set_property_handlers()
         for prop in data:
@@ -228,6 +231,11 @@ class PokemonDataHandler:
             print('[Game Reset]')
             self.events.on_reset(self.data)
             self.battle.on_reset()
+        else:
+            if self.is_new_game:
+                autohotkey(AHK_RECORD_VIDEO)
+                request_start_timer()
+            self.is_new_game = False
 
     def _new_battle_monitor(self):
         raise NotImplementedError('_new_battle_monitor')
