@@ -404,7 +404,7 @@ class YellowDataHandler(PokemonDataHandler):
     )
 
     def _handle_location(self, value):
-        print(f'[Data] new {attr}:', value)
+        print(f'[Data] new location:', value)
         value = str(value)
         self.data['location'] = value
         if value in self.CRITICAL_LOCATIONS:
