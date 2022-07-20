@@ -385,11 +385,14 @@ class YellowDataHandler(PokemonDataHandler):
         self.data['specialDefense'] = x
 
     CRITICAL_LOCATIONS = (
+        'Viridian Forest',
+        'Silph Co - 1F',
+        'Indigo Plateau - Lobby',
         'Viridian City - Gym',
         'Pewter City - Gym',
         'Cerulean City - Gym',
         'Vermilion City - Gym',
-        'Celadon City - Celadon Gym',
+        'Celadon City - Gym',
         'Fuchsia City - Gym',
         'Saffron City - Gym',
         'Cinnabar Island - Gym',
@@ -1392,8 +1395,8 @@ def request_save_state():
                     print('[RetroArch] request save state')
                     s.send(b'SAVE_STATE\n')
                     # no reply
-                    print('[RetroArch] request increment save slot')
-                    s.send(b'STATE_SLOT_PLUS\n')
+                    # print('[RetroArch] request increment save slot')
+                    # s.send(b'STATE_SLOT_PLUS\n')
                     # no reply
     except ConnectionError as e:
         print('[RetroArch] failed to save state')
