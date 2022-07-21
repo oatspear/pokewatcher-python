@@ -1464,6 +1464,10 @@ def request_real_time() -> str:
             s.send(b'getcurrenttime\r\n')
             timevalue = s.recv(1024)
             timevalue = timevalue.decode('utf-8').strip()
+            if '.' not in timevalue:
+                timevalue = timevalue + '.0'
+            if ':' not in timevalue:
+                return f'0:0:{timevalue}'
             if timevalue.count(':') < 2:
                 return f'0:{timevalue}'
             return timevalue
@@ -1473,7 +1477,7 @@ def request_real_time() -> str:
         print('[Time Server] failed to connect')
         warnings.warn('[Time Server] failed to connect')
         logger.error('[Time Server] failed to connect')
-        return time.strftime("%H:%M:%S", time.localtime())
+        return time.strftime("%H:%M:%S", time.localtime()) + '.0'
 
 
 def request_start_timer():
@@ -1741,6 +1745,27 @@ class SleepLoop:
 
 def noop(*args, **kwargs):
     pass
+
+
+def time_fields(time_string):
+    parts = time_string.split('.')
+    if len(parts) < 2:
+        millis = 0
+    else:
+        millis = int(parts[-1])
+        time_string = parts[0]
+    parts = time_string.split(':')
+    seconds = int(parts[-1])
+    if len(parts) == 1:
+        hours = 0
+        minutes = 0
+    elif len(parts) == 2:
+        hours = 0
+        minutes = int(parts[-2])
+    else:
+        hours = int(parts[-3])
+        minutes = int(parts[-2])
+    return (hours, minutes, seconds, millis)
 
 
 ################################################################################
