@@ -176,6 +176,8 @@ class PokemonDataHandler:
         self.battle.on_battle_started = self._emit_battle_started
         self.battle.on_battle_ended = self._emit_battle_ended
         self.is_new_game = True
+        self.locations_to_visit = set()
+        self._data_init()
         self._handlers = {}
         self._set_property_handlers()
         for prop in data:
@@ -236,6 +238,9 @@ class PokemonDataHandler:
                 autohotkey(AHK_RECORD_VIDEO)
                 request_start_timer()
             self.is_new_game = False
+
+    def _data_init(self):
+        pass
 
     def _new_battle_monitor(self):
         raise NotImplementedError('_new_battle_monitor')
@@ -316,6 +321,9 @@ class YellowDataHandler(PokemonDataHandler):
     P_BADGE8 = 'player.badges.earthBadge'
 
     P_PLAYER_ID = 'player.playerId'
+
+    def _data_init(self):
+        self.locations_to_visit = set(self.ONE_TIME_LOCATIONS)
 
     def _new_battle_monitor(self):
         return YellowBattleMonitor()
@@ -403,12 +411,56 @@ class YellowDataHandler(PokemonDataHandler):
         'Champions Room',
     )
 
+    ONE_TIME_LOCATIONS = (
+        'Viridian City',
+        'Pewter City',
+        'Cerulean City',
+        'Lavender Town',
+        'Vermilion City',
+        'Celadon City',
+        'Fuchsia City',
+        'Cinnabar Island',
+        'Saffron City',
+        'Rock Tunnel - 1',
+        'Mt Moon - 1',
+        'Victory Road',
+        'Pokemon Tower - 1F',
+        'Route 1',
+        'Route 2',
+        'Route 3',
+        'Route 4',
+        'Route 5',
+        'Route 6',
+        'Route 7',
+        'Route 8',
+        'Route 9',
+        'Route 10',
+        'Route 11',
+        'Route 12',
+        'Route 13',
+        'Route 14',
+        'Route 15',
+        'Route 16',
+        'Route 17',
+        'Route 18',
+        'Route 19',
+        'Route 20',
+        'Route 21', 
+        'Route 22',
+        'Route 23',
+        'Route 24',
+        'Route 25',
+    )
+
     def _handle_location(self, value):
         print(f'[Data] new location:', value)
         value = str(value)
         self.data['location'] = value
         if value in self.CRITICAL_LOCATIONS:
             request_save_state()
+        elif value in self.locations_to_visit:
+            request_save_state()
+            self.locations_to_visit.remove(value)
 
     @property
     def slot1_attack(self):
