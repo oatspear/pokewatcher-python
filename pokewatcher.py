@@ -1307,6 +1307,10 @@ class BattleTimeSplitter:
         'ROM',
         'Species',
         'Trainer',
+        'RTHours',
+        'RTMinutes',
+        'RTSeconds',
+        'RTMilliseconds',
         'Start Time',
         'Real Time',
         'Game Time',
@@ -1379,10 +1383,15 @@ class BattleTimeSplitter:
         return None
 
     def _make_record(self, monitor, data, resets=0):
+        h, m, s, ms = time_fields(self.time_end)
         return (
             data['rom'],
             data['species'],
             self.name,
+            str(h),
+            str(m),
+            str(s),
+            str(ms),
             self.time_start,
             self.time_end,
             self.game_time,
