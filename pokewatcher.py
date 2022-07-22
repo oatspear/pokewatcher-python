@@ -107,11 +107,11 @@ class GameWatcher:
         rom = request_retroarch_status()
         print('[Watcher] got ROM:', rom)
         self.backup_agent = SaveFileBackupAgent(rom)
-        is_new_game = not self.backup_agent.file.exists()
+        # is_new_game = not self.backup_agent.file.exists()
 
         version, data = request_gamehook_data()
         print('[Watcher] got game version:', version)
-        self._build_data_handler(rom, version, data, is_new_game)
+        self._build_data_handler(rom, version, data)
 
         self.gamehook = GameHookBridge(
             on_connect=lambda: print('[GameHook] stream connected'),
@@ -142,7 +142,7 @@ class GameWatcher:
         self.backup_agent = None
         self.data_handler = None
 
-    def _build_data_handler(self, rom, version, data, is_new_game):
+    def _build_data_handler(self, rom, version, data):
         game_string = version.lower()
         if 'yellow' in game_string:
             self.data_handler = YellowDataHandler(rom, version, data)
@@ -150,7 +150,10 @@ class GameWatcher:
             self.data_handler = CrystalDataHandler(rom, version, data)
         else:
             raise ValueError(f'[Watcher] unknown game version: {version}')
-        self.data_handler.is_new_game = is_new_game
+        print('[GameHook] initial data received')
+        print('[New Game] tracking from this point onward')
+        logger.info('data_handler.is_new_game = True')
+        self.data_handler.is_new_game = True
 
     def _connect_event_handlers(self):
         # connect in-game save events to save file backup agent
@@ -173,12 +176,13 @@ class PokemonDataHandler:
             'rom': rom,
             'version': version,
             'time': '00:00:00.000',
+            'playerId': 0,
         }
         self.events = GameEvents()
         self.battle = self._new_battle_monitor()
         self.battle.on_battle_started = self._emit_battle_started
         self.battle.on_battle_ended = self._emit_battle_ended
-        self.is_new_game = True
+        self.is_new_game = False
         self.locations_to_visit = set()
         self._data_init()
         self._handlers = {}
@@ -231,13 +235,15 @@ class PokemonDataHandler:
         return handle
 
     def _handle_player_id(self, value):
+        prev = self.data['playerId']
         self.data['playerId'] = value
         if value == 0:
             print('[Game Reset]')
             self.events.on_reset(self.data)
             self.battle.on_reset()
         else:
-            if self.is_new_game:
+            if prev == 0 and self.is_new_game:
+                print('[New Game] starting a new game')
                 # autohotkey(AHK_RECORD_VIDEO)
                 keyboard.send(KEY_RECORD_VIDEO)
                 request_start_timer()
