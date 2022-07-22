@@ -21,6 +21,7 @@ import time
 from types import SimpleNamespace
 import warnings
 
+import keyboard
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 
 ################################################################################
@@ -55,6 +56,8 @@ HERE = Path(__file__).parent
 AHK_SAVE_STATE = HERE / 'save_state.ahk'
 AHK_TOGGLE_TIMER = HERE / 'toggle_timer.ahk'
 AHK_RECORD_VIDEO = HERE / 'record_video.ahk'
+
+KEY_RECORD_VIDEO = 'num lock+1'
 
 logger = logging.getLogger(__name__)
 
@@ -235,7 +238,8 @@ class PokemonDataHandler:
             self.battle.on_reset()
         else:
             if self.is_new_game:
-                autohotkey(AHK_RECORD_VIDEO)
+                # autohotkey(AHK_RECORD_VIDEO)
+                keyboard.send(KEY_RECORD_VIDEO)
                 request_start_timer()
             self.is_new_game = False
 
