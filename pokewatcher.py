@@ -195,9 +195,10 @@ class PokemonDataHandler:
         return self.data[key]
 
     def on_property_changed(self, args):
-        prop, value, _bytes, _frozen = args
-        handle = self._handlers.get(prop, noop)
-        handle(value)
+        prop, address, value, _bytes, _frozen, changed_fields = args
+        if 'value' in changed_fields:
+            handle = self._handlers.get(prop, noop)
+            handle(value)
 
     def _simple_setter(self, attr, quiet=True):
         def handle(value):
