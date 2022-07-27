@@ -53,9 +53,9 @@ DEFAULT_BACKUP_NAME_FORMAT = '{rom} - lvl{level}-{time}-{location}.srm'
 CSV_FILENAME = '{rom}.csv'
 
 HERE = Path(__file__).parent
-AHK_SAVE_STATE = HERE / 'save_state.ahk'
-AHK_TOGGLE_TIMER = HERE / 'toggle_timer.ahk'
-AHK_RECORD_VIDEO = HERE / 'record_video.ahk'
+AHK_SAVE_STATE = HERE / 'scripts' / 'save_state.ahk'
+AHK_TOGGLE_TIMER = HERE / 'scripts' / 'toggle_timer.ahk'
+AHK_RECORD_VIDEO = HERE / 'scripts' / 'record_video.ahk'
 
 KEY_RECORD_VIDEO = 'num lock+1'
 
