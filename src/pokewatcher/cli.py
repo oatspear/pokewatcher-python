@@ -25,7 +25,7 @@ import logging
 import sys
 
 from pokewatcher import __version__ as current_version
-from pokewatcher.config import load as load_configs
+from pokewatcher.core.config import load as load_configs
 
 ###############################################################################
 # Constants
