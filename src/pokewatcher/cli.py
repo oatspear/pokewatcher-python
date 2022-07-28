@@ -35,7 +35,10 @@ def parse_arguments(argv: Optional[List[str]]) -> Dict[str, Any]:
     parser = argparse.ArgumentParser(description=msg)
 
     parser.add_argument(
-        '--version', dest='version', action='store_true', help='Prints the program version.'
+        '--version',
+        action='version',
+        version=f'{current_version}',
+        help='Prints the program version.',
     )
 
     parser.add_argument(
@@ -76,7 +79,7 @@ def load_configs(args: Dict[str, Any]) -> Dict[str, Any]:
 ###############################################################################
 
 
-def do_real_work(args: Dict[str, Any], configs: Dict[str, Any]) -> None:
+def workflow(args: Dict[str, Any], configs: Dict[str, Any]) -> None:
     print(f'Arguments: {args}')
     print(f'Configurations: {configs}')
     if args['version']:
@@ -112,4 +115,3 @@ def main(argv: Optional[List[str]] = None) -> int:
         return 1
 
     return 0  # success
-
