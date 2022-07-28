@@ -21,9 +21,18 @@ Some of the structure of this file came from this StackExchange question:
 from typing import Any, Dict, List, Optional
 
 import argparse
+import logging
 import sys
 
 from pokewatcher import __version__ as current_version
+
+###############################################################################
+# Constants
+###############################################################################
+
+logger = logging.getLogger(__name__)
+
+LOG_FILE = Path().resolve() / 'pokewatcher.log'
 
 ###############################################################################
 # Argument Parsing
@@ -74,6 +83,11 @@ def load_configs(args: Dict[str, Any]) -> Dict[str, Any]:
         return sane_defaults
 
 
+def _setup_logging():
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(logging.FileHandler(str(LOG_FILE), mode='w'))
+
+
 ###############################################################################
 # Commands
 ###############################################################################
@@ -82,8 +96,6 @@ def load_configs(args: Dict[str, Any]) -> Dict[str, Any]:
 def workflow(args: Dict[str, Any], configs: Dict[str, Any]) -> None:
     print(f'Arguments: {args}')
     print(f'Configurations: {configs}')
-    if args['version']:
-        print(f'Version: {current_version}')
 
 
 ###############################################################################
@@ -94,24 +106,29 @@ def workflow(args: Dict[str, Any], configs: Dict[str, Any]) -> None:
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_arguments(argv)
 
+    # setup phase --------------------------------------------------------------
     try:
-        # Load additional config files here, e.g., from a path given via args.
-        # Alternatively, set sane defaults if configuration is missing.
         config = load_configs(args)
-        do_real_work(args, config)
-
+        _setup_logging()
     except KeyboardInterrupt:
+        logger.error('Aborted manually.')
         print('Aborted manually.', file=sys.stderr)
         return 1
-
     except Exception as err:
-        # In real code the `except` would probably be less broad.
-        # Turn exceptions into appropriate logs and/or console output.
+        logger.exception('Unhandled exception during setup.', err)
+        print('Unhandled exception during setup.', file=sys.stderr)
+        return 1
 
-        print('An unhandled exception crashed the application!', err)
-
-        # Non-zero return code to signal error.
-        # It can, of course, be more fine-grained than this general code.
+    # main phase ---------------------------------------------------------------
+    try:
+        workflow(args, config)
+    except KeyboardInterrupt:
+        logger.error('Aborted manually.')
+        print('Aborted manually.', file=sys.stderr)
+        return 1
+    except Exception as err:
+        logger.exception('Unhandled exception during execution.', err)
+        print('Unhandled exception during execution.', file=sys.stderr)
         return 1
 
     return 0  # success
