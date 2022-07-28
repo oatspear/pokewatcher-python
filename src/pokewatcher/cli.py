@@ -25,6 +25,7 @@ import logging
 import sys
 
 from pokewatcher import __version__ as current_version
+from pokewatcher.config import load as load_configs
 
 ###############################################################################
 # Constants
@@ -61,26 +62,6 @@ def parse_arguments(argv: Optional[List[str]]) -> Dict[str, Any]:
 ###############################################################################
 # Setup
 ###############################################################################
-
-
-def load_configs(args: Dict[str, Any]) -> Dict[str, Any]:
-    try:
-        config: Dict[str, Any] = {}
-        # with open(args['config_path'], 'r') as file_pointer:
-        # yaml.safe_load(file_pointer)
-
-        # arrange and check configs here
-
-        return config
-    except Exception as err:
-        # log or raise errors
-        print(err, file=sys.stderr)
-        if str(err) == 'Really Bad':
-            raise err
-
-        # Optional: return some sane fallback defaults.
-        sane_defaults: Dict[str, Any] = {}
-        return sane_defaults
 
 
 def _setup_logging():
