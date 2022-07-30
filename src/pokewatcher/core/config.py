@@ -16,12 +16,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 DEFAULTS: Dict[str, Any] = {
-    'auto-save': {'enabled': True},
-    'save-backup': {'enabled': True},
-    'battle-monitor': {'enabled': True},
-    'splits': {'enabled': True},
-    'video-records': {'enabled': True},
+    'auto_save': {'enabled': True},
+    'battle_monitor': {'enabled': True},
+    'save_backup': {'enabled': True},
+    'splitter': {'enabled': True},
     'timer': {'enabled': True},
+    'video_record': {'enabled': True},
 }
 
 ###############################################################################

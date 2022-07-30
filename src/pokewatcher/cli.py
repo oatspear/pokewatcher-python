@@ -25,6 +25,7 @@ import logging
 import sys
 
 from pokewatcher import __version__ as current_version
+from pokewatcher.components import ALL_COMPONENTS
 from pokewatcher.core.config import load as load_configs
 
 ###############################################################################
@@ -64,9 +65,23 @@ def parse_arguments(argv: Optional[List[str]]) -> Dict[str, Any]:
 ###############################################################################
 
 
-def _setup_logging():
+def _setup_logging() -> None:
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.FileHandler(str(LOG_FILE), mode='w'))
+
+
+def _load_components(configs: Dict[str, Any]) -> List[Any]:
+    components = []
+    for module in ALL_COMPONENTS:
+        key = module.__name__
+        settings: Dict[str, Any] = configs[key]
+        if settings.get('enabled', True):
+            logger.info(f'[SETUP] load component: {key}')
+            instance = module.new()
+            instance.setup(settings)
+            components.append(instance)
+        else:
+            logger.info(f'[SETUP] skip disabled component: {key}')
 
 
 ###############################################################################
@@ -91,6 +106,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     try:
         config = load_configs(args)
         _setup_logging()
+        _load_components(config)
     except KeyboardInterrupt:
         logger.error('Aborted manually.')
         print('Aborted manually.', file=sys.stderr)
