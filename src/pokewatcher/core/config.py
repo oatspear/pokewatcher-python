@@ -8,6 +8,7 @@
 from typing import Any, Dict
 
 import logging
+from logging.config import dictConfig
 
 ###############################################################################
 # Constants
@@ -87,4 +88,4 @@ def load(args: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def setup_logging() -> None:
-    logging.dictConfig(LOGGING_CONFIG)
+    dictConfig(LOGGING_CONFIG)

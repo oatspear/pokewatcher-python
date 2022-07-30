@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 ###############################################################################
 
 
-class AutoSaveComponent:
+class Component:
     def setup(self, settings: Mapping[str, Any]):
         logger.info('setting up')
         return
@@ -39,5 +39,5 @@ class AutoSaveComponent:
 
 
 def new():
-    instance = AutoSaveComponent()
+    instance = Component()
     return instance

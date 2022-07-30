@@ -68,7 +68,7 @@ def _load_components(configs: Dict[str, Any]) -> List[Any]:
     logger.info('loading components')
     components = []
     for module in ALL_COMPONENTS:
-        key = module.__name__
+        key = module.__name__.split('.')[-1]
         settings: Dict[str, Any] = configs[key]
         if settings.get('enabled', True):
             logger.info(f'loading component: {key}')
@@ -98,9 +98,10 @@ def workflow(args: Dict[str, Any], configs: Dict[str, Any], components: List[Any
     while True:
         for component in components:
             component.update(delta)
-            now = time.time()
-            delta = now - t0
-            t0 = now
+        time.sleep(sleep_delay)
+        now = time.time()
+        delta = now - t0
+        t0 = now
     return 0
 
 
