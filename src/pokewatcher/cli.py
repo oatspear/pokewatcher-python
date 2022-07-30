@@ -23,18 +23,17 @@ from typing import Any, Dict, List, Optional
 import argparse
 import logging
 import sys
+import time
 
 from pokewatcher import __version__ as current_version
 from pokewatcher.components import ALL_COMPONENTS
-from pokewatcher.core.config import load as load_configs
+from pokewatcher.core.config import load as load_configs, setup_logging
 
 ###############################################################################
 # Constants
 ###############################################################################
 
 logger = logging.getLogger(__name__)
-
-LOG_FILE = Path().resolve() / 'pokewatcher.log'
 
 ###############################################################################
 # Argument Parsing
@@ -65,33 +64,50 @@ def parse_arguments(argv: Optional[List[str]]) -> Dict[str, Any]:
 ###############################################################################
 
 
-def _setup_logging() -> None:
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.FileHandler(str(LOG_FILE), mode='w'))
-
-
 def _load_components(configs: Dict[str, Any]) -> List[Any]:
+    logger.info('loading components')
     components = []
     for module in ALL_COMPONENTS:
         key = module.__name__
         settings: Dict[str, Any] = configs[key]
         if settings.get('enabled', True):
-            logger.info(f'[SETUP] load component: {key}')
+            logger.info(f'loading component: {key}')
             instance = module.new()
             instance.setup(settings)
             components.append(instance)
         else:
-            logger.info(f'[SETUP] skip disabled component: {key}')
+            logger.info(f'skipping disabled component: {key}')
+    return components
 
 
 ###############################################################################
-# Commands
+# Main Logic
 ###############################################################################
 
 
-def workflow(args: Dict[str, Any], configs: Dict[str, Any]) -> None:
-    print(f'Arguments: {args}')
-    print(f'Configurations: {configs}')
+def workflow(args: Dict[str, Any], configs: Dict[str, Any], components: List[Any]) -> int:
+    logger.debug(f'arguments: {args}')
+    logger.debug(f'configurations: {configs}')
+
+    for component in components:
+        component.start()
+
+    sleep_delay = configs['options']['sleep_delay']
+    t0 = time.time()
+    delta = 0.0
+    while True:
+        for component in components:
+            component.update(delta)
+            now = time.time()
+            delta = now - t0
+            t0 = now
+    return 0
+
+
+def cleanup(components: List[Any]) -> None:
+    logger.info('cleaning up components')
+    for component in components:
+        component.cleanup()
 
 
 ###############################################################################
@@ -103,29 +119,29 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parse_arguments(argv)
 
     # setup phase --------------------------------------------------------------
+    logger.info('running setup operations')
     try:
-        config = load_configs(args)
-        _setup_logging()
-        _load_components(config)
+        configs = load_configs(args)
+        setup_logging()
+        components = _load_components(configs)
     except KeyboardInterrupt:
-        logger.error('Aborted manually.')
-        print('Aborted manually.', file=sys.stderr)
+        logger.error('aborted manually')
         return 1
     except Exception as err:
-        logger.exception('Unhandled exception during setup.', err)
-        print('Unhandled exception during setup.', file=sys.stderr)
+        logger.exception('exception during setup')
         return 1
 
     # main phase ---------------------------------------------------------------
     try:
-        workflow(args, config)
+        rcode = workflow(args, configs, components)
     except KeyboardInterrupt:
-        logger.error('Aborted manually.')
-        print('Aborted manually.', file=sys.stderr)
-        return 1
+        logger.error('aborted manually')
+        rcode = 1
     except Exception as err:
-        logger.exception('Unhandled exception during execution.', err)
-        print('Unhandled exception during execution.', file=sys.stderr)
+        logger.exception('exception during execution')
         return 1
 
-    return 0  # success
+    if rcode != 0:
+        logger.critical(f'terminating with error code: {rcode}')
+    cleanup(components)
+    return rcode
