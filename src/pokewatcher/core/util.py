@@ -5,6 +5,12 @@
 # Imports
 ###############################################################################
 
+from typing import Callable, Optional
+
+import socket
+
+from attrs import define, field
+
 ###############################################################################
 # Interface
 ###############################################################################
@@ -14,6 +20,11 @@ def noop(*args, **kwargs):
     pass
 
 
+def const_false(*args, **kwargs):
+    return False
+
+
+@define
 class SleepLoop:
     """Context manager for a timed sleep loop.
     Use `n <= 0` for an infinite loop.
@@ -34,13 +45,12 @@ class SleepLoop:
     ```
     """
 
-    def __init__(self, n=0, delay=1.0):
-        self.n = n
-        self.delay = delay
-        self.iterate = self._no_loop
-        self.i = -1
-        self.delta = 0.0
-        self.timestamp = 0
+    n: int = 0
+    delay: float = 1.0
+    iterate: Callable = field(init=False, default=const_false)
+    i: int = field(init=False, default=-1)
+    delta: float = field(init=False, default=0.0)
+    timestamp: float = field(init=False, default=0.0)
 
     @property
     def iteration(self):
@@ -74,3 +84,46 @@ class SleepLoop:
     def __exit__(self, type, value, traceback):
         self.i = -1
         self.iterate = self._no_loop
+
+
+@define
+class UdpConnection:
+    host: str
+    port: int
+    timeout: float = 0.0
+    _socket: Optional[socket.socket] = field(init=False, default=None, repr=False)
+
+    def connect(self):
+        if self._socket is None:
+            self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            if self.timeout > 0.0:
+                # timeout mode instead of blocking mode
+                self._socket.settimeout(self.timeout)
+            try:
+                self._socket.connect((self.host, self.port))
+            except socket.timeout as e:
+                self._socket.close()
+                self._socket = None
+                raise ConnectionError(e)
+
+    def disconnect(self):
+        if self._socket is not None:
+            self._socket.shutdown(socket.SHUT_RDWR)
+            self._socket.close()
+            self._socket = None
+
+    def send(self, msg):
+        self._socket.send(msg)
+
+    def receive(self, bytes=4096, encoding='utf-8'):
+        msg = self._socket.recv(bytes)
+        if encoding is not None:
+            msg = msg.decode('utf-8')
+        return msg
+
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, type, value, traceback):
+        self.disconnect()
