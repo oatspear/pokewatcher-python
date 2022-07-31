@@ -93,6 +93,10 @@ class UdpConnection:
     timeout: float = 0.0
     _socket: Optional[socket.socket] = field(init=False, default=None, repr=False)
 
+    @property
+    def address(self) -> str:
+        return f'{self.host}:{self.port}'
+
     def connect(self):
         if self._socket is None:
             self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
