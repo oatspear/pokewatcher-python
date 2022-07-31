@@ -92,13 +92,14 @@ def workflow(args: Dict[str, Any], configs: Dict[str, Any], components: List[Any
     for component in components:
         component.start()
 
-    sleep_delay = configs['options']['sleep_delay']
+    freq = configs['options']['update_frequency']
+    delay = 1.0 / freq  # hz to sec
     t0 = time.time()
     delta = 0.0
     while True:
         for component in components:
             component.update(delta)
-        time.sleep(sleep_delay)
+        time.sleep(delay)
         now = time.time()
         delta = now - t0
         t0 = now

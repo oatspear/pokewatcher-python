@@ -17,7 +17,7 @@ from logging.config import dictConfig
 logger = logging.getLogger(__name__)
 
 DEFAULTS: Dict[str, Any] = {
-    'options': {'sleep_delay': 3.0},
+    'options': {'update_frequency': 50.0},
     'auto_save': {'enabled': True},
     'battle_monitor': {'enabled': True},
     'save_backup': {'enabled': True},
