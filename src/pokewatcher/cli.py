@@ -23,11 +23,12 @@ from typing import Any, Dict, List, Optional
 import argparse
 import logging
 import sys
-import time
 
 from pokewatcher import __version__ as current_version
 from pokewatcher.components import ALL_COMPONENTS
 from pokewatcher.core.config import load as load_configs, setup_logging
+import pokewatcher.core.gamehook as gamehook
+import pokewatcher.core.retroarch as retroarch
 from pokewatcher.core.util import SleepLoop
 
 ###############################################################################
@@ -68,17 +69,22 @@ def parse_arguments(argv: Optional[List[str]]) -> Dict[str, Any]:
 def _load_components(configs: Dict[str, Any]) -> List[Any]:
     logger.info('loading components')
     components = []
+    _load_component_into(retroarch, components, configs)
+    _load_component_into(gamehook, components, configs)
     for module in ALL_COMPONENTS:
-        key = module.__name__.split('.')[-1]
-        settings: Dict[str, Any] = configs[key]
-        if settings.get('enabled', True):
-            logger.info(f'loading component: {key}')
-            instance = module.new()
-            instance.setup(settings)
-            components.append(instance)
-        else:
-            logger.info(f'skipping disabled component: {key}')
+        _load_component_into(module, components, configs)
     return components
+
+def _load_component_into(module: Any, components: List[Any], configs: Dict[str, Any]):
+    key = module.__name__.split('.')[-1]
+    settings: Dict[str, Any] = configs[key]
+    if settings.get('enabled', True):
+        logger.info(f'loading component: {key}')
+        instance = module.new()
+        instance.setup(settings)
+        components.append(instance)
+    else:
+        logger.info(f'skipping disabled component: {key}')
 
 
 ###############################################################################

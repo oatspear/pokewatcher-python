@@ -76,6 +76,7 @@ setup(
     install_requires=[
         'attrs>=22.0',
         'pyyaml>=5.3.1',
+        'requests>=2.28',
         'signalrcore<=1.0',
     ],
     extras_require={

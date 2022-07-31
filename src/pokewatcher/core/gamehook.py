@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Dict, Final, Optional
+from typing import Any, Callable, Dict, Final, Mapping, Optional
 
 import json
 import logging
@@ -36,26 +36,47 @@ class GameHookError(PokeWatcherError):
 
 @define
 class GameHookBridge:
-    meta: Dict[str, Any] = field(init=False, default={})
-    mapper: Dict[str, Any] = field(init=False, default={})
     on_connect: Callable = noop
     on_disconnect: Callable = noop
     on_error: Callable = noop
     on_change: Callable = noop
     on_load: Callable = noop
-    hub: Optional[HubConnectionBuilder] = field(init=False, default=None)
+    meta: Dict[str, Any] = field(init=False, factory=dict)
+    mapper: Dict[str, Any] = field(init=False, factory=dict)
+    url_signalr: str = field(init=False, default='http://localhost:8085/updates')
+    url_requests: str = field(init=False, default='http://localhost:8085/mapper')
+    hub: Optional[HubConnectionBuilder] = field(init=False, default=None, repr=False)
 
     @property
     def game_name(self) -> Optional[str]:
         return self.meta.get('gameName')
 
-    def connect(self, url):
+    def setup(self, settings: Mapping[str, Any]):
+        logger.info('setting up')
+        logger.debug(f'settings: {settings}')
+        urls = settings['url']
+        self.url_signalr = urls['signalr']
+        self.url_requests = urls['requests']
+
+    def start(self):
+        self.connect()
+        self.request_mapper()
+
+    def update(self, delta):
+        # logger.debug('update')
+        return
+
+    def cleanup(self):
+        logger.info('cleaning up')
+        self.disconnect()
+
+    def connect(self):
         if self.hub is None:
-            logger.info(f'connecting to {url}')
+            logger.info(f'connecting to {self.url_signalr}')
             handler = logging.StreamHandler()
             handler.setLevel(logging.WARNING)
             self.hub = HubConnectionBuilder()\
-                .with_url(url, options={'verify_ssl': False})\
+                .with_url(self.url_signalr, options={'verify_ssl': False})\
                 .configure_logging(logging.WARNING, socket_trace=True, handler=handler)\
                 .with_automatic_reconnect({
                     'type': 'raw',
@@ -75,15 +96,15 @@ class GameHookBridge:
 
     def disconnect(self):
         if self.hub is not None:
-            logger.info('disconnecting')
+            logger.info(f'disconnecting from {self.url_signalr}')
             self.hub.stop()
             self.hub = None
 
-    def request_mapper(self, url, ntries=3) -> str:
+    def request_mapper(self, ntries=3) -> str:
         with SleepLoop(n=ntries, delay=1.0) as loop:
             while loop.iterate():
-                logger.info(f'requesting mapper from {url}')
-                response = requests.get(url)
+                logger.info(f'requesting mapper from {self.url_requests}')
+                response = requests.get(self.url_requests)
                 response = json.loads(response.text)
                 try:
                     self.meta = response['meta']
@@ -94,10 +115,15 @@ class GameHookBridge:
                 except KeyError:
                     logger.warning('mapper not yet loaded')
         logger.warning('gave up on mapper request')
-        raise GameHookError.get_mapper(url)
+        raise GameHookError.get_mapper(self.url_requests)
 
     def _on_property_changed(self, args):
         prop, _address, value, _bytes, _frozen, changed_fields = args
         if 'value' in changed_fields:
             self.mapper[prop] = value
             self.on_change(prop, value)
+
+
+def new():
+    instance = GameHookBridge()
+    return instance
