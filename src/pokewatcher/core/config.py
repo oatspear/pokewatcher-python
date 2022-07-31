@@ -18,6 +18,12 @@ logger = logging.getLogger(__name__)
 
 DEFAULTS: Dict[str, Any] = {
     'options': {'update_frequency': 50.0},
+    'gamehook': {
+        'url': {
+            'signalr': 'http://localhost:8085/updates',
+            'requests': 'http://localhost:8085/mapper',
+        },
+    },
     'auto_save': {'enabled': True},
     'battle_monitor': {'enabled': True},
     'save_backup': {'enabled': True},
