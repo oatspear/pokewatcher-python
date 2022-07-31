@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Mapping
+from typing import Any, Final, Mapping
 
 import logging
 
@@ -13,7 +13,7 @@ import logging
 # Constants
 ###############################################################################
 
-logger = logging.getLogger(__name__)
+logger: Final = logging.getLogger(__name__)
 
 ###############################################################################
 # Interface
