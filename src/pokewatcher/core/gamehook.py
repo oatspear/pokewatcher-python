@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict, Final, Optional
 
 import json
 import logging
@@ -21,7 +21,7 @@ from pokewatcher.core.util import noop, SleepLoop
 # Constants
 ###############################################################################
 
-logger = logging.getLogger(__name__)
+logger: Final = logging.getLogger(__name__)
 
 ###############################################################################
 # Interface
