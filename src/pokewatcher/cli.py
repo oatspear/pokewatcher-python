@@ -28,6 +28,7 @@ import time
 from pokewatcher import __version__ as current_version
 from pokewatcher.components import ALL_COMPONENTS
 from pokewatcher.core.config import load as load_configs, setup_logging
+from pokewatcher.core.util import SleepLoop
 
 ###############################################################################
 # Constants
@@ -94,15 +95,10 @@ def workflow(args: Dict[str, Any], configs: Dict[str, Any], components: List[Any
 
     freq = configs['options']['update_frequency']
     delay = 1.0 / freq  # hz to sec
-    t0 = time.time()
-    delta = 0.0
-    while True:
-        for component in components:
-            component.update(delta)
-        time.sleep(delay)
-        now = time.time()
-        delta = now - t0
-        t0 = now
+    with SleepLoop(delay=delay) as loop:
+        while loop.iterate():
+            for component in components:
+                component.update(loop.delta)
     return 0
 
 
