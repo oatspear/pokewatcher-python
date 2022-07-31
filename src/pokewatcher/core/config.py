@@ -18,6 +18,11 @@ logger = logging.getLogger(__name__)
 
 DEFAULTS: Dict[str, Any] = {
     'options': {'update_frequency': 50.0},
+    'retroarch': {
+        'host': '127.0.0.1',
+        'port': 55355,
+        'timeout': 3.0,
+    },
     'gamehook': {
         'url': {
             'signalr': 'http://localhost:8085/updates',
