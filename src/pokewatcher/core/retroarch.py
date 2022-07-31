@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Final, Optional
+from typing import Final, Mapping, Optional
 
 import logging
 
