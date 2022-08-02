@@ -49,6 +49,7 @@ class GameInterface:
         gamehook = settings['gamehook']
         self.gamehook.setup(gamehook)
         self.gamehook.on_change = self._on_property_changed
+        self._set_data_handlers()
 
     def start(self):
         logger.info('starting low-level components')
@@ -67,3 +68,15 @@ class GameInterface:
 
     def _on_property_changed(self, prop: str, value: Any):
         pass
+
+    def _set_data_handlers(self):
+        version = self.version.lower()
+        if 'yellow' in version:
+            pass  # self.data_handler = YellowDataHandler(rom, version, data)
+        elif 'crystal' in version:
+            pass  # self.data_handler = CrystalDataHandler(rom, version, data)
+        else:
+            raise ValueError(f'Unknown game version: {version}')
+        #print('[New Game] tracking from this point onward')
+        #logger.info('data_handler.is_new_game = True')
+        #self.data_handler.is_new_game = True
