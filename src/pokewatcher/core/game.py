@@ -30,6 +30,14 @@ class GameInterface:
     retroarch: RetroArchBridge = field(factory=RetroArchBridge)
     gamehook: GameHookBridge = field(factory=GameHookBridge)
 
+    @property
+    def rom(self) -> Optional[str]:
+        return self.retroarch.rom
+
+    @property
+    def version(self) -> Optional[str]:
+        return self.gamehook.game_name
+
     def setup(self, settings: Mapping[str, Any]):
         logger.info('setting up')
         retroarch = settings['retroarch']
