@@ -27,8 +27,7 @@ import sys
 from pokewatcher import __version__ as current_version
 from pokewatcher.components import ALL_COMPONENTS
 from pokewatcher.core.config import load as load_configs, setup_logging
-import pokewatcher.core.gamehook as gamehook
-import pokewatcher.core.retroarch as retroarch
+from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import SleepLoop
 
 ###############################################################################
@@ -66,25 +65,27 @@ def parse_arguments(argv: Optional[List[str]]) -> Dict[str, Any]:
 ###############################################################################
 
 
+def _load_game_interface(configs: Dict[str, Any]) -> GameInterface:
+    logger.info('loading game interface')
+    game = GameInterface()
+    game.setup(configs)
+    return game
+
+
 def _load_components(configs: Dict[str, Any]) -> List[Any]:
     logger.info('loading components')
     components = []
-    _load_component_into(retroarch, components, configs)
-    _load_component_into(gamehook, components, configs)
     for module in ALL_COMPONENTS:
-        _load_component_into(module, components, configs)
+        key = module.__name__.split('.')[-1]
+        settings: Dict[str, Any] = configs[key]
+        if settings.get('enabled', True):
+            logger.info(f'loading component: {key}')
+            instance = module.new()
+            instance.setup(settings)
+            components.append(instance)
+        else:
+            logger.info(f'skipping disabled component: {key}')
     return components
-
-def _load_component_into(module: Any, components: List[Any], configs: Dict[str, Any]):
-    key = module.__name__.split('.')[-1]
-    settings: Dict[str, Any] = configs[key]
-    if settings.get('enabled', True):
-        logger.info(f'loading component: {key}')
-        instance = module.new()
-        instance.setup(settings)
-        components.append(instance)
-    else:
-        logger.info(f'skipping disabled component: {key}')
 
 
 ###############################################################################
@@ -92,10 +93,16 @@ def _load_component_into(module: Any, components: List[Any], configs: Dict[str, 
 ###############################################################################
 
 
-def workflow(args: Dict[str, Any], configs: Dict[str, Any], components: List[Any]) -> int:
+def workflow(
+    args: Dict[str, Any],
+    configs: Dict[str, Any],
+    game: GameInterface,
+    components: List[Any],
+) -> int:
     logger.debug(f'arguments: {args}')
     logger.debug(f'configurations: {configs}')
 
+    game.start()
     for component in components:
         component.start()
 
@@ -103,13 +110,15 @@ def workflow(args: Dict[str, Any], configs: Dict[str, Any], components: List[Any
     delay = 1.0 / freq  # hz to sec
     with SleepLoop(delay=delay) as loop:
         while loop.iterate():
+            game.update(loop.delta)
             for component in components:
                 component.update(loop.delta)
     return 0
 
 
-def cleanup(components: List[Any]) -> None:
-    logger.info('cleaning up components')
+def cleanup(game: GameInterface, components: List[Any]) -> None:
+    logger.info('cleaning up game and components')
+    game.cleanup()
     for component in components:
         component.cleanup()
 
@@ -127,6 +136,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     try:
         configs = load_configs(args)
         setup_logging()
+        game = _load_game_interface(configs)
         components = _load_components(configs)
     except KeyboardInterrupt:
         logger.error('aborted manually')
@@ -137,7 +147,7 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     # main phase ---------------------------------------------------------------
     try:
-        rcode = workflow(args, configs, components)
+        rcode = workflow(args, configs, game, components)
     except KeyboardInterrupt:
         logger.error('aborted manually')
         rcode = 1
@@ -147,5 +157,5 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     if rcode != 0:
         logger.critical(f'terminating with error code: {rcode}')
-    cleanup(components)
+    cleanup(game, components)
     return rcode
