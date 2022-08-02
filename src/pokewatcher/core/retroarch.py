@@ -50,9 +50,10 @@ class RetroArchBridge:
         port = settings['port']
         timeout = settings['timeout']
         self._socket = UdpConnection(host, port, timeout=timeout)
+        self.request_status()
 
     def start(self):
-        self.request_status()
+        return
 
     def update(self, delta):
         # logger.debug('update')

@@ -58,10 +58,10 @@ class GameHookBridge:
         urls = settings['url']
         self.url_signalr = urls['signalr']
         self.url_requests = urls['requests']
+        self.request_mapper()
 
     def start(self):
         self.connect()
-        self.request_mapper()
 
     def update(self, delta):
         # logger.debug('update')
