@@ -15,7 +15,7 @@ from attrs import define, field
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 
 from pokewatcher.errors import PokeWatcherError
-from pokewatcher.core.util import noop, SleepLoop
+from pokewatcher.core.util import identity, noop, SleepLoop
 
 ###############################################################################
 # Constants
@@ -43,6 +43,7 @@ class GameHookBridge:
     on_load: Callable = noop
     meta: Dict[str, Any] = field(init=False, factory=dict)
     mapper: Dict[str, Any] = field(init=False, factory=dict)
+    transforms: Dict[str, Callable] = field(init=False, factory=dict)
     url_signalr: str = field(init=False, default='http://localhost:8085/updates')
     url_requests: str = field(init=False, default='http://localhost:8085/mapper')
     hub: Optional[HubConnectionBuilder] = field(init=False, default=None, repr=False)
@@ -108,7 +109,10 @@ class GameHookBridge:
                 response = json.loads(response.text)
                 try:
                     self.meta = response['meta']
-                    self.mapper = response['properties']
+                    self.mapper = {}
+                    for prop, value in response['properties'].items():
+                        f = self.transforms.get(prop, identity)
+                        self.mapper[prop] = f(value)
                     name = self.meta['gameName']
                     logger.info('received mapper')
                     return name
@@ -120,6 +124,8 @@ class GameHookBridge:
     def _on_property_changed(self, args):
         prop, _address, value, _bytes, _frozen, changed_fields = args
         if 'value' in changed_fields:
+            f = self.transforms.get(key, identity)
+            value = f(value)
             self.mapper[prop] = value
             self.on_change(prop, value)
 

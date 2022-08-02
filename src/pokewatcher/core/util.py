@@ -25,6 +25,10 @@ def const_false(*args, **kwargs):
     return False
 
 
+def identity(x: Any) -> Any:
+    return x
+
+
 @define
 class SleepLoop:
     """Context manager for a timed sleep loop.
