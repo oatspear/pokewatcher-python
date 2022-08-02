@@ -13,6 +13,7 @@ from attrs import define, field
 
 from pokewatcher.core.gamehook import GameHookBridge
 from pokewatcher.core.retroarch import RetroArchBridge
+from pokewatcher.data.states import initial_state
 
 ###############################################################################
 # Constants
@@ -29,6 +30,7 @@ logger: Final = logging.getLogger(__name__)
 class GameInterface:
     retroarch: RetroArchBridge = field(factory=RetroArchBridge)
     gamehook: GameHookBridge = field(factory=GameHookBridge)
+    state: Any = field(init=False, default=None)
 
     @property
     def rom(self) -> Optional[str]:
@@ -49,7 +51,8 @@ class GameInterface:
         gamehook = settings['gamehook']
         self.gamehook.setup(gamehook)
         self.gamehook.on_change = self._on_property_changed
-        self._set_data_handlers()
+        self.state = initial_state(self.version.lower())
+        # TODO load mapper data type transforms
 
     def start(self):
         logger.info('starting low-level components')
@@ -67,16 +70,7 @@ class GameInterface:
         self.retroarch.cleanup()
 
     def _on_property_changed(self, prop: str, value: Any):
-        pass
-
-    def _set_data_handlers(self):
-        version = self.version.lower()
-        if 'yellow' in version:
-            pass  # self.data_handler = YellowDataHandler(rom, version, data)
-        elif 'crystal' in version:
-            pass  # self.data_handler = CrystalDataHandler(rom, version, data)
-        else:
-            raise ValueError(f'Unknown game version: {version}')
-        #print('[New Game] tracking from this point onward')
-        #logger.info('data_handler.is_new_game = True')
-        #self.data_handler.is_new_game = True
+        new_state = self.state.on_property_changed(prop, value)
+        if new_state is not self.state:
+            logger.info(f'state transition: {self.state.name} -> {new_state.name}')
+        self.state = new_state
