@@ -43,7 +43,7 @@ class GameHookBridge:
     on_load: Callable = noop
     meta: Dict[str, Any] = field(init=False, factory=dict)
     mapper: Dict[str, Any] = field(init=False, factory=dict)
-    transforms: Dict[str, Callable] = field(init=False, factory=dict)
+    transforms: Dict[str, Callable] = field(init=False, factory=dict, repr=False)
     url_signalr: str = field(init=False, default='http://localhost:8085/updates')
     url_requests: str = field(init=False, default='http://localhost:8085/mapper')
     hub: Optional[HubConnectionBuilder] = field(init=False, default=None, repr=False)
