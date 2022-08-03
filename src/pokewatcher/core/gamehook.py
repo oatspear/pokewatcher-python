@@ -126,8 +126,8 @@ class GameHookBridge:
         if 'value' in changed_fields:
             f = self.transforms.get(key, identity)
             value = f(value)
-            self.mapper[prop] = value
             self.on_change(prop, value)
+            self.mapper[prop] = value
 
 
 def new():
