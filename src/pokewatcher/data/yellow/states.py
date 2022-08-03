@@ -37,4 +37,6 @@ class InitialState(GameState):
         )
 
     def on_property_changed(self, prop: str, value: Any) -> GameState:
+        if prop == 'playerId':
+            pass  # TODO
         return self
