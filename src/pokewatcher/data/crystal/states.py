@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any
+from typing import Any, Mapping, Optional
 
 import logging
 
@@ -27,9 +27,10 @@ logger: Final = logging.getLogger(__name__)
 @define
 class InitialState(GameState):
     @classmethod
-    def new(cls) -> GameState:
+    def new(cls, data: Optional[Mapping[str, Any]] = None) -> GameState:
         return cls(
             'initial',
+            data=data,
             is_game_started=False,
             is_overworld=False,
             is_battle=False,

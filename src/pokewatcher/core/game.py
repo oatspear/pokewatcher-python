@@ -51,7 +51,7 @@ class GameInterface:
         gamehook = settings['gamehook']
         self.gamehook.setup(gamehook)
         self.gamehook.on_change = self._on_property_changed
-        self.state = initial_state(self.version.lower())
+        self.state = initial_state(self.version.lower(), self.gamehook.mapper)
         # TODO load mapper data type transforms
 
     def start(self):

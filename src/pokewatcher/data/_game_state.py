@@ -5,11 +5,11 @@
 # Imports
 ###############################################################################
 
-from typing import Any
+from typing import Any, Mapping
 
 import logging
 
-from attrs import define
+from attrs import define, field
 
 ###############################################################################
 # Constants
@@ -25,6 +25,7 @@ logger: Final = logging.getLogger(__name__)
 @define
 class GameState:
     name: str
+    data: Mapping[str, Any] = field(factory=dict)
     is_game_started: bool = True
     is_overworld: bool = False
     is_battle: bool = False
