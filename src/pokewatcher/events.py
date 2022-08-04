@@ -2,6 +2,12 @@
 # Copyright © 2022 André "Oatspear" Santos
 
 ###############################################################################
+# Imports
+###############################################################################
+
+from typing import Callable, Final
+
+###############################################################################
 # Event Class
 ###############################################################################
 
@@ -36,21 +42,21 @@ class Event(list):
     g(2)
     """
 
-    def emit(self, *args, **kwargs):
+    def emit(self, *args, **kwargs) -> None:
         for f in self:
             f(*args, **kwargs)
 
-    def subscribe(self, callback):
+    def watch(self, callback: Callable) -> None:
         return self.append(callback)
 
-    def unsubscribe(self, callback):
+    def forget(self, callback: Callable) -> None:
         return self.remove(callback)
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> None:
         for f in self:
             f(*args, **kwargs)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'Event({list.__repr__(self)})'
 
 
@@ -58,16 +64,4 @@ class Event(list):
 # Global Interface
 ###############################################################################
 
-
-class EventSystem:
-    def __init__(self):
-        pass
-
-    def __getattr__(self, attr):
-        e = Event()
-        setattr(self, attr, e)
-        return e
-
-
-_events = EventSystem()
-
+on_new_game: Final[Event] = Event()
