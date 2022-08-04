@@ -70,7 +70,7 @@ class GameInterface:
         self.retroarch.cleanup()
 
     def _on_property_changed(self, prop: str, value: Any):
-        new_state = self.state.on_property_changed(prop, value)
+        new_state = self.state.on_property_changed(prop, value, self.gamehook.mapper)
         if new_state is not self.state:
             logger.info(f'state transition: {self.state.name} -> {new_state.name}')
         self.state = new_state

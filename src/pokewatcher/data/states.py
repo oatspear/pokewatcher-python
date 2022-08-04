@@ -26,8 +26,8 @@ def initial_state(version: str, data: Mapping[str, Any]) -> GameState:
     logger.debug(f'initial state for {version} version')
     if 'yellow' in version:
         from pokewatcher.data.yellow.states import InitialState
-        return InitialState.new(data=data)
+        return InitialState.new(data)
     if 'crystal' in version:
         from pokewatcher.data.crystal.states import InitialState
-        return InitialState.new(data=data)
+        return InitialState.new(data)
     raise ValueError(f'Unknown game version: {version}')

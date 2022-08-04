@@ -27,14 +27,12 @@ logger: Final = logging.getLogger(__name__)
 @define
 class InitialState(GameState):
     @classmethod
-    def new(cls, data: Optional[Mapping[str, Any]] = None) -> GameState:
-        return cls(
-            'initial',
-            data=data,
-            is_game_started=False,
-            is_overworld=False,
-            is_battle=False,
-        )
+    def new(cls, data: Mapping[str, Any]) -> GameState:
+        return cls()
+
+    @property
+    def is_game_started(self) -> bool:
+        return False
 
     def on_property_changed(self, prop: str, value: Any) -> GameState:
         return self

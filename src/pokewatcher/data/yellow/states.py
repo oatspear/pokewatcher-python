@@ -5,19 +5,23 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Mapping, Optional
+from typing import Any, Mapping
 
 import logging
 
 from attrs import define
 
 from pokewatcher.data._game_state import GameState
+import pokewatcher.events as events
 
 ###############################################################################
 # Constants
 ###############################################################################
 
 logger: Final = logging.getLogger(__name__)
+
+P_PLAYER_ID = 'playerId'
+P_MAP = 'overworld.map'
 
 ###############################################################################
 # Interface
@@ -27,16 +31,41 @@ logger: Final = logging.getLogger(__name__)
 @define
 class InitialState(GameState):
     @classmethod
-    def new(cls, data: Optional[Mapping[str, Any]] = None) -> GameState:
-        return cls(
-            'initial',
-            data=data,
-            is_game_started=False,
-            is_overworld=False,
-            is_battle=False,
-        )
+    def new(cls, data: Mapping[str, Any]) -> GameState:
+        return cls()
 
-    def on_property_changed(self, prop: str, value: Any) -> GameState:
-        if prop == 'playerId':
-            pass  # TODO
+    @property
+    def is_game_started(self) -> bool:
+        return False
+
+    def on_property_changed(self, prop: str, value: Any, data: Mapping[str, Any]) -> GameState:
+        if prop == P_PLAYER_ID:
+            prev = data[P_PLAYER_ID]
+            if value > 0 and prev == 0:
+                logger.info('starting a new game')
+                events.on_new_game.emit()
+                assert not data[P_MAP]
+                return BeforeReceivingStarterState.new(data)
+        return self
+
+
+@define
+class BeforeReceivingStarterState(GameState):
+    _in_overworld: bool = False
+
+    @classmethod
+    def new(cls, data: Mapping[str, Any]) -> GameState:
+        return cls()
+
+    @property
+    def is_overworld(self) -> bool:
+        return self._in_overworld
+
+    def on_property_changed(self, prop: str, value: Any, data: Mapping[str, Any]) -> GameState:
+        if prop == P_MAP:
+            if value:
+                self._in_overworld = True
+                super()._on_map_changed(value)
+            else:
+                self._in_overworld = False
         return self

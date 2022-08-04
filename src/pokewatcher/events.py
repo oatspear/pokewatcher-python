@@ -65,3 +65,4 @@ class Event(list):
 ###############################################################################
 
 on_new_game: Final[Event] = Event()
+on_map_changed: Final[Event] = Event()
