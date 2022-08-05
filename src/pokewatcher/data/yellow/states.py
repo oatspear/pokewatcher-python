@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Mapping
+from typing import Any, Final, Mapping
 
 import logging
 
@@ -30,13 +30,11 @@ P_MAP = 'overworld.map'
 
 @define
 class InitialState(GameState):
+    is_game_started: bool = False
+
     @classmethod
     def new(cls, data: Mapping[str, Any]) -> GameState:
         return cls()
-
-    @property
-    def is_game_started(self) -> bool:
-        return False
 
     def on_property_changed(self, prop: str, value: Any, data: Mapping[str, Any]) -> GameState:
         if prop == P_PLAYER_ID:
@@ -51,21 +49,14 @@ class InitialState(GameState):
 
 @define
 class BeforeReceivingStarterState(GameState):
-    _in_overworld: bool = False
-
     @classmethod
     def new(cls, data: Mapping[str, Any]) -> GameState:
         return cls()
 
-    @property
-    def is_overworld(self) -> bool:
-        return self._in_overworld
-
     def on_property_changed(self, prop: str, value: Any, data: Mapping[str, Any]) -> GameState:
         if prop == P_MAP:
             if value:
-                self._in_overworld = True
                 super()._on_map_changed(value)
             else:
-                self._in_overworld = False
+                self.is_overworld = False
         return self

@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Mapping, Optional
+from typing import Any, Final, Mapping, Optional
 
 import logging
 
@@ -26,13 +26,11 @@ logger: Final = logging.getLogger(__name__)
 
 @define
 class InitialState(GameState):
+    is_game_started: bool = False
+
     @classmethod
     def new(cls, data: Mapping[str, Any]) -> GameState:
         return cls()
-
-    @property
-    def is_game_started(self) -> bool:
-        return False
 
     def on_property_changed(self, prop: str, value: Any) -> GameState:
         return self
