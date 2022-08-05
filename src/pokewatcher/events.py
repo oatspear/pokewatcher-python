@@ -5,17 +5,20 @@
 # Imports
 ###############################################################################
 
-from typing import Callable, Final
+from typing import Callable, Final, Iterable, List
+
+from attrs import define, field
 
 ###############################################################################
 # Event Class
 ###############################################################################
 
-# Credit to StackOverflow user Longpoke. See:
+# Based on solution by StackOverflow user Longpoke. See:
 # https://stackoverflow.com/a/2022629
 
 
-class Event(list):
+@define
+class Event:
     """Event subscription.
 
     A list of callable objects. Calling an instance of this will cause a
@@ -23,41 +26,54 @@ class Event(list):
 
     Example Usage:
     >>> def f(x):
-    ...     print 'f(%s)' % x
+    ...     print(f'f({x})')
     >>> def g(x):
-    ...     print 'g(%s)' % x
+    ...     print(f'g({x})')
     >>> e = Event()
     >>> e()
-    >>> e.append(f)
+    >>> e.watch(f)
     >>> e(123)
     f(123)
-    >>> e.remove(f)
+    >>> e.forget(f)
     >>> e()
     >>> e += (f, g)
     >>> e(10)
     f(10)
     g(10)
-    >>> del e[0]
+    >>> del e.callbacks[0]
     >>> e(2)
     g(2)
     """
 
+    callbacks: List[Callable] = field(factory=list)
+    count: int = field(init=False, default=0, repr=False)
+
     def emit(self, *args, **kwargs) -> None:
-        for f in self:
+        self.count += 1
+        for f in self.callbacks:
             f(*args, **kwargs)
 
     def watch(self, callback: Callable) -> None:
-        return self.append(callback)
+        return self.callbacks.append(callback)
+
+    def append(self, callback: Callable) -> None:
+        return self.callbacks.append(callback)
 
     def forget(self, callback: Callable) -> None:
-        return self.remove(callback)
+        return self.callbacks.remove(callback)
+
+    def remove(self, callback: Callable) -> None:
+        return self.callbacks.remove(callback)
+
+    def clear(self) -> None:
+        return self.callbacks.clear()
 
     def __call__(self, *args, **kwargs) -> None:
-        for f in self:
-            f(*args, **kwargs)
+        return self.emit(*args, **kwargs)
 
-    def __repr__(self) -> str:
-        return f'Event({list.__repr__(self)})'
+    def __iadd__(self, callbacks: Iterable[Callable]) -> 'Event':
+        self.callbacks += callbacks
+        return self
 
 
 ###############################################################################
