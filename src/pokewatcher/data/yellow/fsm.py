@@ -11,14 +11,14 @@ import logging
 
 from attrs import define
 
-from pokewatcher.data._game_state import GameState
+from pokewatcher.data.fsm import GameState, OverworldState
 import pokewatcher.events as events
 
 ###############################################################################
 # Constants
 ###############################################################################
 
-logger: Final = logging.getLogger(__name__)
+logger: Final[logging.Logger] = logging.getLogger(__name__)
 
 P_PLAYER_ID = 'playerId'
 P_MAP = 'overworld.map'
@@ -30,29 +30,28 @@ P_MAP = 'overworld.map'
 
 @define
 class InitialState(GameState):
-    is_game_started: bool = False
+    @property
+    def is_game_started(self) -> bool:
+        return False
 
-    @classmethod
-    def new(cls, data: Mapping[str, Any]) -> GameState:
-        return cls()
-
-    def on_property_changed(self, prop: str, value: Any, data: Mapping[str, Any]) -> GameState:
+    def on_property_changed(
+        self,
+        prop: str,
+        prev: Any,
+        value: Any,
+        data: Mapping[str, Any],
+    ) -> GameState:
         if prop == P_PLAYER_ID:
-            prev = data[P_PLAYER_ID]
-            if value > 0 and prev == 0:
-                logger.info('starting a new game')
-                events.on_new_game.emit()
-                assert not data[P_MAP]
-                return BeforeReceivingStarterState.new(data)
+            return self.on_player_id_changed(prev, value)
         return self
+
+    @property
+    def state_on_new_game(self) -> 'GameState':
+        return BeforeReceivingStarterState()
 
 
 @define
 class BeforeReceivingStarterState(GameState):
-    @classmethod
-    def new(cls, data: Mapping[str, Any]) -> GameState:
-        return cls()
-
     def on_property_changed(self, prop: str, value: Any, data: Mapping[str, Any]) -> GameState:
         if prop == P_MAP:
             if value:

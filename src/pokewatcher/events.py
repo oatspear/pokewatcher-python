@@ -45,6 +45,7 @@ class Event:
     g(2)
     """
 
+    name: str = 'Event'
     callbacks: List[Callable] = field(factory=list)
     count: int = field(init=False, default=0, repr=False)
 
@@ -80,5 +81,10 @@ class Event:
 # Global Interface
 ###############################################################################
 
-on_new_game: Final[Event] = Event()
-on_map_changed: Final[Event] = Event()
+on_property_changed: Final[Event] = Event(name='on_property_changed')
+
+on_new_game: Final[Event] = Event(name='on_new_game')
+on_reset: Final[Event] = Event(name='on_reset')
+on_continue: Final[Event] = Event(name='on_continue')
+
+on_map_changed: Final[Event] = Event(name='on_map_changed')

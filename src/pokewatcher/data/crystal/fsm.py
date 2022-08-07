@@ -11,7 +11,7 @@ import logging
 
 from attrs import define
 
-from pokewatcher.data._game_state import GameState
+from pokewatcher.data.states import GameState
 
 ###############################################################################
 # Constants

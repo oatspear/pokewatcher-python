@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from pokewatcher.data.yellow.states import (
+from pokewatcher.data.yellow.fsm import (
     BeforeReceivingStarterState,
     InitialState,
     P_MAP,

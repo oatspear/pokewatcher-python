@@ -18,7 +18,7 @@ Some of the structure of this file came from this StackExchange question:
 # Imports
 ###############################################################################
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Final, List, Optional
 
 import argparse
 import logging
@@ -34,7 +34,7 @@ from pokewatcher.core.util import SleepLoop
 # Constants
 ###############################################################################
 
-logger = logging.getLogger(__name__)
+logger: Final[logging.Logger] = logging.getLogger(__name__)
 
 ###############################################################################
 # Argument Parsing
