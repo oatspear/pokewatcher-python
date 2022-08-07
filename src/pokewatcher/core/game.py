@@ -56,7 +56,8 @@ class GameInterface:
         events.on_new_game.watch(_log_event('starting a new game'))
         events.on_reset.watch(_log_event('game reset'))
         events.on_continue.watch(_log_event('continue previous game'))
-        self.gamehook.on_change = events.on_property_changed.emit
+        _load_data_handler(self.gamehook)
+
         self.state = initial_state(self.version.lower(), self.gamehook.mapper)
         # TODO load mapper data type transforms
 
@@ -103,3 +104,15 @@ def _fsm(version: str, data: Mapping[str, Any]) -> GameState:
         from pokewatcher.data.crystal.states import InitialState
         return InitialState.new(data)
     raise ValueError(f'Unknown game version: {version}')
+
+
+def _load_data_handler(gamehook: GameHookBridge):
+    version = gamehook.game_name.lower()
+    if 'yellow' in version:
+        from pokewatcher.data.yellow.gamehook import DataHandler
+    elif 'crystal' in version:
+        from pokewatcher.data.crystal.gamehook import DataHandler
+    else:
+        raise ValueError(f'Unknown game version: {version}')
+    handler = DataHandler()
+    gamehook.on_change = handler.on_property_changed

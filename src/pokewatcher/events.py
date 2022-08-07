@@ -86,5 +86,6 @@ on_property_changed: Final[Event] = Event(name='on_property_changed')
 on_new_game: Final[Event] = Event(name='on_new_game')
 on_reset: Final[Event] = Event(name='on_reset')
 on_continue: Final[Event] = Event(name='on_continue')
+on_save_game: Final[Event] = Event(name='on_save_game')
 
 on_map_changed: Final[Event] = Event(name='on_map_changed')
