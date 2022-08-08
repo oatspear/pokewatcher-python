@@ -252,3 +252,13 @@ class GameData:
     @property
     def current_map(self) -> Optional[GameMap]:
         return self.maps.get(self.location)
+
+    # def set(self, attr: str, value: Any, emit: bool = False):
+    #     parts = attr.split('.')
+    #     holder = self
+    #     for part in parts[:-1]:
+    #         holder = getattr(holder, part)
+    #     prev = getattr(holder, parts[-1])
+    #     setattr(holder, parts[-1], value)
+    #     if emit:
+    #         self.on_change.emit(attr, prev, value, self)
