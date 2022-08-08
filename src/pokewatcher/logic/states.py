@@ -55,15 +55,6 @@ class GameState:
         # remove event handlers, etc.
         return
 
-    def on_property_changed(
-        self,
-        prop: str,
-        prev: Any,
-        value: Any,
-        data: Mapping[str, Any],
-    ) -> 'GameState':
-        return self
-
     def on_player_id_changed(self, prev: int, value: int) -> 'GameState':
         logger.debug(f'player ID changed from {prev} to {value}')
         if value == 0:

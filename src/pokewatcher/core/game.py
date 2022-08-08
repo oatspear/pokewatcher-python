@@ -116,3 +116,7 @@ def _load_data_handler(gamehook: GameHookBridge):
         raise ValueError(f'Unknown game version: {version}')
     handler = DataHandler()
     gamehook.on_change = handler.on_property_changed
+    # initial data transforms
+    no_data = {}
+    for prop, value in gamehook.mapper.items():
+        handler.on_property_changed(prop, None, value, no_data)
