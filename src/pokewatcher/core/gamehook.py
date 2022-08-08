@@ -15,7 +15,7 @@ from attrs import define, field
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 
 from pokewatcher.errors import PokeWatcherError
-from pokewatcher.core.util import noop, SleepLoop
+from pokewatcher.core.util import identity, noop, SleepLoop
 
 ###############################################################################
 # Constants
@@ -47,6 +47,7 @@ class GameHookBridge:
     on_load: Callable = noop
     meta: Dict[str, Any] = field(init=False, factory=dict)
     mapper: Dict[str, Any] = field(init=False, factory=dict)
+    transforms: Dict[str, Callable] = field(init=False, factory=dict)
     url_signalr: str = field(init=False, default='http://localhost:8085/updates')
     url_requests: str = field(init=False, default='http://localhost:8085/mapper')
     hub: Optional[HubConnectionBuilder] = field(init=False, default=None, repr=False)
@@ -124,6 +125,8 @@ class GameHookBridge:
     def _on_property_changed(self, args):
         prop, _address, value, _bytes, _frozen, changed_fields = args
         if 'value' in changed_fields:
+            f = self.transforms.get(prop, identity)
+            value = f(value)
             prev = self.mapper.get(prop)
             self.mapper[prop] = value
             self.on_change(prop, prev, value, self.mapper)
