@@ -73,6 +73,23 @@ class EventfulData(Generic[T]):
         return set_and_emit
 
 
+@define
+class AttributePath:
+    _obj: Any
+    _path: str = field(init=False, default='')
+
+    def get_path(self) -> str:
+        return self._path
+
+    def __getattr__(self, attr: str) -> 'AttributePath':
+        self._obj = getattr(self._obj, attr)
+        if not self._path:
+            self._path = attr
+        else:
+            self._path += f'.{attr}'
+        return self
+
+
 ###############################################################################
 # Pokémon Data
 ###############################################################################
