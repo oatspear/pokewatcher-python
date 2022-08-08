@@ -57,7 +57,7 @@ class MonStats:
         return self.sp_attack
 
     @special.setter
-    def _set_special(self, value: int):
+    def special(self, value: int):
         self.sp_attack = value
         self.sp_defense = value
 
@@ -86,7 +86,7 @@ class PartyMon:
         return self.stats.hp
 
     @max_hp.setter
-    def _set_max_hp(self, value: int):
+    def max_hp(self, value: int):
         self.stats.hp = value
 
 
