@@ -5,11 +5,13 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Dict, Final, List, Optional
+from typing import Any, Callable, Dict, Final, Generic, List, Optional, Tuple, TypeVar
 
 import logging
 
 from attrs import define, field
+
+from pokewatcher.core.util import leaf_attribute
 
 ###############################################################################
 # Constants
@@ -17,6 +19,7 @@ from attrs import define, field
 
 logger: Final[logging.Logger] = logging.getLogger(__name__)
 
+T: Final[TypeVar] = TypeVar('T')
 
 ###############################################################################
 # General Purpose
@@ -36,6 +39,38 @@ class TimeStamp:
             if self.hours == 0:
                 return t if self.minutes == 0 else f'{self.minutes:02}:{t}'
         return f'{self.hours:02}:{self.minutes:02}:{t}'
+
+
+@define
+class EventfulData(Generic[T]):
+    data: T
+    on_change: Event = field(factory=Event)
+
+    def get_leaf(self, path: str) -> Tuple[Any, str]:
+        return leaf_attribute(self.data, path)
+
+    def get(self, path: str) -> Any:
+        obj, attr = leaf_attribute(self.data, path)
+        return getattr(obj, attr)
+
+    def set(self, path: str, value: Any, emit: bool = True) -> None:
+        obj, attr = leaf_attribute(self.data, path)
+        prev = getattr(obj, attr)
+        setattr(obj, attr, value)
+        if emit:
+            self.on_change.emit(path, prev, value, self.data)
+
+    def setter(self, path: str, emit: bool = True) -> Callable:
+        obj, attr = leaf_attribute(self.data, path)
+        return self._setter(path, obj, attr, emit)
+
+    def _setter(self, path: str, obj: Any, attr: str, emit: bool) -> Callable:
+        def set_and_emit(value: Any):
+            prev = getattr(obj, attr)
+            setattr(obj, attr, value)
+            if emit:
+                self.on_change.emit(path, prev, value, self.data)
+        return set_and_emit
 
 
 ###############################################################################
@@ -71,7 +106,7 @@ class MonSpecies:
 
 @define
 class PartyMon:
-    species: int = 1
+    species: int = 0
     name: str = ''
     level: int = 1
     stats: MonStats = field(factory=MonStats)
@@ -89,6 +124,42 @@ class PartyMon:
     def max_hp(self, value: int):
         self.stats.hp = value
 
+    @property
+    def is_valid_species(self) -> bool:
+        return self.species > 0
+
+
+@define
+class TrainerParty:
+    size: int = 0
+    slot1: PartyMon = field(factory=PartyMon)
+    slot2: PartyMon = field(factory=PartyMon)
+    slot3: PartyMon = field(factory=PartyMon)
+    slot4: PartyMon = field(factory=PartyMon)
+    slot5: PartyMon = field(factory=PartyMon)
+    slot6: PartyMon = field(factory=PartyMon)
+
+    @property
+    def slots(self) -> Tuple[PartyMon]:
+        return (self.slot1, self.slot2, self.slot3, self.slot4, self.slot5, self.slot6)
+
+    def as_list(self) -> List[PartyMon]:
+        return list(self.slots[:self.size])
+
+    @property
+    def lead(self) -> PartyMon:
+        return self.slot1
+
+    @property
+    def last(self) -> PartyMon:
+        return self.slot6
+
+    def __getitem__(self, i: int) -> PartyMon:
+        return self.slots[i]
+
+    def __len__(self) -> int:
+        return self.size
+
 
 ###############################################################################
 # Battle Pokémon Data
@@ -99,11 +170,11 @@ class PartyMon:
 class TrainerData:
     name: str = ''
     trainer_class: str = ''
-    team: List[PartyMon] = field(factory=list)
+    team: TrainerParty = field(factory=TrainerParty)
 
     @property
     def lead(self) -> Optional[PartyMon]:
-        return None if not self.team else self.team[0]
+        return self.team.lead
 
 
 @define
@@ -201,12 +272,12 @@ class PlayerData:
     name: str = ''
     number: int = 0
     badges: BadgeData = field(factory=BadgeData)
-    team: List[PartyMon] = field(factory=list)
+    team: TrainerParty = field(factory=TrainerParty)
     money: int = 0
 
     @property
     def lead(self) -> Optional[PartyMon]:
-        return None if not self.team else self.team[0]
+        return self.team.lead
 
 
 ###############################################################################

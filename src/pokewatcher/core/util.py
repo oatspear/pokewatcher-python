@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Callable, Optional
+from typing import Callable, Optional, Tuple
 
 import socket
 import time
@@ -27,6 +27,14 @@ def const_false(*args, **kwargs):
 
 def identity(x: Any) -> Any:
     return x
+
+
+def leaf_attribute(obj: Any, path: str) -> Tuple[Any, str]:
+    parts = path.split('.')
+    base = obj
+    for attr in parts[:-1]:
+        base = getattr(base, attr)
+    return (base, parts[-1])
 
 
 @define
