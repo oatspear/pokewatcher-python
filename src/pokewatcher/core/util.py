@@ -13,7 +13,7 @@ import time
 from attrs import define, field
 
 ###############################################################################
-# Interface
+# Useful Functions
 ###############################################################################
 
 
@@ -29,12 +29,80 @@ def identity(x: Any) -> Any:
     return x
 
 
-def leaf_attribute(obj: Any, path: str) -> Tuple[Any, str]:
-    parts = path.split('.')
-    base = obj
-    for attr in parts[:-1]:
-        base = getattr(base, attr)
-    return (base, parts[-1])
+###############################################################################
+# Data Handling
+###############################################################################
+
+
+@define
+class Attribute:
+    obj: Any
+    name: str
+
+    def get(self) -> Any:
+        return getattr(self.obj, self.name)
+
+    def set(self, value: Any) -> None:
+        setattr(self.obj, self.name, value)
+
+    @classmethod
+    def leaf(cls, obj: Any, path: str) -> 'Attribute':
+        parts = path.split('.')
+        for attr in parts[:-1]:
+            obj = getattr(obj, attr)
+        assert hasattr(obj, parts[-1])
+        return cls(obj, parts[-1])
+
+
+# @define
+# class EventfulData(Generic[T]):
+#     data: T
+#     on_change: Event = field(factory=Event)
+#
+#     def get_leaf(self, path: str) -> Attribute:
+#         return Attribute.leaf(self.data, path)
+#
+#     def get(self, path: str) -> Any:
+#         return Attribute.leaf(self.data, path).get()
+#
+#     def set(self, path: str, value: Any, emit: bool = True) -> None:
+#         attr = Attribute.leaf(self.data, path)
+#         prev = attr.get()
+#         attr.set(value)
+#         if emit:
+#             self.on_change.emit(path, prev, value, self.data)
+#
+#     def setter(self, path: str, emit: bool = True) -> Callable:
+#         attr = Attribute.leaf(self.data, path)
+#         return self._setter(path, attr, emit)
+#
+#     def _setter(self, path: str, attr: Attribute, emit: bool) -> Callable:
+#         def set_and_emit(value: Any):
+#             prev = attr.get()
+#             attr.set(value)
+#             if emit:
+#                 self.on_change.emit(path, prev, value, self.data)
+#         return set_and_emit
+
+
+###############################################################################
+# Time Management
+###############################################################################
+
+
+@define
+class TimeStamp:
+    hours: int = 0
+    minutes: int = 0
+    seconds: int = 0
+    millis: int = 0
+
+    def formatted(self, zeroes: bool = True, millis: bool = True) -> str:
+        t = f'{self.seconds:02}' if not millis else f'{self.seconds:02}.{self.millis:03}'
+        if not zeroes:
+            if self.hours == 0:
+                return t if self.minutes == 0 else f'{self.minutes:02}:{t}'
+        return f'{self.hours:02}:{self.minutes:02}:{t}'
 
 
 @define
@@ -97,6 +165,11 @@ class SleepLoop:
     def __exit__(self, type, value, traceback):
         self.i = -1
         self.iterate = self._no_loop
+
+
+###############################################################################
+# Networking
+###############################################################################
 
 
 @define
