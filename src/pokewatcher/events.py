@@ -89,3 +89,6 @@ on_continue: Final[Event] = Event(name='on_continue')
 on_save_game: Final[Event] = Event(name='on_save_game')
 
 on_map_changed: Final[Event] = Event(name='on_map_changed')
+
+on_battle_started: Final[Event] = Event(name='on_battle_started')
+on_battle_ended: Final[Event] = Event(name='on_battle_ended')
