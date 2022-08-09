@@ -46,7 +46,7 @@ class Attribute:
         setattr(self.obj, self.name, value)
 
     @classmethod
-    def leaf(cls, obj: Any, path: str) -> 'Attribute':
+    def of(cls, obj: Any, path: str) -> 'Attribute':
         parts = path.split('.')
         for attr in parts[:-1]:
             obj = getattr(obj, attr)
