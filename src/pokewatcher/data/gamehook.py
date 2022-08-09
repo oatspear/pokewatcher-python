@@ -46,7 +46,7 @@ class BaseDataHandler:
 
     def store(self, prop: str, path: str, emit: bool = True):
         logger.debug(f'data store: {prop} -> {path} (emit: {emit})')
-        attr = Attribute.leaf(self.data, path)
+        attr = Attribute.of(self.data, path)
         if emit:
             self.handlers[prop] = self._lazy_set_and_emit(path, obj, attr)
         else:
