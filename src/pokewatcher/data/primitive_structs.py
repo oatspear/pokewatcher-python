@@ -252,8 +252,13 @@ class PlayerData:
 @define
 class GameMap:
     name: str
+    group: str
     is_indoors: bool = False
     is_gym: bool = False
+
+    @property
+    def uid(self) -> str:
+        return f'{self.group}/{self.name}'
 
 
 ###############################################################################
