@@ -11,7 +11,7 @@ import logging
 
 from attrs import define, field
 
-from pokewatcher.core.util import identity, leaf_attribute, noop
+from pokewatcher.core.util import Attribute, identity, noop
 from pokewatcher.data.structs import GameData
 from pokewatcher.events import Event
 
@@ -46,7 +46,7 @@ class BaseDataHandler:
 
     def store(self, prop: str, path: str, emit: bool = True):
         logger.debug(f'data store: {prop} -> {path} (emit: {emit})')
-        obj, attr = leaf_attribute(self.data, path)
+        attr = Attribute.leaf(self.data, path)
         if emit:
             self.handlers[prop] = self._lazy_set_and_emit(path, obj, attr)
         else:
@@ -54,14 +54,14 @@ class BaseDataHandler:
 
     def _lazy_set(self, obj: Any, attr: str) -> Callable:
         def just_set(prev: Any, value: Any, mapper: Mapping[str, Any]):
-            # prev = getattr(obj, attr)
-            setattr(obj, attr, value)
+            # prev = attr.get()
+            attr.set(value)
         return just_set
 
-    def _lazy_set_and_emit(self, path: str, obj: Any, attr: str) -> Callable:
+    def _lazy_set_and_emit(self, path: str, attr: Attribute) -> Callable:
         def set_and_emit(prev: Any, value: Any, mapper: Mapping[str, Any]):
-            # prev = getattr(obj, attr)
-            setattr(obj, attr, value)
+            # prev = attr.get()
+            attr.set(value)
             self.on_data_changed.emit(path, prev, value, self.data)
         return set_and_emit
 
