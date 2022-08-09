@@ -5,13 +5,11 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Dict, Final, Generic, List, Optional, Tuple
+from typing import Any, Dict, Final, List, Optional, Tuple
 
 import logging
 
-from attrs import asdict, define, field, frozen
-
-from pokewatcher.data.abstract import VarBool, Variable, VarInt, VarString
+from attrs import asdict, define, field
 
 ###############################################################################
 # Constants
@@ -24,18 +22,23 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 ###############################################################################
 
 
-@frozen
+@define
 class MonStats:
-    hp: VarInt = field(factory=VarInt.one, converter=VarInt)
-    attack: VarInt = field(factory=VarInt.one, converter=VarInt)
-    defense: VarInt = field(factory=VarInt.one, converter=VarInt)
-    speed: VarInt = field(factory=VarInt.one, converter=VarInt)
-    sp_attack: VarInt = field(factory=VarInt.one, converter=VarInt)
-    sp_defense: VarInt = field(factory=VarInt.one, converter=VarInt)
+    hp: int = 1
+    attack: int = 1
+    defense: int = 1
+    speed: int = 1
+    sp_attack: int = 1
+    sp_defense: int = 1
 
     @property
-    def special(self) -> VarInt:
+    def special(self) -> int:
         return self.sp_attack
+
+    @special.setter
+    def special(self, value: int):
+        self.sp_attack = value
+        self.sp_defense = value
 
 
 @define
@@ -45,30 +48,34 @@ class MonSpecies:
     base_stats: MonStats = field(factory=MonStats)
 
 
-@frozen
+@define
 class PartyMon:
-    species: VarInt = field(factory=VarInt.zero, converter=VarInt)
-    name: VarString = field(factory=VarString.empty, converter=VarString)
-    level: VarInt = field(factory=VarInt.one, converter=VarInt)
+    species: int = 0
+    name: str = ''
+    level: int = 1
     stats: MonStats = field(factory=MonStats)
-    hp: VarInt = field(factory=VarInt.minus_one, converter=VarInt)
+    hp: int = -1
 
     def __attrs_post_init__(self):
-        if self.hp.value < 0:
-            self.hp.set(self.stats.hp.value)
+        if self.hp < 0:
+            self.hp = self.stats.hp
 
     @property
-    def max_hp(self) -> VarInt:
+    def max_hp(self) -> int:
         return self.stats.hp
+
+    @max_hp.setter
+    def max_hp(self, value: int):
+        self.stats.hp = value
 
     @property
     def is_valid_species(self) -> bool:
-        return self.species.value > 0
+        return self.species > 0
 
 
-@frozen
+@define
 class TrainerParty:
-    size: VarInt = field(factory=VarInt.zero, converter=VarInt)
+    size: int = 0
     slot1: PartyMon = field(factory=PartyMon)
     slot2: PartyMon = field(factory=PartyMon)
     slot3: PartyMon = field(factory=PartyMon)
@@ -103,10 +110,10 @@ class TrainerParty:
 ###############################################################################
 
 
-@frozen
+@define
 class TrainerData:
-    name: VarString = field(factory=VarString.empty, converter=VarString)
-    trainer_class: VarString = field(factory=VarString.empty, converter=VarString)
+    name: str = ''
+    trainer_class: str = ''
     team: TrainerParty = field(factory=TrainerParty)
 
     @property
@@ -114,27 +121,27 @@ class TrainerData:
         return self.team.lead
 
 
-@frozen
+@define
 class BattleMonStatStages:
-    attack: VarInt = field(factory=VarInt.zero, converter=VarInt)
-    defense: VarInt = field(factory=VarInt.zero, converter=VarInt)
-    speed: VarInt = field(factory=VarInt.zero, converter=VarInt)
-    sp_attack: VarInt = field(factory=VarInt.zero, converter=VarInt)
-    sp_defense: VarInt = field(factory=VarInt.zero, converter=VarInt)
-    accuracy: VarInt = field(factory=VarInt.zero, converter=VarInt)
-    evasion: VarInt = field(factory=VarInt.zero, converter=VarInt)
+    attack: int = 0
+    defense: int = 0
+    speed: int = 0
+    sp_attack: int = 0
+    sp_defense: int = 0
+    accuracy: int = 0
+    evasion: int = 0
 
 
-@frozen
+@define
 class BattleMon:
-    name: VarString = field(converter=VarString)
-    hp: VarInt = field(factory=VarInt.minus_one, converter=VarInt)
+    name: str
+    hp: int = -1
     stats: MonStats = field(factory=MonStats)
     stages: BattleMonStatStages = field(factory=BattleMonStatStages)
-    party_index: VarInt = field(factory=VarInt.zero, converter=VarInt)
+    party_index: int = 0
 
 
-@frozen
+@define
 class BattleData:
     player: BattleMon
     enemy: BattleMon
@@ -150,18 +157,18 @@ class BattleData:
 ###############################################################################
 
 
-@frozen
+@define
 class BadgeData:
-    badge1: VarBool = field(factory=VarBool.false, converter=VarBool)
-    badge2: VarBool = field(factory=VarBool.false, converter=VarBool)
-    badge3: VarBool = field(factory=VarBool.false, converter=VarBool)
-    badge4: VarBool = field(factory=VarBool.false, converter=VarBool)
-    badge5: VarBool = field(factory=VarBool.false, converter=VarBool)
-    badge6: VarBool = field(factory=VarBool.false, converter=VarBool)
-    badge7: VarBool = field(factory=VarBool.false, converter=VarBool)
-    badge8: VarBool = field(factory=VarBool.false, converter=VarBool)
+    badge1: bool = False
+    badge2: bool = False
+    badge3: bool = False
+    badge4: bool = False
+    badge5: bool = False
+    badge6: bool = False
+    badge7: bool = False
+    badge8: bool = False
 
-    def __getitem__(self, i: Any) -> VarBool:
+    def __getitem__(self, i: Any) -> bool:
         if i == 0:
             return self.badge1
         if i == 1:
@@ -182,21 +189,21 @@ class BadgeData:
 
     def __setitem__(self, i: Any, value: bool):
         if i == 0:
-            self.badge1.set(value)
+            self.badge1 = value
         elif i == 1:
-            self.badge2.set(value)
+            self.badge2 = value
         elif i == 2:
-            self.badge3.set(value)
+            self.badge3 = value
         elif i == 3:
-            self.badge4.set(value)
+            self.badge4 = value
         elif i == 4:
-            self.badge5.set(value)
+            self.badge5 = value
         elif i == 5:
-            self.badge6.set(value)
+            self.badge6 = value
         elif i == 6:
-            self.badge7.set(value)
+            self.badge7 = value
         elif i == 7:
-            self.badge8.set(value)
+            self.badge8 = value
         else:
             raise IndexError(f'expected 0 <= i < 8; got {i}')
 
@@ -204,13 +211,13 @@ class BadgeData:
         return 8
 
 
-@frozen
+@define
 class PlayerData:
-    name: VarString = field(factory=VarString.empty, converter=VarString)
-    number: VarInt = field(factory=VarInt.zero, converter=VarInt)
+    name: str = ''
+    number: int = 0
     badges: BadgeData = field(factory=BadgeData)
     team: TrainerParty = field(factory=TrainerParty)
-    money: VarInt = field(factory=VarInt.zero, converter=VarInt)
+    money: int = 0
 
     @property
     def lead(self) -> PartyMon:
@@ -222,7 +229,7 @@ class PlayerData:
 ###############################################################################
 
 
-@frozen
+@define
 class GameMap:
     name: str
     group: str
@@ -239,38 +246,32 @@ class GameMap:
 ###############################################################################
 
 
-@frozen
+@define
 class GameTime:
-    hours: VarInt = field(factory=VarInt.zero, converter=VarInt)
-    minutes: VarInt = field(factory=VarInt.zero, converter=VarInt)
-    seconds: VarInt = field(factory=VarInt.zero, converter=VarInt)
-    frames: VarInt = field(factory=VarInt.zero, converter=VarInt)
+    hours: int = 0
+    minutes: int = 0
+    seconds: int = 0
+    frames: int = 0
 
     def formatted(self, zeroes: bool = True, frames: bool = True) -> str:
-        t = f'{self.seconds.value:02}'
-        if frames:
-            t= f'{t}.{self.frames.value:02}'
+        t = f'{self.seconds:02}' if not frames else f'{self.seconds:02}.{self.frames:02}'
         if not zeroes:
-            if self.hours.value == 0:
-                return t if self.minutes.value == 0 else f'{self.minutes.value:02}:{t}'
-        return f'{self.hours.value:02}:{self.minutes.value:02}:{t}'
+            if self.hours == 0:
+                return t if self.minutes == 0 else f'{self.minutes:02}:{t}'
+        return f'{self.hours:02}:{self.minutes:02}:{t}'
 
 
-@frozen
+@define
 class GameData:
     player: PlayerData = field(factory=PlayerData)
     time: GameTime = field(factory=GameTime)
-    location: VarString = field(factory=VarString.empty, converter=VarString)
+    location: str = ''
     dex: List[MonSpecies] = field(factory=list, repr=False)
     maps: Dict[str, GameMap] = field(factory=dict, repr=False)
 
     @property
     def current_map(self) -> Optional[GameMap]:
-        return self.maps.get(self.location.value)
+        return self.maps.get(self.location)
 
     def serialize(self) -> Dict[str, Any]:
-        return asdict(self, value_serializer=_serializer)
-
-
-def _serializer(obj, attr, value):
-    return value.value if isinstance(value, Variable) else value
+        return asdict(self)
