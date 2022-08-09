@@ -17,6 +17,10 @@ from attrs import asdict, define, field
 
 logger: Final[logging.Logger] = logging.getLogger(__name__)
 
+BATTLE_WIN: Final[int] = 1
+BATTLE_DRAW: Final[int] = 0
+BATTLE_LOSS: Final[int] = -1
+
 ###############################################################################
 # Pokémon Data
 ###############################################################################
@@ -143,13 +147,15 @@ class BattleMon:
 
 @define
 class BattleData:
-    player: BattleMon
-    enemy: BattleMon
-    trainer: Optional[TrainerData] = None
+    ongoing: bool = False
+    result: int = BATTLE_WIN
+    player: BattleMon = field(factory=BattleMon)
+    enemy: BattleMon = field(factory=BattleMon)
+    trainer: TrainerData = field(factory=TrainerData)
 
     @property
     def is_vs_wild(self) -> bool:
-        return self.trainer is None
+        return not self.trainer.trainer_class
 
 
 ###############################################################################
@@ -266,7 +272,7 @@ class GameData:
     player: PlayerData = field(factory=PlayerData)
     time: GameTime = field(factory=GameTime)
     location: str = ''
-    battle: Optional[BattleData] = None
+    battle: BattleData = field(factory=BattleData)
     dex: List[MonSpecies] = field(factory=list, repr=False)
     maps: Dict[str, GameMap] = field(factory=dict, repr=False)
 
