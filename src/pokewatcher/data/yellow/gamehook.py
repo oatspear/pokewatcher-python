@@ -11,6 +11,7 @@ import logging
 
 from attrs import define
 
+import pokewatcher.data.constants as const
 from pokewatcher.data.gamehook import BaseDataHandler
 import pokewatcher.events as events
 
@@ -83,7 +84,7 @@ SFX_SAVE_FILE = 0xB6
 class DataHandler(BaseDataHandler):
     def __attrs_post_init__(self):
         # player data
-        self.store(P_PLAYER_ID, 'player.number', emit=True)
+        self.store(P_PLAYER_ID, const.VAR_PLAYER_ID, emit=True)
         self.handlers[P_PLAYER_ID] = self.on_player_id_changed
         self.store_int(P_GAME_TIME_HOURS)
         self.store_int(P_GAME_TIME_MINUTES)
