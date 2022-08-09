@@ -81,7 +81,7 @@ class Event:
 # Global Interface
 ###############################################################################
 
-on_property_changed: Final[Event] = Event(name='on_property_changed')
+on_data_changed: Final[Event] = Event(name='on_data_changed')
 
 on_new_game: Final[Event] = Event(name='on_new_game')
 on_reset: Final[Event] = Event(name='on_reset')
