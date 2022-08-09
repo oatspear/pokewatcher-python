@@ -283,7 +283,7 @@ class GameData:
 
     @property
     def is_in_battle(self) -> bool:
-        return self.battle is not None
+        return self.battle.ongoing
 
     def serialize(self) -> Dict[str, Any]:
         return asdict(self)
