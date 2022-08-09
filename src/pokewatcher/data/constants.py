@@ -140,7 +140,8 @@ VAR_BATTLE_ENEMY_STAGE_SP_DEFENSE: Final[str] = 'battle.enemy.stages.sp_defense'
 VAR_BATTLE_ENEMY_STAGE_ACCURACY: Final[str] = 'battle.enemy.stages.accuracy'
 VAR_BATTLE_ENEMY_STAGE_EVASION: Final[str] = 'battle.enemy.stages.evasion'
 
-VAR_BATTLE_TRAINER_ID: Final[str] = 'battle.trainer.name'
+VAR_BATTLE_TRAINER_NAME: Final[str] = 'battle.trainer.name'
+VAR_BATTLE_TRAINER_ID: Final[str] = 'battle.trainer.number'
 VAR_BATTLE_TRAINER_CLASS: Final[str] = 'battle.trainer.trainer_class'
 
 VAR_BATTLE_TRAINER_MON1_SPECIES: Final[str] = 'battle.trainer.slot1.species'
