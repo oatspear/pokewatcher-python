@@ -13,7 +13,7 @@ from attrs import define, field
 
 from pokewatcher.core.util import Attribute, identity, noop
 from pokewatcher.data.structs import GameData
-from pokewatcher.events import Event
+from pokewatcher.events import on_data_changed
 
 ###############################################################################
 # Constants
@@ -36,7 +36,6 @@ TRANSFORMS: Final[Mapping[str, Callable]] = {
 @define
 class BaseDataHandler:
     data: GameData
-    on_data_changed: Event = field(factory=lambda: Event('on_data_changed'))
     handlers: Mapping[str, Callable] = field(factory=dict)
     transforms: Mapping[str, Callable] = field(factory=dict)
 
@@ -44,17 +43,13 @@ class BaseDataHandler:
         handler = self.handlers.get(prop, noop)
         handler(prev, value, mapper)
 
-    def store(self, prop: str, path: str, emit: bool = True):
-        logger.debug(f'data store: {prop} -> {path} (emit: {emit})')
+    def store(self, prop: str, path: str):
+        logger.debug(f'data store: {prop} -> {path}')
         attr = Attribute.of(self.data, path)
-        if emit:
-            self.handlers[prop] = self._lazy_set_and_emit(path, obj, attr)
-        else:
-            self.handlers[prop] = self._lazy_set(obj, attr)
+        self.handlers[prop] = self._lazy_set_and_emit(path, attr)
 
-    def _lazy_set(self, obj: Any, attr: str) -> Callable:
+    def _lazy_set(self, obj: Any, attr: Attribute) -> Callable:
         def just_set(prev: Any, value: Any, mapper: Mapping[str, Any]):
-            # prev = attr.get()
             attr.set(value)
         return just_set
 
@@ -62,7 +57,7 @@ class BaseDataHandler:
         def set_and_emit(prev: Any, value: Any, mapper: Mapping[str, Any]):
             # prev = attr.get()
             attr.set(value)
-            self.on_data_changed.emit(path, prev, value, self.data)
+            on_data_changed.emit(path, prev, value)
         return set_and_emit
 
     def setup(self, settings: Mapping[str, Any]):
