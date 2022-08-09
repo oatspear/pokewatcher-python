@@ -50,7 +50,7 @@ class MonSpecies:
 
 @define
 class PartyMon:
-    species: int = 0
+    species: str = ''
     name: str = ''
     level: int = 1
     stats: MonStats = field(factory=MonStats)
@@ -70,7 +70,7 @@ class PartyMon:
 
     @property
     def is_valid_species(self) -> bool:
-        return self.species > 0
+        return self.species != ''
 
 
 @define
@@ -266,12 +266,17 @@ class GameData:
     player: PlayerData = field(factory=PlayerData)
     time: GameTime = field(factory=GameTime)
     location: str = ''
+    battle: Optional[BattleData] = None
     dex: List[MonSpecies] = field(factory=list, repr=False)
     maps: Dict[str, GameMap] = field(factory=dict, repr=False)
 
     @property
     def current_map(self) -> Optional[GameMap]:
         return self.maps.get(self.location)
+
+    @property
+    def is_in_battle(self) -> bool:
+        return self.battle is not None
 
     def serialize(self) -> Dict[str, Any]:
         return asdict(self)
