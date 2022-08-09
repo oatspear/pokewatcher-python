@@ -117,6 +117,7 @@ class TrainerParty:
 @define
 class TrainerData:
     name: str = ''
+    number: int = 0
     trainer_class: str = ''
     team: TrainerParty = field(factory=TrainerParty)
 
