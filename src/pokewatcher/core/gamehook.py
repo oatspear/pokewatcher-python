@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Dict, Final, Mapping, Optional
+from typing import Any, Callable, Dict, Final, Mapping, Optional, Set
 
 import json
 import logging
@@ -48,6 +48,7 @@ class GameHookBridge:
     meta: Dict[str, Any] = field(init=False, factory=dict)
     mapper: Dict[str, Any] = field(init=False, factory=dict)
     transforms: Dict[str, Callable] = field(init=False, factory=dict)
+    byte_properties: Set[str] = field(init=False, factory=set)
     url_signalr: str = field(init=False, default='http://localhost:8085/updates')
     url_requests: str = field(init=False, default='http://localhost:8085/mapper')
     hub: Optional[HubConnectionBuilder] = field(init=False, default=None, repr=False)
@@ -63,6 +64,8 @@ class GameHookBridge:
         self.url_signalr = urls['signalr']
         self.url_requests = urls['requests']
         self.request_mapper()
+        # TODO load property transforms
+        # TODO populate byte_properties
 
     def start(self):
         self.connect()
@@ -123,8 +126,10 @@ class GameHookBridge:
         raise GameHookError.get_mapper(self.url_requests)
 
     def _on_property_changed(self, args):
-        prop, _address, value, _bytes, _frozen, changed_fields = args
+        prop, _address, value, byte_value, _frozen, changed_fields = args
         if 'value' in changed_fields:
+            if prop in self.byte_properties:
+                value = byte_value
             f = self.transforms.get(prop, identity)
             value = f(value)
             prev = self.mapper.get(prop)
