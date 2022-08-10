@@ -17,9 +17,9 @@ from attrs import asdict, define, field
 
 logger: Final[logging.Logger] = logging.getLogger(__name__)
 
-BATTLE_WIN: Final[int] = 1
-BATTLE_DRAW: Final[int] = 0
-BATTLE_LOSS: Final[int] = -1
+BATTLE_RESULT_WIN: Final[int] = 1
+BATTLE_RESULT_DRAW: Final[int] = 0
+BATTLE_RESULT_LOSE: Final[int] = -1
 
 ###############################################################################
 # Pokémon Data
@@ -125,6 +125,12 @@ class TrainerData:
     def lead(self) -> PartyMon:
         return self.team.lead
 
+    def reset(self):
+        self.name = ''
+        self.number = 0
+        self.trainer_class = ''
+        self.team.size = 0
+
 
 @define
 class BattleMonStatStages:
@@ -149,7 +155,7 @@ class BattleMon:
 @define
 class BattleData:
     ongoing: bool = False
-    result: int = BATTLE_WIN
+    result: int = BATTLE_RESULT_WIN
     player: BattleMon = field(factory=BattleMon)
     enemy: BattleMon = field(factory=BattleMon)
     trainer: TrainerData = field(factory=TrainerData)
@@ -157,6 +163,19 @@ class BattleData:
     @property
     def is_vs_wild(self) -> bool:
         return not self.trainer.trainer_class
+
+    def set_wild_battle(self):
+        self.ongoing = True
+        self.result = BATTLE_RESULT_DRAW
+        self.trainer.reset()
+
+    def set_victory(self):
+        self.ongoing = False
+        self.result = BATTLE_RESULT_WIN
+
+    def set_defeat(self):
+        self.ongoing = False
+        self.result = BATTLE_RESULT_LOSE
 
 
 ###############################################################################
