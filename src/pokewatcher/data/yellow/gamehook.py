@@ -75,14 +75,6 @@ P_BADGE8 = 'player.badges.earthBadge'
 
 SFX_SAVE_FILE = 0xB6
 
-BATTLE_TYPE_NONE = 'None'
-BATTLE_TYPE_WILD = 'Wild'
-BATTLE_TYPE_TRAINER = 'Trainer'
-BATTLE_TYPE_LOST = 'Lost Battle'
-
-ALARM_ENABLED = 'Enabled'
-ALARM_DISABLED = 'Disabled'
-
 TRAINER_CLASS_NONE = 'NOBODY'
 
 STATE_INIT = 0
