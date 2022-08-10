@@ -46,7 +46,10 @@ class BaseDataHandler:
     def store(self, prop: str, path: str):
         logger.debug(f'data store: {prop} -> {path}')
         attr = Attribute.of(self.data, path)
-        handler = self._lazy_set_and_emit(path, attr)
+        self.do(prop, self._lazy_set_and_emit(path, attr))
+
+    def do(self, prop: str, handler: Callable):
+        logger.debug(f'handle {prop}: {handler}')
         f = self.handlers.get(prop)
         if f is not None:
             handler = self._chain(f, handler)
