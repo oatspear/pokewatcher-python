@@ -81,7 +81,7 @@ class BaseDataHandler:
 
 
 def get_transform(data_type: str, key: str):
-    t = TRANSFORMS.get(data_type, identity)
+    transform = TRANSFORMS.get(data_type, identity)
     if key:
-        return lambda x: t(x[key])
-    return lambda x: t(x)
+        return lambda d: transform(d[key])
+    return transform
