@@ -73,6 +73,7 @@ class BaseDataHandler:
             on_data_changed.emit(path, prev, value)
         return set_and_emit
 
+    # TODO move this to the GameHookBridge
     def setup(self, settings: Mapping[str, Any]):
         for prop, conf in settings['properties'].items():
             data_type = conf.get('data_type', '')
@@ -80,6 +81,7 @@ class BaseDataHandler:
             self.transforms[prop] = get_transform(data_type, key)
 
 
+# TODO move this to the GameHookBridge
 def get_transform(data_type: str, key: str):
     transform = TRANSFORMS.get(data_type, identity)
     if key:
