@@ -85,6 +85,10 @@ class InOverworld(InGame):
 
 @define
 class InBattle(InGame):
+    @property
+    def is_battle_state(self) -> bool:
+        return True
+
     def wIsInBattle(self, prev: int, value: int, data: GameData) -> GameState:
         if value == BATTLE_TYPE_NONE:
             data.battle.set_draw()
