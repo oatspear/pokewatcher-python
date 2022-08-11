@@ -28,7 +28,7 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 
 
 @define
-class BaseDataHandler:
+class DataHandler:
     data: GameData
     fsm: StateMachine
     handlers: Mapping[str, Callable] = field(init=False, factory=dict)
