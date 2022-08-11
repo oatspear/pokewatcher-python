@@ -23,6 +23,13 @@ from pokewatcher.core.util import identity, noop, SleepLoop
 
 logger: Final = logging.getLogger(__name__)
 
+TRANSFORMS: Final[Mapping[str, Callable]] = {
+    'bool': bool,
+    'int': int,
+    'float': float,
+    'string': str,
+}
+
 ###############################################################################
 # Interface
 ###############################################################################
@@ -64,7 +71,10 @@ class GameHookBridge:
         self.url_signalr = urls['signalr']
         self.url_requests = urls['requests']
         self.request_mapper()
-        # TODO load property transforms
+        for prop, conf in settings['properties'].items():
+            data_type = conf.get('type', '')
+            key = conf.get('key', '')
+            self.transforms[prop] = get_transform(data_type, key)
         # TODO populate byte_properties
 
     def start(self):
@@ -140,3 +150,10 @@ class GameHookBridge:
 def new():
     instance = GameHookBridge()
     return instance
+
+
+def get_transform(data_type: str, key: str):
+    transform = TRANSFORMS.get(data_type, identity)
+    if key:
+        return lambda d: transform(d[key])
+    return transform

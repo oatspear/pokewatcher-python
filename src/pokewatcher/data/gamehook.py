@@ -5,13 +5,13 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Final, Mapping, Tuple
+from typing import Any, Callable, Final, Mapping
 
 import logging
 
 from attrs import define, field
 
-from pokewatcher.core.util import Attribute, identity, noop
+from pokewatcher.core.util import Attribute, noop
 from pokewatcher.data.structs import GameData
 from pokewatcher.events import on_data_changed
 
@@ -20,13 +20,6 @@ from pokewatcher.events import on_data_changed
 ###############################################################################
 
 logger: Final[logging.Logger] = logging.getLogger(__name__)
-
-TRANSFORMS: Final[Mapping[str, Callable]] = {
-    'bool': bool,
-    'int': int,
-    'float': float,
-    'string': str,
-}
 
 ###############################################################################
 # Interface
@@ -37,7 +30,6 @@ TRANSFORMS: Final[Mapping[str, Callable]] = {
 class BaseDataHandler:
     data: GameData
     handlers: Mapping[str, Callable] = field(factory=dict)
-    transforms: Mapping[str, Callable] = field(factory=dict)
 
     def on_property_changed(self, prop: str, prev: Any, value: Any, mapper: Mapping[str, Any]):
         handler = self.handlers.get(prop, noop)
@@ -72,18 +64,3 @@ class BaseDataHandler:
             attr.set(value)
             on_data_changed.emit(path, prev, value)
         return set_and_emit
-
-    # TODO move this to the GameHookBridge
-    def setup(self, settings: Mapping[str, Any]):
-        for prop, conf in settings['properties'].items():
-            data_type = conf.get('data_type', '')
-            key = conf.get('key', '')
-            self.transforms[prop] = get_transform(data_type, key)
-
-
-# TODO move this to the GameHookBridge
-def get_transform(data_type: str, key: str):
-    transform = TRANSFORMS.get(data_type, identity)
-    if key:
-        return lambda d: transform(d[key])
-    return transform

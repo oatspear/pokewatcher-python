@@ -92,7 +92,6 @@ class GameInterface:
         else:
             raise ValueError(f'Unknown game version: {version}')
         handler = DataHandler(self.data)
-        # handler.setup({})
         self.gamehook.transforms = handler.transforms
         self.gamehook.on_change = handler.on_property_changed
         # handle initial data
