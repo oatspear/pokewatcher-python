@@ -177,6 +177,10 @@ class BattleData:
         self.ongoing = False
         self.result = BATTLE_RESULT_LOSE
 
+    def set_draw(self):
+        self.ongoing = False
+        self.result = BATTLE_RESULT_DRAW
+
 
 ###############################################################################
 # Player Data
