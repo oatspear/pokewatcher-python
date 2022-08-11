@@ -79,7 +79,7 @@ class InOverworld(InGame):
         elif value == BATTLE_TYPE_LOST:
             data.battle.set_defeat()
             events.on_blackout.emit()
-        else:
+        elif value != BATTLE_TYPE_NONE:
             logger.warning(f'unknown battle type: {value}')
         return self
 
