@@ -75,7 +75,9 @@ class GameHookBridge:
             data_type = conf.get('type', '')
             key = conf.get('key', '')
             self.transforms[prop] = get_transform(data_type, key)
-        # TODO populate byte_properties
+            use_bytes = bool(conf.get('bytes', False))
+            if use_bytes is True:
+                self.byte_properties.add(prop)
 
     def start(self):
         self.connect()
