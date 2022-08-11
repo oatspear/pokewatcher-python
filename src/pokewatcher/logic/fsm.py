@@ -11,7 +11,7 @@ import logging
 
 from attrs import define
 
-from pokewatcher.data.structs import BattleData, GameData
+from pokewatcher.data.structs import GameData
 from pokewatcher.errors import StateMachineError
 import pokewatcher.events as events
 
