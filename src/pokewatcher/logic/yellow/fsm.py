@@ -39,6 +39,7 @@ class Initial(GameState):
     def wPlayerID(self, prev: int, value: int, data: GameData) -> GameState:
         logger.debug(f'player ID changed from {prev} to {value}')
         if value != 0 and prev == 0:
+            logger.info('starting a new game')
             events.on_new_game.emit()
             return InOverworld()
         return self
@@ -49,6 +50,7 @@ class MainMenu(GameState):
     def wPlayerID(self, prev: int, value: int, data: GameData) -> GameState:
         logger.debug(f'player ID changed from {prev} to {value}')
         if value != 0 and prev == 0:
+            logger.info('continue previous game')
             events.on_continue.emit()
             return InOverworld()
         return self
@@ -59,6 +61,7 @@ class InGame(GameState):
     def wPlayerID(self, prev: int, value: int, data: GameData) -> GameState:
         logger.debug(f'player ID changed from {prev} to {value}')
         if value == 0:
+            logger.info('game reset')
             events.on_reset.emit()
             return MainMenu()
         return self
