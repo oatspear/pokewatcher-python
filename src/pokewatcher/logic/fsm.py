@@ -9,7 +9,7 @@ from typing import Any, Final
 
 import logging
 
-from attrs import define
+from attrs import define, field
 
 from pokewatcher.data.structs import GameData
 from pokewatcher.errors import StateMachineError
@@ -65,16 +65,15 @@ class GameState:
 
 @define
 class StateMachine:
-    state: GameState
-    data: GameData
+    state: GameState = field(factory=GameState)
 
-    def on_input(self, label: str, prev: Any, value: Any):
+    def on_input(self, label: str, prev: Any, value: Any, data: GameData):
         logger.debug(f'on {label}: {prev} -> {value}')
         transition = getattr(self.state, label)
         if transition is None:
             logger.debug(f'no state transition: {self.state.name} -> {label} ({prev}, {value})')
         else:
-            new_state = transition(prev, value, self.data)
+            new_state = transition(prev, value, data)
             if new_state is not self.state:
                 logger.info(f'state transition: {self.state.name} -> {new_state.name}')
             self.state = new_state
