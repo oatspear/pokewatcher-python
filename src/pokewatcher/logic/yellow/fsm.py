@@ -22,7 +22,7 @@ from pokewatcher.data.yellow.constants import (
     SFX_SAVE_FILE,
 )
 import pokewatcher.events as events
-from pokewatcher.logic.fsm import GameState
+from pokewatcher.logic.fsm import GameState, transition
 
 ###############################################################################
 # Constants
@@ -35,8 +35,15 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 ###############################################################################
 
 
+class YellowState(GameState):
+    wPlayerID = transition
+    wIsInBattle = transition
+    wChannelSoundIDs_5 = transition
+    wLowHealthAlarmDisabled = transition
+
+
 @define
-class Initial(GameState):
+class Initial(YellowState):
     def wPlayerID(self, prev: int, value: int, data: GameData) -> GameState:
         logger.debug(f'player ID changed from {prev} to {value}')
         if value != 0 and prev == 0:
@@ -47,7 +54,7 @@ class Initial(GameState):
 
 
 @define
-class MainMenu(GameState):
+class MainMenu(YellowState):
     def wPlayerID(self, prev: int, value: int, data: GameData) -> GameState:
         logger.debug(f'player ID changed from {prev} to {value}')
         if value != 0 and prev == 0:
@@ -58,7 +65,7 @@ class MainMenu(GameState):
 
 
 @define
-class InGame(GameState):
+class InGame(YellowState):
     def wPlayerID(self, prev: int, value: int, data: GameData) -> GameState:
         logger.debug(f'player ID changed from {prev} to {value}')
         if value == 0:
@@ -91,6 +98,7 @@ class InOverworld(InGame):
         if value == SFX_SAVE_FILE:
             logger.info('saved game')
             events.on_save_game.emit()
+        return self
 
 
 @define
