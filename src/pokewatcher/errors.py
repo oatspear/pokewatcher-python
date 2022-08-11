@@ -20,3 +20,7 @@ class StateMachineError(PokeWatcherError):
     @classmethod
     def no_transition(cls, state: str, label: str, value: Any) -> 'StateMachineError':
         return cls(f'No transition from state {state} via {label} ({value})')
+
+    @classmethod
+    def inconsistent(cls, state: str, label: str, value: Any) -> 'StateMachineError':
+        return cls(f'Unexpected transition ({label}, {value}) on state {state}')
