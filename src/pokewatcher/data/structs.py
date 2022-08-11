@@ -145,7 +145,7 @@ class BattleMonStatStages:
 
 @define
 class BattleMon:
-    name: str
+    name: str = ''
     hp: int = -1
     stats: MonStats = field(factory=MonStats)
     stages: BattleMonStatStages = field(factory=BattleMonStatStages)
