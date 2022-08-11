@@ -11,6 +11,7 @@ import logging
 
 from attrs import define
 
+from pokewatcher.data.structs import GameData
 from pokewatcher.data.yellow.constants import (
     ALARM_DISABLED,
     ALARM_ENABLED,
