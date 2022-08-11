@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Final
+from typing import Final, Tuple
 
 ###############################################################################
 # Constants
@@ -25,3 +25,5 @@ WRAM_PLAYER_ID: Final[str] = 'wPlayerID'
 WRAM_BATTLE_TYPE: Final[str] = 'wIsInBattle'
 WRAM_LOW_HEALTH_ALARM: Final[str] = 'wLowHealthAlarmDisabled'
 WRAM_AUDIO_CHANNEL5: Final[str] = 'wChannelSoundIDs_5'
+
+ALL_WRAM: Final[Tuple] = tuple(v for k, v in globals().items() if k.startswith('WRAM_'))
