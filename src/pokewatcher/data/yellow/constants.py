@@ -18,3 +18,10 @@ BATTLE_TYPE_LOST: Final[int] = 0xFF
 
 ALARM_ENABLED: Final[int] = 0x00
 ALARM_DISABLED: Final[int] = 0x01
+
+SFX_SAVE_FILE: Final[int] = 0xB6
+
+WRAM_PLAYER_ID: Final[str] = 'wPlayerID'
+WRAM_BATTLE_TYPE: Final[str] = 'wIsInBattle'
+WRAM_LOW_HEALTH_ALARM: Final[str] = 'wLowHealthAlarmDisabled'
+WRAM_AUDIO_CHANNEL5: Final[str] = 'wChannelSoundIDs_5'
