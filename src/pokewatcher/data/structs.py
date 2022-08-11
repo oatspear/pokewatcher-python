@@ -164,6 +164,18 @@ class BattleData:
     def is_vs_wild(self) -> bool:
         return not self.trainer.trainer_class
 
+    @property
+    def is_victory(self) -> bool:
+        return not self.ongoing and self.result == BATTLE_RESULT_WIN
+
+    @property
+    def is_draw(self) -> bool:
+        return not self.ongoing and self.result == BATTLE_RESULT_DRAW
+
+    @property
+    def is_defeat(self) -> bool:
+        return not self.ongoing and self.result == BATTLE_RESULT_LOSE
+
     def set_wild_battle(self):
         self.ongoing = True
         self.result = BATTLE_RESULT_DRAW

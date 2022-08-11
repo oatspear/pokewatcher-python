@@ -61,7 +61,7 @@ class InGame(GameState):
         if value == 0:
             events.on_reset.emit()
             return MainMenu()
-        return state
+        return self
 
 
 @define
@@ -92,16 +92,12 @@ class InBattle(InGame):
 
     def wIsInBattle(self, prev: int, value: int, data: GameData) -> GameState:
         if value == BATTLE_TYPE_NONE:
-            data.battle.set_draw()
+            # result should be set at this point
+            data.battle.ongoing = False
             events.on_battle_ended()
-            # events.on_run_away()
             return InOverworld()
-        elif value == BATTLE_TYPE_WILD:
-            self.inconsistent()
-        elif value == BATTLE_TYPE_TRAINER:
-            self.inconsistent()
-        elif value == BATTLE_TYPE_LOST:
-            self.inconsistent()
+        elif value in (BATTLE_TYPE_WILD, BATTLE_TYPE_TRAINER, BATTLE_TYPE_LOST):
+            self.inconsistent('wIsInBattle', value)
         else:
             logger.warning(f'unknown battle type: {value}')
         return self
@@ -123,17 +119,13 @@ class VictorySequence(InGame):
     def wIsInBattle(self, prev: int, value: int, data: GameData) -> GameState:
         if value == BATTLE_TYPE_NONE:
             return InOverworld()
-        elif value == BATTLE_TYPE_WILD:
-            self.inconsistent()
-        elif value == BATTLE_TYPE_TRAINER:
-            self.inconsistent()
-        elif value == BATTLE_TYPE_LOST:
-            self.inconsistent()
+        elif value in (BATTLE_TYPE_WILD, BATTLE_TYPE_TRAINER, BATTLE_TYPE_LOST):
+            self.inconsistent('wIsInBattle', value)
         else:
             logger.warning(f'unknown battle type: {value}')
         return self
 
     def wLowHealthAlarmDisabled(self, prev: int, value: int, data: GameData) -> GameState:
         if value == ALARM_DISABLED:
-            self.inconsistent()
+            self.inconsistent('wLowHealthAlarmDisabled', value)
         return self
