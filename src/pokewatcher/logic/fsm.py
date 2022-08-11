@@ -39,23 +39,14 @@ class GameState:
     def is_battle_state(self) -> bool:
         return False
 
-    def enter(self, *args, **kwargs):
-        logger.debug(f'enter state: {self.name}')
-        # set event handlers, etc.
-        return
-
-    def exit(self):
-        logger.debug(f'exit state: {self.name}')
-        # remove event handlers, etc.
-        return
-
-    def transition(self, prev: Any, value: Any, data: GameData) -> 'GameState':
-        # this is just a template for other transition functions
-        logger.debug(f'on state input: {self.name} -> transition ({prev}, {value})')
-        return self
-
     def inconsistent(self, label: str, value: Any):
         raise StateMachineError.inconsistent(self.name, label, value)
+
+
+def transition(state: GameState, prev: Any, value: Any, data: GameData) -> GameState:
+    # this is just a template for other transition functions
+    logger.debug(f'on state input: {self.name} -> transition ({prev}, {value})')
+    return self
 
 
 ###############################################################################
