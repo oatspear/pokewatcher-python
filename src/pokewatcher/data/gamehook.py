@@ -14,6 +14,7 @@ from attrs import define, field
 from pokewatcher.core.util import Attribute, noop
 from pokewatcher.data.structs import GameData
 from pokewatcher.events import on_data_changed
+from pokewatcher.logic.fsm import StateMachine
 
 ###############################################################################
 # Constants
@@ -29,11 +30,16 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 @define
 class BaseDataHandler:
     data: GameData
-    handlers: Mapping[str, Callable] = field(factory=dict)
+    fsm: StateMachine
+    handlers: Mapping[str, Callable] = field(init=False, factory=dict)
+    labels: Mapping[str, str] = field(init=False, factory=dict)
 
     def on_property_changed(self, prop: str, prev: Any, value: Any, mapper: Mapping[str, Any]):
         handler = self.handlers.get(prop, noop)
         handler(prev, value, mapper)
+        label = self.labels.get(prop)
+        if label:
+            self.fsm.on_input(label, prev, value, self.data)
 
     def store(self, prop: str, path: str):
         logger.debug(f'data store: {prop} -> {path}')
