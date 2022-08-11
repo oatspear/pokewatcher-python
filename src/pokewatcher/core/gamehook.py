@@ -71,6 +71,7 @@ class GameHookBridge:
         self.url_signalr = urls['signalr']
         self.url_requests = urls['requests']
         self.request_mapper()
+        # FIXME this cannot be here, must be version-specific
         for prop, conf in settings['properties'].items():
             data_type = conf.get('type', '')
             key = conf.get('key', '')
