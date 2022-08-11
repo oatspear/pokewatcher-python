@@ -34,7 +34,7 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 
 
 @define
-class Start(GameState):
+class Initial(GameState):
     def wPlayerID(self, prev: int, value: int, data: GameData) -> GameState:
         logger.debug(f'player ID changed from {prev} to {value}')
         if value != 0 and prev == 0:
