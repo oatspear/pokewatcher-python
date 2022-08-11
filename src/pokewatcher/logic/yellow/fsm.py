@@ -19,6 +19,7 @@ from pokewatcher.data.yellow.constants import (
     BATTLE_TYPE_NONE,
     BATTLE_TYPE_TRAINER,
     BATTLE_TYPE_WILD,
+    SFX_SAVE_FILE,
 )
 import pokewatcher.events as events
 from pokewatcher.logic.fsm import GameState
@@ -85,6 +86,11 @@ class InOverworld(InGame):
         elif value != BATTLE_TYPE_NONE:
             logger.warning(f'unknown battle type: {value}')
         return self
+
+    def wChannelSoundIDs_5(self, prev: Any, value: int, data: GameData) -> GameState:
+        if value == SFX_SAVE_FILE:
+            logger.info('saved game')
+            events.on_save_game.emit()
 
 
 @define
