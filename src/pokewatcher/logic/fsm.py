@@ -12,7 +12,7 @@ import logging
 from attrs import define
 
 from pokewatcher.data.structs import BattleData, GameData
-# from pokewatcher.errors import StateMachineError
+from pokewatcher.errors import StateMachineError
 import pokewatcher.events as events
 
 ###############################################################################
@@ -53,6 +53,9 @@ class GameState:
         # this is just a template for other transition functions
         logger.debug(f'on state input: {self.name} -> transition ({prev}, {value})')
         return self
+
+    def inconsistent(self, label: str, value: Any):
+        raise StateMachineError.inconsistent(self.name, label, value)
 
 
 ###############################################################################
