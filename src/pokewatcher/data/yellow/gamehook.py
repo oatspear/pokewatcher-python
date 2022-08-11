@@ -77,10 +77,11 @@ SFX_SAVE_FILE = 0xB6
 
 TRAINER_CLASS_NONE = 'NOBODY'
 
-STATE_INIT = 0
-STATE_OUT_OF_BATTLE = 1
-STATE_IN_BATTLE = 2
-STATE_PLAYER_WON = 3
+LABELS = {
+    P_PLAYER_ID: 'wPlayerID',
+    P_BATTLE_TYPE: 'wIsInBattle',
+    P_BATTLE_ALARM: 'wLowHealthAlarmDisabled',
+}
 
 ###############################################################################
 # Interface
@@ -89,12 +90,11 @@ STATE_PLAYER_WON = 3
 
 @define
 class DataHandler(BaseDataHandler):
-    state: int = STATE_INIT
-
     def __attrs_post_init__(self):
+        self.labels.update(LABELS)
+
         # player data
         self.store(P_PLAYER_ID, const.VAR_PLAYER_ID)
-        self.do(P_PLAYER_ID, self.on_player_id_changed)
         self.store(P_GAME_TIME_HOURS, const.VAR_GAME_TIME_HOURS)
         self.store(P_GAME_TIME_MINUTES, const.VAR_GAME_TIME_MINUTES)
         self.store(P_GAME_TIME_SECONDS, const.VAR_GAME_TIME_SECONDS)
@@ -123,8 +123,6 @@ class DataHandler(BaseDataHandler):
         # self.store_int(P_GYM_LEADER)
         self.store(P_TRAINER_CLASS, const.VAR_BATTLE_TRAINER_CLASS)
         self.store(P_TRAINER_NUMBER, const.VAR_BATTLE_TRAINER_ID)
-        self.handlers[P_BATTLE_TYPE] = self.on_battle_type_changed
-        self.handlers[P_BATTLE_ALARM] = self.on_low_health_alarm_changed
 
         # battle lead data
         self.store(P_BATTLE_ATK, const.VAR_BATTLE_PLAYER_ATTACK)
@@ -145,74 +143,8 @@ class DataHandler(BaseDataHandler):
         self.handlers[P_AUDIO_CH5] = self.on_audio_changed
         # self.handlers[P_AUDIO_CH6] = self.on_audio_changed
 
-    def on_player_id_changed(self, prev: Any, value: Any, mapper: Mapping[str, Any]):
-        logger.debug(f'player ID changed: {prev} -> {value}')
-        if value == 0:
-            events.on_reset.emit()
-        elif prev == 0:
-            if self.state == STATE_INIT:
-                events.on_new_game.emit()
-            else:
-                events.on_continue.emit()
-
     def on_audio_changed(self, prev: Any, value: Any, mapper: Mapping[str, Any]):
         if self.state != STATE_OUT_OF_BATTLE:
             return
         if value == SFX_SAVE_FILE:
             events.on_save_game.emit()
-
-    def on_battle_type_changed(self, prev: Any, value: Any, mapper: Mapping[str, Any]):
-        logger.debug(f'on_battle_type_changed: {prev} -> {value}')
-        # self.battle_type = value
-
-        if value == BATTLE_TYPE_NONE:
-            if self.state == STATE_IN_BATTLE:
-                self._run_away()
-            elif self.state == STATE_PLAYER_WON:
-                self.state = STATE_OUT_OF_BATTLE
-                self.battle_result = None
-
-        elif value == BATTLE_TYPE_WILD:
-            self.state = STATE_IN_BATTLE
-            self.trainer_class = None
-            self.on_battle_started()
-
-        elif value == BATTLE_TYPE_TRAINER:
-            self.state = STATE_IN_BATTLE
-            self.on_battle_started()
-
-        elif value == BATTLE_TYPE_LOST:
-            self._white_out()
-
-        else:
-            logger.error(f'unknown battle type value: {value}')
-
-    def on_low_health_alarm_changed(self, prev: Any, value: Any, mapper: Mapping[str, Any]):
-        logger.debug(f'on_low_health_alarm_changed: {prev} -> {value}')
-
-        if value == ALARM_DISABLED:
-            if self.state != STATE_IN_BATTLE:
-                print("[Battle] player won but monitor is not in the correct state")
-                print("[Battle] state:", self.state)
-            self._win_battle()
-
-        elif value == ALARM_ENABLED:
-            # game reset or battle starting after a previous victory
-            # print("[Battle] game reset or battle starting")
-            # print("[Battle] state:", self.state)
-            pass
-
-    def _run_away(self):
-        self.state = STATE_OUT_OF_BATTLE
-        self.battle_result = None
-        self.on_battle_ended()
-
-    def _white_out(self):
-        self.state = STATE_OUT_OF_BATTLE
-        self.battle_result = False
-        self.on_battle_ended()
-
-    def _win_battle(self):
-        self.state = self.STATE_PLAYER_WON
-        self.battle_result = True
-        self.on_battle_ended()
