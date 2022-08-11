@@ -116,6 +116,10 @@ class InBattle(InGame):
 
 @define
 class VictorySequence(InGame):
+    @property
+    def is_battle_state(self) -> bool:
+        return True
+
     def wIsInBattle(self, prev: int, value: int, data: GameData) -> GameState:
         if value == BATTLE_TYPE_NONE:
             return InOverworld()
