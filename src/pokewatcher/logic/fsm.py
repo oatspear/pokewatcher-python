@@ -60,11 +60,11 @@ class StateMachine:
 
     def on_input(self, label: str, prev: Any, value: Any, data: GameData):
         logger.debug(f'on {label}: {prev} -> {value}')
-        transition = getattr(self.state, label)
-        if transition is None:
-            logger.debug(f'no state transition: {self.state.name} -> {label} ({prev}, {value})')
-        else:
-            new_state = transition(prev, value, data)
-            if new_state is not self.state:
-                logger.info(f'state transition: {self.state.name} -> {new_state.name}')
-            self.state = new_state
+        t = getattr(self.state, label)
+        if t is None:
+            # logger.debug(f'no state transition: {self.state.name} -> {label} ({prev}, {value})')
+            raise StateMachineError.no_transition(self.state.name, label, value)
+        new_state = t(prev, value, data)
+        if new_state is not self.state:
+            logger.info(f'state transition: {self.state.name} -> {new_state.name}')
+        self.state = new_state
