@@ -60,7 +60,8 @@ class DataHandler:
                 endianess = 'little' if ghp.is_little_endian else 'big'
                 value = int.from_bytes(byte_values, byteorder=endianess)
             # convert data to something else
-            value = ghp.converter(value)
+            if value is not None:
+                value = ghp.converter(value)
             # store it in GameData
             if ghp.attribute is not None:
                 prev = ghp.attribute.get()
