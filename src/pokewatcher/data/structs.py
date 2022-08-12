@@ -269,7 +269,7 @@ class BadgeData:
 @define
 class PlayerData:
     name: str = ''
-    number: int = 0
+    number: int = -1
     badges: BadgeData = field(factory=BadgeData)
     team: TrainerParty = field(factory=TrainerParty)
     money: int = 0

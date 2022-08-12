@@ -17,6 +17,7 @@ from pokewatcher.data.yellow.constants import (
     BATTLE_TYPE_NONE,
     BATTLE_TYPE_TRAINER,
     BATTLE_TYPE_WILD,
+    DEFAULT_PLAYER_NAME,
     SFX_SAVE_FILE,
 )
 import pokewatcher.events as events
@@ -35,6 +36,7 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 
 class YellowState(GameState):
     wPlayerID = transition  # noqa: N815
+    wPlayerName = transition  # noqa: N815
     wIsInBattle = transition  # noqa: N815
     wChannelSoundIDs_5 = transition  # noqa: N815
     wLowHealthAlarmDisabled = transition  # noqa: N815
@@ -42,6 +44,13 @@ class YellowState(GameState):
 
 @define
 class Initial(YellowState):
+    def wPlayerName(self, prev: str, value: str, _data: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'player name changed from {prev!r} to {value!r}')
+        if value != DEFAULT_PLAYER_NAME:
+            logger.info('found saved game')
+            return MainMenu()
+        return self
+
     def wPlayerID(self, prev: int, value: int, _data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'player ID changed from {prev} to {value}')
         if value != 0 and prev == 0:
@@ -58,6 +67,10 @@ class MainMenu(YellowState):
         if value != 0 and prev == 0:
             logger.info('continue previous game')
             events.on_continue.emit()
+            return InOverworld()
+        elif value != 0 and prev > 0:
+            logger.info('starting a new game')
+            events.on_new_game.emit()
             return InOverworld()
         return self
 

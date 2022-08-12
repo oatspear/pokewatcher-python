@@ -22,6 +22,7 @@ from pokewatcher.logic.fsm import StateMachine
 logger: Final[logging.Logger] = logging.getLogger(__name__)
 
 P_PLAYER_ID = 'player.playerId'
+P_PLAYER_NAME = 'player.name'
 
 P_SPECIES = 'player.team.0.species'
 P_LEVEL = 'player.team.0.level'
@@ -79,6 +80,11 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'label': yellow.WRAM_PLAYER_ID,
         'store': game_data.VAR_PLAYER_ID,
+    },
+    P_PLAYER_NAME: {
+        'type': 'string',
+        'label': yellow.WRAM_PLAYER_NAME,
+        'store': game_data.VAR_PLAYER_NAME,
     },
     P_GAME_TIME_HOURS: {
         'type': 'int',
