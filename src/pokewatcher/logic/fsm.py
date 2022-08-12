@@ -65,6 +65,7 @@ def transition_label(label: str) -> Callable:
     def decorator(function: Callable) -> Callable:
         function.label = label
         return function
+
     return decorator
 
 
