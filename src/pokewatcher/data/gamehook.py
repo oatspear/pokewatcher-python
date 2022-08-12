@@ -64,9 +64,9 @@ class DataHandler:
                 value = ghp.converter(value)
             # store it in GameData
             if ghp.attribute is not None:
-                prev = ghp.attribute.get()
+                ghp.previous = ghp.attribute.get()
                 ghp.attribute.set(value)
-                on_data_changed.emit(ghp.attribute.path, prev, value)
+                on_data_changed.emit(ghp.attribute.path, ghp.previous, value)
             # additional side effects
             ghp.handler(value, self.data)
             # feed to StateMachine
@@ -117,6 +117,7 @@ class DataHandler:
         logger.debug(f'data store: {prop} -> {path}')
         ghp = self.ensure_property(prop)
         ghp.attribute = Attribute.of(self.data, path)
+        ghp.previous = ghp.attribute.get()
 
     def transition(self, prop: str, label: str):
         logger.debug(f'transition label: {prop} -> {label}')
