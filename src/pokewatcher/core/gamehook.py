@@ -104,15 +104,15 @@ class GameHookBridge:
             self.hub.stop()
             self.hub = None
 
-    def request_mapper(self, ntries=3) -> str:
+    def request_mapper(self, ntries: int = 3) -> str:
         with SleepLoop(n=ntries, delay=1.0) as loop:
             while loop.iterate():
                 logger.info(f'requesting mapper from {self.url_requests}')
                 response = requests.get(self.url_requests)
-                response = json.loads(response.text)
+                data = json.loads(response.text)
                 try:
-                    self.meta = response['meta']
-                    self.mapper = response['properties']
+                    self.meta = data['meta']
+                    self.mapper = data['properties']
                     name = self.meta['gameName']
                     logger.info('received mapper')
                     return name
