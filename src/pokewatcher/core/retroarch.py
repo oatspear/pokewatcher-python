@@ -11,7 +11,7 @@ import logging
 
 from attrs import define, field
 
-from pokewatcher.core.util import noop, SleepLoop, UdpConnection
+from pokewatcher.core.util import SleepLoop, UdpConnection, noop
 from pokewatcher.errors import PokeWatcherError
 
 ###############################################################################

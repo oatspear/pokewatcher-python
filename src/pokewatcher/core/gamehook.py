@@ -9,12 +9,12 @@ from typing import Any, Callable, Dict, Final, Mapping, Optional
 
 import json
 import logging
-import requests
 
 from attrs import define, field
+import requests
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 
-from pokewatcher.core.util import noop, SleepLoop
+from pokewatcher.core.util import SleepLoop, noop
 from pokewatcher.errors import PokeWatcherError
 
 ###############################################################################
@@ -79,15 +79,20 @@ class GameHookBridge:
             logger.info(f'connecting to {self.url_signalr}')
             handler = logging.StreamHandler()
             handler.setLevel(logging.WARNING)
-            self.hub = HubConnectionBuilder()\
-                .with_url(self.url_signalr, options={'verify_ssl': False})\
-                .configure_logging(logging.WARNING, socket_trace=True, handler=handler)\
-                .with_automatic_reconnect({
-                    'type': 'raw',
-                    'keep_alive_interval': 10,
-                    'reconnect_interval': 5,
-                    'max_attempts': 5,
-                }).build()
+            self.hub = (
+                HubConnectionBuilder()
+                .with_url(self.url_signalr, options={'verify_ssl': False})
+                .configure_logging(logging.WARNING, socket_trace=True, handler=handler)
+                .with_automatic_reconnect(
+                    {
+                        'type': 'raw',
+                        'keep_alive_interval': 10,
+                        'reconnect_interval': 5,
+                        'max_attempts': 5,
+                    }
+                )
+                .build()
+            )
             self.hub.on_open(self.on_connect)
             self.hub.on_close(self.on_disconnect)
             self.hub.on_error(self.on_error)

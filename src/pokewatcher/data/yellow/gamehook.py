@@ -80,7 +80,6 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'label': yellow.WRAM_PLAYER_ID,
         'store': game_data.VAR_PLAYER_ID,
     },
-
     P_GAME_TIME_HOURS: {
         'type': 'int',
         'bytes': True,
@@ -96,7 +95,6 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_GAME_TIME_SECONDS,
     },
-
     P_SPECIES: {
         'type': 'string',
         'key': 'name',
@@ -157,12 +155,10 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_PARTY_MON1_SP_DEFENSE,
     },
-
     P_MAP: {
         'type': 'string',
         'store': game_data.VAR_MAP,
     },
-
     # P_AUDIO_SOUND: {},
     P_AUDIO_CH5: {
         'type': 'int',
@@ -170,7 +166,6 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'label': yellow.WRAM_AUDIO_CHANNEL5,
     },
     # P_AUDIO_CH6: {},
-
     P_BATTLE_TYPE: {
         'type': 'int',
         'bytes': True,
@@ -191,7 +186,6 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'label': yellow.WRAM_LOW_HEALTH_ALARM,
     },
-
     P_STAGE_ATK: {
         'type': 'int',
         'bytes': True,
@@ -222,7 +216,6 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_STAGE_EVASION,
     },
-
     P_BATTLE_ATK: {
         'type': 'int',
         'bytes': True,
@@ -243,7 +236,6 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_SPECIAL,
     },
-
     P_BADGE1: {
         'type': 'bool',
         'bytes': True,

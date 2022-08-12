@@ -131,4 +131,5 @@ class DataHandler:
         def gof(prev: Any, value: Any, mapper: Mapping[str, Any]):
             f(prev, value, mapper)
             g(prev, value, mapper)
+
         return gof

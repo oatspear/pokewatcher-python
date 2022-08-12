@@ -16,13 +16,7 @@ from pokewatcher.data.yellow.constants import (
 )
 from pokewatcher.errors import StateMachineError
 import pokewatcher.events as events
-from pokewatcher.logic.yellow.fsm import (
-    InBattle,
-    Initial,
-    InOverworld,
-    MainMenu,
-    VictorySequence,
-)
+from pokewatcher.logic.yellow.fsm import InBattle, Initial, InOverworld, MainMenu, VictorySequence
 
 ###############################################################################
 # Initial State

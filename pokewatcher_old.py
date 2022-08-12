@@ -5,6 +5,7 @@
 # Imports
 ################################################################################
 
+from types import SimpleNamespace
 from typing import Any, Dict, Tuple
 
 from collections import Counter, namedtuple
@@ -12,16 +13,15 @@ import json
 import logging
 import os
 from pathlib import Path
-import requests
 import shutil
 import socket
 import subprocess
 import sys
 import time
-from types import SimpleNamespace
 import warnings
 
 import keyboard
+import requests
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 
 ################################################################################
@@ -205,6 +205,7 @@ class PokemonDataHandler:
             if not quiet:
                 print(f'[Data] new {attr}:', value)
             self.data[attr] = value
+
         return handle
 
     def _key_setter(self, attr, key, quiet=True):
@@ -212,6 +213,7 @@ class PokemonDataHandler:
             if not quiet:
                 print(f'[Data] new {attr}:', value)
             self.data[attr] = value[key] if value is not None else None
+
         return handle
 
     def _string_setter(self, attr, quiet=True):
@@ -219,6 +221,7 @@ class PokemonDataHandler:
             if not quiet:
                 print(f'[Data] new {attr}:', value)
             self.data[attr] = str(value)
+
         return handle
 
     def _int_setter(self, attr, quiet=True):
@@ -226,6 +229,7 @@ class PokemonDataHandler:
             if not quiet:
                 print(f'[Data] new {attr}:', value)
             self.data[attr] = int(value)
+
         return handle
 
     def _bool_setter(self, attr, quiet=True):
@@ -233,6 +237,7 @@ class PokemonDataHandler:
             if not quiet:
                 print(f'[Data] new {attr}:', value)
             self.data[attr] = bool(value)
+
         return handle
 
     def _handle_player_id(self, value):
@@ -456,7 +461,7 @@ class YellowDataHandler(PokemonDataHandler):
         'Route 18',
         'Route 19',
         'Route 20',
-        'Route 21', 
+        'Route 21',
         'Route 22',
         'Route 23',
         'Route 24',
@@ -525,7 +530,7 @@ class CrystalDataHandler(PokemonDataHandler):
     P_TRAINER_CLASS = 'battle.trainer.class'
     P_TRAINER_ID = 'battle.trainer.id'
     P_BATTLE_ALARM = 'battle.lowHealthAlarm'
-    
+
     P_STAGE_ATK = 'battle.yourPokemon.modStageAttack'
     P_STAGE_DEF = 'battle.yourPokemon.modStageDefense'
     P_STAGE_SPD = 'battle.yourPokemon.modStageSpeed'
@@ -612,8 +617,8 @@ class CrystalDataHandler(PokemonDataHandler):
         self._handlers[self.P_AUDIO_CHANNEL5] = self._handle_sound_effects
 
     MAPS = {
-        'OLIVINE': { 2: 'OLIVINE_GYM' },
-        'MAHOGANY': { 2: 'MAHOGANY_GYM' },
+        'OLIVINE': {2: 'OLIVINE_GYM'},
+        'MAHOGANY': {2: 'MAHOGANY_GYM'},
         'DUNGEONS': {
             1: 'SPROUT_TOWER',
             2: 'SPROUT_TOWER',
@@ -661,18 +666,14 @@ class CrystalDataHandler(PokemonDataHandler):
             1: 'BLACKTHORN_GYM',
             2: 'BLACKTHORN_GYM',
         },
-        'CINNABAR': { 4: 'CINNABAR_GYM' },
-        'CERULEAN': { 6: 'CERULEAN_GYM' },
-        'AZALEA': { 5: 'AZALEA_GYM' },
-        'VIOLET': { 7: 'VIOLET_GYM' },
-        'GOLDENROD': { 3: 'GOLDENROD_GYM' },
-        'VERMILION': { 11: 'VERMILION_GYM' },
-        'PEWTER': { 4: 'PEWTER_GYM' },
-        'FAST SHIP': {
-            10: 'MOUNT_MOON',
-            11: 'MOUNT_MOON',
-            12: 'TIN_TOWER_ROOF'
-        },
+        'CINNABAR': {4: 'CINNABAR_GYM'},
+        'CERULEAN': {6: 'CERULEAN_GYM'},
+        'AZALEA': {5: 'AZALEA_GYM'},
+        'VIOLET': {7: 'VIOLET_GYM'},
+        'GOLDENROD': {3: 'GOLDENROD_GYM'},
+        'VERMILION': {11: 'VERMILION_GYM'},
+        'PEWTER': {4: 'PEWTER_GYM'},
+        'FAST SHIP': {10: 'MOUNT_MOON', 11: 'MOUNT_MOON', 12: 'TIN_TOWER_ROOF'},
         'INDIGO': {
             3: 'WILLS_ROOM',
             4: 'KOGAS_ROOM',
@@ -680,8 +681,8 @@ class CrystalDataHandler(PokemonDataHandler):
             6: 'KARENS_ROOM',
             7: 'LANCES_ROOM',
         },
-        'FUCHSIA': { 8: 'FUCHSIA_GYM' },
-        'CELADON': { 21: 'CELADON_GYM' },
+        'FUCHSIA': {8: 'FUCHSIA_GYM'},
+        'CELADON': {21: 'CELADON_GYM'},
         'CIANWOOD': {
             5: 'CIANWOOD_GYM',
             11: 'BATTLE_TOWER',
@@ -691,8 +692,8 @@ class CrystalDataHandler(PokemonDataHandler):
             15: 'BATTLE_TOWER',
             16: 'BATTLE_TOWER',
         },
-        'VIRIDIAN': { 4: 'VIRIDIAN_GYM' },
-        'SAFFRON': { 4: 'SAFFRON_GYM' },
+        'VIRIDIAN': {4: 'VIRIDIAN_GYM'},
+        'SAFFRON': {4: 'SAFFRON_GYM'},
     }
 
     def _set_map_group_and_location(self, value):
@@ -939,18 +940,20 @@ class YellowBattleMonitor:
         self.on_battle_ended()
 
     def _internal_state(self):
-        return '\n'.join((
-            'YellowBattleMonitor',
-            f'  state: {self.state}',
-            f'  battle_type: {self.battle_type}',
-            f'  trainer_class: {self.trainer_class}',
-            f'  trainer_id: {self.trainer_id}',
-            f'  enemy_species: {self.enemy_species}',
-            f'  battle_result: {self.battle_result}',
-            '  battle_mon:',
-            f'    stats: {self.battle_mon.stats}',
-            f'    stages: {self.battle_mon.stages}',
-        ))
+        return '\n'.join(
+            (
+                'YellowBattleMonitor',
+                f'  state: {self.state}',
+                f'  battle_type: {self.battle_type}',
+                f'  trainer_class: {self.trainer_class}',
+                f'  trainer_id: {self.trainer_id}',
+                f'  enemy_species: {self.enemy_species}',
+                f'  battle_result: {self.battle_result}',
+                '  battle_mon:',
+                f'    stats: {self.battle_mon.stats}',
+                f'    stages: {self.battle_mon.stages}',
+            )
+        )
 
 
 # BattleIntro:
@@ -967,6 +970,7 @@ class YellowBattleMonitor:
 #       write [wOtherTrainerClass]
 # WinTrainerBattle:
 #   write [wBattleEnded]
+
 
 class CrystalBattleMonitor:
     # wBattleMode
@@ -1125,19 +1129,21 @@ class CrystalBattleMonitor:
         print('[Battle] back to overworld')
 
     def _internal_state(self):
-        return '\n'.join((
-            'CrystalBattleMonitor',
-            f'  state: {self.state}',
-            f'  battle_type: {self.battle_type}',
-            f'  battle_mode: {self.battle_mode}',
-            f'  trainer_class: {self.trainer_class}',
-            f'  trainer_id: {self.trainer_id}',
-            f'  enemy_species: {self.enemy_species}',
-            f'  battle_result: {self.battle_result}',
-            '  battle_mon:',
-            f'    stats: {self.battle_mon.stats}',
-            f'    stages: {self.battle_mon.stages}',
-        ))
+        return '\n'.join(
+            (
+                'CrystalBattleMonitor',
+                f'  state: {self.state}',
+                f'  battle_type: {self.battle_type}',
+                f'  battle_mode: {self.battle_mode}',
+                f'  trainer_class: {self.trainer_class}',
+                f'  trainer_id: {self.trainer_id}',
+                f'  enemy_species: {self.enemy_species}',
+                f'  battle_result: {self.battle_result}',
+                '  battle_mon:',
+                f'    stats: {self.battle_mon.stats}',
+                f'    stages: {self.battle_mon.stages}',
+            )
+        )
 
 
 ################################################################################
@@ -1162,82 +1168,82 @@ class BattleTimeSplitter:
     BOSSES = {
         'Pokemon Yellow': [
             # CLASS,         ID, NAME
-            ('BROCK',         1, 'BROCK'),
-            ('BROCK',         1, 'BROCK'),
-            ('MISTY',         1, 'MISTY'),
-            ('LASS',         10, 'ODDISH LASS'),
-            ('ROCKET',        5, 'ROCKET'),
-            ('LT.SURGE',      1, 'LT.SURGE'),
-            ('JR TRAINER F',  5, 'RTG1 - WRAPPING LASS'),
-            ('POKEMANIAC',    7, 'RTG2 - POKEMANIAC 1'),
-            ('POKEMANIAC',    5, 'RTG3 - POKEMANIAC 2'),
+            ('BROCK', 1, 'BROCK'),
+            ('BROCK', 1, 'BROCK'),
+            ('MISTY', 1, 'MISTY'),
+            ('LASS', 10, 'ODDISH LASS'),
+            ('ROCKET', 5, 'ROCKET'),
+            ('LT.SURGE', 1, 'LT.SURGE'),
+            ('JR TRAINER F', 5, 'RTG1 - WRAPPING LASS'),
+            ('POKEMANIAC', 7, 'RTG2 - POKEMANIAC 1'),
+            ('POKEMANIAC', 5, 'RTG3 - POKEMANIAC 2'),
             ('JR TRAINER F', 10, 'RTG4 - STATUS JR TRAINER'),
-            ('HIKER',         9, 'RTG5 - SELF-DESTRUCTING HIKER'),
+            ('HIKER', 9, 'RTG5 - SELF-DESTRUCTING HIKER'),
             ('JR TRAINER F', 18, 'RTG6 - FINISHER'),
-            ('ERIKA',         1, 'ERIKA'),
-            ('KOGA',          1, 'KOGA'),
-            ('BLAINE',        1, 'BLAINE'),
-            ('SABRINA',       1, 'SABRINA'),
-            ('GIOVANNI',      2, 'GIOVANNI (SILPH)'),
-            ('GIOVANNI',      3, 'GIOVANNI'),
-            ('LORELEI',       1, 'LORELEI'),
-            ('BRUNO',         1, 'BRUNO'),
-            ('AGATHA',        1, 'AGATHA'),
-            ('LANCE',         1, 'LANCE'),
-            ('RIVAL1',        2, 'RIVAL (OPTIONAL)'),
-            ('RIVAL1',        3, 'RIVAL (NUGGET BRIDGE)'),
-            ('RIVAL2',        1, 'RIVAL (SS ANNE)'),
-            ('RIVAL2',        2, 'RIVAL (PKMN TOWER)'),
-            ('RIVAL2',        3, 'RIVAL (PKMN TOWER)'),
-            ('RIVAL2',        4, 'RIVAL (PKMN TOWER)'),
-            ('RIVAL2',        5, 'RIVAL (SILPH CO.)'),
-            ('RIVAL2',        6, 'RIVAL (SILPH CO.)'),
-            ('RIVAL2',        7, 'RIVAL (SILPH CO.)'),
-            ('RIVAL2',        8, 'RIVAL (FINAL)'),
-            ('RIVAL2',        9, 'RIVAL (FINAL)'),
-            ('RIVAL2',       10, 'RIVAL (FINAL)'),
-            ('RIVAL3',        1, 'CHAMPION'),
-            ('RIVAL3',        2, 'CHAMPION'),
-            ('RIVAL3',        3, 'CHAMPION'),
+            ('ERIKA', 1, 'ERIKA'),
+            ('KOGA', 1, 'KOGA'),
+            ('BLAINE', 1, 'BLAINE'),
+            ('SABRINA', 1, 'SABRINA'),
+            ('GIOVANNI', 2, 'GIOVANNI (SILPH)'),
+            ('GIOVANNI', 3, 'GIOVANNI'),
+            ('LORELEI', 1, 'LORELEI'),
+            ('BRUNO', 1, 'BRUNO'),
+            ('AGATHA', 1, 'AGATHA'),
+            ('LANCE', 1, 'LANCE'),
+            ('RIVAL1', 2, 'RIVAL (OPTIONAL)'),
+            ('RIVAL1', 3, 'RIVAL (NUGGET BRIDGE)'),
+            ('RIVAL2', 1, 'RIVAL (SS ANNE)'),
+            ('RIVAL2', 2, 'RIVAL (PKMN TOWER)'),
+            ('RIVAL2', 3, 'RIVAL (PKMN TOWER)'),
+            ('RIVAL2', 4, 'RIVAL (PKMN TOWER)'),
+            ('RIVAL2', 5, 'RIVAL (SILPH CO.)'),
+            ('RIVAL2', 6, 'RIVAL (SILPH CO.)'),
+            ('RIVAL2', 7, 'RIVAL (SILPH CO.)'),
+            ('RIVAL2', 8, 'RIVAL (FINAL)'),
+            ('RIVAL2', 9, 'RIVAL (FINAL)'),
+            ('RIVAL2', 10, 'RIVAL (FINAL)'),
+            ('RIVAL3', 1, 'CHAMPION'),
+            ('RIVAL3', 2, 'CHAMPION'),
+            ('RIVAL3', 3, 'CHAMPION'),
         ],
         'Pokemon Crystal': [
             # CLASS,    ID,  NAME
             # ('YOUNGSTER', 1, 'YOUNGSTER JOEY'),
             # ('YOUNGSTER', 2, 'YOUNGSTER MIKEY'),
-            ('RIVAL1',    1, 'RIVAL1'),
-            ('RIVAL1',    2, 'RIVAL1'),
-            ('RIVAL1',    3, 'RIVAL1'),
-            ('FALKNER',   1, 'FALKNER'),
-            ('RIVAL1',    4, 'RIVAL2'),  
-            ('RIVAL1',    5, 'RIVAL2'),  
-            ('RIVAL1',    6, 'RIVAL2'),  
-            ('BUGSY',     1, 'BUGSY'),
-            ('WHITNEY',   1, 'WHITNEY'),
-            ('RIVAL1',    7, 'RIVAL3'),  
-            ('RIVAL1',    8, 'RIVAL3'),  
-            ('RIVAL1',    9, 'RIVAL3'), 
-            ('MORTY',     1, 'MORTY'), 
-            ('CHUCK',     1, 'CHUCK'),
-            ('PRYCE',     1, 'PRYCE'),
-            ('JASMINE',   1, 'JASMINE'),
-            ('RIVAL1',    10, 'RIVAL4'),  
-            ('RIVAL1',    11, 'RIVAL4'),  
-            ('RIVAL1',    12, 'RIVAL4'), 
-            ('CLAIR',     1, 'CLAIR'),
-            ('WILL',      1, 'WILL'),
-            ('KOGA',      1, 'KOGA'),
-            ('BRUNO',     1, 'BRUNO'),
-            ('KAREN',     1, 'KAREN'),
-            ('CHAMPION',  1, 'CHAMPION'),
-            ('SABRINA',   1, 'SABRINA'),
-            ('ERIKA',     1, 'ERIKA'),
-            ('MISTY',     1, 'MISTY'),
+            ('RIVAL1', 1, 'RIVAL1'),
+            ('RIVAL1', 2, 'RIVAL1'),
+            ('RIVAL1', 3, 'RIVAL1'),
+            ('FALKNER', 1, 'FALKNER'),
+            ('RIVAL1', 4, 'RIVAL2'),
+            ('RIVAL1', 5, 'RIVAL2'),
+            ('RIVAL1', 6, 'RIVAL2'),
+            ('BUGSY', 1, 'BUGSY'),
+            ('WHITNEY', 1, 'WHITNEY'),
+            ('RIVAL1', 7, 'RIVAL3'),
+            ('RIVAL1', 8, 'RIVAL3'),
+            ('RIVAL1', 9, 'RIVAL3'),
+            ('MORTY', 1, 'MORTY'),
+            ('CHUCK', 1, 'CHUCK'),
+            ('PRYCE', 1, 'PRYCE'),
+            ('JASMINE', 1, 'JASMINE'),
+            ('RIVAL1', 10, 'RIVAL4'),
+            ('RIVAL1', 11, 'RIVAL4'),
+            ('RIVAL1', 12, 'RIVAL4'),
+            ('CLAIR', 1, 'CLAIR'),
+            ('WILL', 1, 'WILL'),
+            ('KOGA', 1, 'KOGA'),
+            ('BRUNO', 1, 'BRUNO'),
+            ('KAREN', 1, 'KAREN'),
+            ('CHAMPION', 1, 'CHAMPION'),
+            ('SABRINA', 1, 'SABRINA'),
+            ('ERIKA', 1, 'ERIKA'),
+            ('MISTY', 1, 'MISTY'),
             ('LT. SURGE', 1, 'LT. SURGE'),
-            ('BROCK',     1, 'BROCK'),
-            ('BLAINE',    1, 'BLAINE'),
-            ('JANINE',    1, 'JANINE'),
-            ('BLUE',      1, 'BLUE'),
-            ('RED',       1, 'RED'),
+            ('BROCK', 1, 'BROCK'),
+            ('BLAINE', 1, 'BLAINE'),
+            ('JANINE', 1, 'JANINE'),
+            ('BLUE', 1, 'BLUE'),
+            ('RED', 1, 'RED'),
         ],
     }
 
@@ -1361,7 +1367,7 @@ class BattleTimeSplitter:
             if not self.filepath.exists():
                 text = ','.join(self.CSV_HEADERS) + '\n'
                 self.filepath.write_text(text, encoding='utf-8')
-            
+
             contents = list(','.join(r) for r in records)
             contents.append('')
             text = '\n'.join(contents)
@@ -1554,6 +1560,7 @@ def request_gamehook_data() -> Tuple[str, Any]:
 # External Processes
 ################################################################################
 
+
 def autohotkey(script: Path) -> bool:
     logger.info(f'[AutoHotkey] running {script}')
     cmd = f'start autohotkey {script}'
@@ -1571,9 +1578,11 @@ def autohotkey(script: Path) -> bool:
 # GameHook Watcher
 ################################################################################
 
+
 class GameHookBridge:
-    def __init__(self, on_connect=None, on_disconnect=None, on_error=None,
-                 on_change=None, on_load=None):
+    def __init__(
+        self, on_connect=None, on_disconnect=None, on_error=None, on_change=None, on_load=None
+    ):
         self.on_connect = on_connect or noop
         self.on_disconnect = on_disconnect or noop
         self.on_error = on_error or noop
@@ -1585,15 +1594,20 @@ class GameHookBridge:
         if self.hub is None:
             handler = logging.StreamHandler()
             handler.setLevel(logging.WARNING)
-            self.hub = HubConnectionBuilder()\
-                .with_url(GAMEHOOK_SIGNALR, options={'verify_ssl': False}) \
-                .configure_logging(logging.WARNING, socket_trace=True, handler=handler) \
-                .with_automatic_reconnect({
-                    'type': 'raw',
-                    'keep_alive_interval': 10,
-                    'reconnect_interval': 5,
-                    'max_attempts': 5,
-                }).build()
+            self.hub = (
+                HubConnectionBuilder()
+                .with_url(GAMEHOOK_SIGNALR, options={'verify_ssl': False})
+                .configure_logging(logging.WARNING, socket_trace=True, handler=handler)
+                .with_automatic_reconnect(
+                    {
+                        'type': 'raw',
+                        'keep_alive_interval': 10,
+                        'reconnect_interval': 5,
+                        'max_attempts': 5,
+                    }
+                )
+                .build()
+            )
             self.hub.on_open(self.on_connect)
             self.hub.on_close(self.on_disconnect)
             self.hub.on_error(self.on_error)
@@ -1703,8 +1717,8 @@ class SaveFileBackupAgent:
         self.save_signal = True
         self._timestamp = time.time()
 
-        #print('[AutoHotkey] running "save state" script')
-        #autohotkey(AHK_SAVE_STATE)
+        # print('[AutoHotkey] running "save state" script')
+        # autohotkey(AHK_SAVE_STATE)
         request_save_state()
 
 

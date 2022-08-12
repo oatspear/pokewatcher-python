@@ -75,7 +75,7 @@ class TrainerParty:
         return (self.slot1, self.slot2, self.slot3, self.slot4, self.slot5, self.slot6)
 
     def as_list(self) -> List[PartyMon]:
-        return list(self.slots[:self.size])
+        return list(self.slots[: self.size])
 
     @property
     def lead(self) -> PartyMon:

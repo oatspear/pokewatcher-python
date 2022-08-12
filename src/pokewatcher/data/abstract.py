@@ -128,9 +128,11 @@ class Composite:
     def _propagate_atomic(self, name: str) -> Callable:
         def cb(*args, **kwargs):
             self.on_change.emit(name, *args, **kwargs)
+
         return cb
 
     def _propagate_composite(self, prefix: str) -> Callable:
         def cb(name, *args, **kwargs):
             self.on_change.emit(f'{prefix}.{name}', *args, **kwargs)
+
         return cb
