@@ -13,7 +13,6 @@ from attrs import define, field
 
 from pokewatcher.data.structs import GameData
 from pokewatcher.errors import StateMachineError
-import pokewatcher.events as events
 
 ###############################################################################
 # Constants
@@ -45,8 +44,8 @@ class GameState:
 
 def transition(state: GameState, prev: Any, value: Any, data: GameData) -> GameState:
     # this is just a template for other transition functions
-    logger.debug(f'on state input: {self.name} -> transition ({prev}, {value})')
-    return self
+    logger.debug(f'on state input: {state.name} -> transition ({prev}, {value})')
+    return state
 
 
 ###############################################################################

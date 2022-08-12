@@ -14,7 +14,6 @@ from attrs import define
 from pokewatcher.data.structs import GameData
 from pokewatcher.data.yellow.constants import (
     ALARM_DISABLED,
-    ALARM_ENABLED,
     BATTLE_TYPE_LOST,
     BATTLE_TYPE_NONE,
     BATTLE_TYPE_TRAINER,

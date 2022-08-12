@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Dict, Final, Generic, List, Optional, Tuple
+from typing import Any, Dict, Final, List, Optional, Tuple
 
 import logging
 
@@ -37,6 +37,7 @@ class MonStats:
     @property
     def special(self) -> VarInt:
         return self.sp_attack
+
 
 @frozen
 class PartyMon:
@@ -225,7 +226,7 @@ class GameTime:
     def formatted(self, zeroes: bool = True, frames: bool = True) -> str:
         t = f'{self.seconds.value:02}'
         if frames:
-            t= f'{t}.{self.frames.value:02}'
+            t = f'{t}.{self.frames.value:02}'
         if not zeroes:
             if self.hours.value == 0:
                 return t if self.minutes.value == 0 else f'{self.minutes.value:02}:{t}'

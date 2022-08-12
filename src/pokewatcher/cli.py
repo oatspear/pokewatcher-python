@@ -22,7 +22,6 @@ from typing import Any, Dict, Final, List, Optional
 
 import argparse
 import logging
-import sys
 
 from pokewatcher import __version__ as current_version
 from pokewatcher.components import ALL_COMPONENTS
@@ -141,7 +140,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     except KeyboardInterrupt:
         logger.error('aborted manually')
         return 1
-    except Exception as err:
+    except Exception:
         logger.exception('exception during setup')
         return 1
 
@@ -151,7 +150,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     except KeyboardInterrupt:
         logger.error('aborted manually')
         rcode = 1
-    except Exception as err:
+    except Exception:
         logger.exception('exception during execution')
         return 1
 

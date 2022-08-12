@@ -113,6 +113,7 @@ class TimeStamp:
 @define
 class SleepLoop:
     """Context manager for a timed sleep loop.
+
     Use `n <= 0` for an infinite loop.
     Use `delay` to specify the sleep time (in seconds) between iterations.
     Includes `delta` (seconds) - time spent since the previous iteration.

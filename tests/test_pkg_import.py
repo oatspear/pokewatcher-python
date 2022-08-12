@@ -20,4 +20,3 @@ def test_pkg_has_version():
     assert hasattr(pokewatcher, '__version__')
     assert isinstance(pokewatcher.__version__, str)
     assert pokewatcher.__version__ != ''
-

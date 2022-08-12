@@ -14,8 +14,8 @@ import requests
 from attrs import define, field
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 
-from pokewatcher.errors import PokeWatcherError
 from pokewatcher.core.util import noop, SleepLoop
+from pokewatcher.errors import PokeWatcherError
 
 ###############################################################################
 # Constants

@@ -5,14 +5,14 @@
 # Imports
 ###############################################################################
 
-from typing import Final, Mapping
+from typing import Any, Final, Mapping
 
 import logging
 
 import pokewatcher.data.constants as game_data
-import pokewatcher.data.yellow.constants as yellow
 from pokewatcher.data.gamehook import DataHandler
 from pokewatcher.data.structs import GameData
+import pokewatcher.data.yellow.constants as yellow
 from pokewatcher.logic.fsm import StateMachine
 
 ###############################################################################

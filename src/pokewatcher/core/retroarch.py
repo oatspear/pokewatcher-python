@@ -11,8 +11,8 @@ import logging
 
 from attrs import define, field
 
-from pokewatcher.errors import PokeWatcherError
 from pokewatcher.core.util import noop, SleepLoop, UdpConnection
+from pokewatcher.errors import PokeWatcherError
 
 ###############################################################################
 # Constants
@@ -75,7 +75,7 @@ class RetroArchBridge:
                     self._socket.send(GET_STATUS)
                     reply = self._socket.receive(bytes=4096)
                 except ConnectionError as e:
-                    logger.error('failed to establish a connection')
+                    logger.error(f'failed to establish a connection: {e}')
 
                 if not reply.startswith('GET_STATUS '):
                     logger.warning('unexpected response: ' + reply)
@@ -103,7 +103,7 @@ class RetroArchBridge:
                     # self._socket.send(b'STATE_SLOT_PLUS\n')
                     # no reply
                 except ConnectionError as e:
-                    logger.error('failed to establish a connection')
+                    logger.error(f'failed to establish a connection: {e}')
                 return
         logger.warning('unable to create a saved state')
         raise RetroArchError.save_state(self._socket.address)

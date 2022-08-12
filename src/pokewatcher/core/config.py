@@ -94,7 +94,6 @@ def load(args: Dict[str, Any]) -> Dict[str, Any]:
         return config
     except Exception as err:
         logger.error('loading configuration failed: ' + str(err))
-        print('Error while loading configuration. Reverting to defaults.', file=sys.stderr)
         return DEFAULTS
 
 

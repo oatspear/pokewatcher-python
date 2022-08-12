@@ -188,7 +188,7 @@ def test_in_battle_battle_type_other():
     for value in values:
         try:
             s.wIsInBattle(BATTLE_TYPE_WILD, value, data)
-            assert False
+            raise AssertionError()
         except StateMachineError:
             assert data.battle.ongoing is True
             assert events.on_battle_ended.count == c
@@ -253,7 +253,7 @@ def test_victory_sequence_battle_type_other():
     for value in values:
         try:
             s.wIsInBattle(BATTLE_TYPE_WILD, value, data)
-            assert False
+            raise AssertionError()
         except StateMachineError:
             pass
 
@@ -263,7 +263,7 @@ def test_victory_sequence_alarm_disabled():
     data = GameData()
     try:
         s.wLowHealthAlarmDisabled(ALARM_ENABLED, ALARM_DISABLED, data)
-        assert False
+        raise AssertionError()
     except StateMachineError:
         pass
 
