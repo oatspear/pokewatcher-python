@@ -292,7 +292,7 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
 
 
 def load_data_handler(data: GameData, fsm: StateMachine) -> DataHandler:
-    handler = DataHandler()
+    handler = DataHandler(data, fsm)
     for prop, metadata in PROPERTIES.items():
         handler.configure_property(prop, metadata)
     return handler
