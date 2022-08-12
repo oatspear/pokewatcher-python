@@ -80,10 +80,11 @@ class GameHookBridge:
             logger.info(f'connecting to {self.url_signalr}')
             handler = logging.StreamHandler()
             handler.setLevel(logging.WARNING)
+            # socket_trace produces lots of debug messages
             self.hub = (
                 HubConnectionBuilder()
                 .with_url(self.url_signalr, options={'verify_ssl': False})
-                .configure_logging(logging.WARNING, socket_trace=True, handler=handler)
+                .configure_logging(logging.WARNING, socket_trace=False, handler=handler)
                 .with_automatic_reconnect(
                     {
                         'type': 'raw',
