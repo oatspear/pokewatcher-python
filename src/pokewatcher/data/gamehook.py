@@ -5,13 +5,13 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Final, Mapping
+from typing import Any, Callable, Final, Mapping, Optional
 
 import logging
 
 from attrs import define, field
 
-from pokewatcher.core.util import Attribute, noop
+from pokewatcher.core.util import Attribute, identity, noop
 from pokewatcher.data.structs import GameData
 from pokewatcher.events import on_data_changed
 from pokewatcher.logic.fsm import StateMachine
@@ -22,51 +22,96 @@ from pokewatcher.logic.fsm import StateMachine
 
 logger: Final[logging.Logger] = logging.getLogger(__name__)
 
+TRANSFORMS: Final[Mapping[str, Callable]] = {
+    'bool': bool,
+    'int': int,
+    'float': float,
+    'string': str,
+}
+
 ###############################################################################
 # Interface
 ###############################################################################
 
 
 @define
+class GameHookProperty:
+    name: str
+    previous: Any = None
+    uses_bytes: bool = False
+    attribute: Optional[Attribute] = None
+    label: Optional[str] = None
+    converter: Callable = identity
+    handler: Callable = noop
+
+
+@define
 class DataHandler:
     data: GameData
     fsm: StateMachine
-    handlers: Mapping[str, Callable] = field(init=False, factory=dict)
-    labels: Mapping[str, str] = field(init=False, factory=dict)
+    properties: Mapping[str, GameHookProperty] = field(init=False, factory=dict)
 
-    def on_property_changed(self, prop: str, prev: Any, value: Any, mapper: Mapping[str, Any]):
-        handler = self.handlers.get(prop, noop)
-        handler(prev, value, mapper)
-        label = self.labels.get(prop)
-        if label:
-            self.fsm.on_input(label, prev, value, self.data)
+    def on_property_changed(self, prop: str, value: Any, byte_value: int):
+        ghp = self.properties.get(prop)
+        if ghp is not None:
+            # bytes or glossary value?
+            v = byte_value if prop.uses_bytes else value
+            # convert data to something else
+            v = ghp.converter(v)
+            # store it in GameData
+            if ghp.attribute is not None:
+                prev = ghp.attribute.get()
+                ghp.attribute.set(value)
+                on_data_changed.emit(ghp.attribute.path, prev, v)
+            # additional side effects
+            ghp.handler(v, self.data)
+            # feed to StateMachine
+            if ghp.label:
+                self.fsm.on_input(ghp.label, ghp.previous, v, self.data)
+            # store previous value for posterity
+            ghp.previous = v
+
+    def ensure_property(self, prop: str) -> GameHookProperty:
+        ghp = self.properties.get(prop)
+        if ghp is None:
+            ghp = GameHookProperty(prop)
+            self.properties[prop] = ghp
+        return ghp
+
+    def use_bytes(self, prop: str):
+        logger.debug(f'use bytes: {prop}')
+        ghp = self._ensure_property(prop)
+        ghp.uses_bytes = True
+
+    def convert(self, prop: str, data_type: str, key: Optional[str] = None):
+        logger.debug(f'convert data: {prop} -> {data_type}[{repr(key)}]')
+        ghp = self._ensure_property(prop)
+        f = TRANSFORMS.get(data_type, identity)
+        if key is None:
+            ghp.converter = f
+        else:
+            ghp.converter = lambda d: f(d[key])
 
     def store(self, prop: str, path: str):
         logger.debug(f'data store: {prop} -> {path}')
-        attr = Attribute.of(self.data, path)
-        self.do(prop, self._lazy_set_and_emit(path, attr))
+        ghp = self._ensure_property(prop)
+        ghp.attribute = Attribute.of(self.data, path)
+
+    def transition(self, prop: str, label: str):
+        logger.debug(f'transition label: {prop} -> {label}')
+        ghp = self._ensure_property(prop)
+        ghp.label = label
 
     def do(self, prop: str, handler: Callable):
         logger.debug(f'handle {prop}: {handler}')
-        f = self.handlers.get(prop)
-        if f is not None:
-            handler = self._chain(f, handler)
-        self.handlers[prop] = handler
+        ghp = self._ensure_property(prop)
+        if ghp.handler is noop:
+            ghp.handler = handler
+        else:
+            ghp.handler = self._chain(ghp.handler, handler)
 
     def _chain(self, f: Callable, g: Callable) -> Callable:
         def gof(prev: Any, value: Any, mapper: Mapping[str, Any]):
             f(prev, value, mapper)
             g(prev, value, mapper)
         return gof
-
-    def _lazy_set(self, obj: Any, attr: Attribute) -> Callable:
-        def just_set(prev: Any, value: Any, mapper: Mapping[str, Any]):
-            attr.set(value)
-        return just_set
-
-    def _lazy_set_and_emit(self, path: str, attr: Attribute) -> Callable:
-        def set_and_emit(prev: Any, value: Any, mapper: Mapping[str, Any]):
-            # prev = attr.get()
-            attr.set(value)
-            on_data_changed.emit(path, prev, value)
-        return set_and_emit
