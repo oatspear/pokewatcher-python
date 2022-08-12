@@ -182,7 +182,7 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     },
     # P_GYM_LEADER: {},
     P_BATTLE_ALARM: {
-        'type': 'int',
+        'type': 'bool',
         'bytes': True,
         'label': yellow.WRAM_LOW_HEALTH_ALARM,
     },

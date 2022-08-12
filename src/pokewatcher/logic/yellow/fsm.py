@@ -13,7 +13,6 @@ from attrs import define
 
 from pokewatcher.data.structs import GameData
 from pokewatcher.data.yellow.constants import (
-    ALARM_DISABLED,
     BATTLE_TYPE_LOST,
     BATTLE_TYPE_NONE,
     BATTLE_TYPE_TRAINER,
@@ -35,15 +34,15 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 
 
 class YellowState(GameState):
-    wPlayerID = transition
-    wIsInBattle = transition
-    wChannelSoundIDs_5 = transition
-    wLowHealthAlarmDisabled = transition
+    wPlayerID = transition  # noqa: N815
+    wIsInBattle = transition  # noqa: N815
+    wChannelSoundIDs_5 = transition  # noqa: N815
+    wLowHealthAlarmDisabled = transition  # noqa: N815
 
 
 @define
 class Initial(YellowState):
-    def wPlayerID(self, prev: int, value: int, data: GameData) -> GameState:
+    def wPlayerID(self, prev: int, value: int, _data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'player ID changed from {prev} to {value}')
         if value != 0 and prev == 0:
             logger.info('starting a new game')
@@ -54,7 +53,7 @@ class Initial(YellowState):
 
 @define
 class MainMenu(YellowState):
-    def wPlayerID(self, prev: int, value: int, data: GameData) -> GameState:
+    def wPlayerID(self, prev: int, value: int, _data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'player ID changed from {prev} to {value}')
         if value != 0 and prev == 0:
             logger.info('continue previous game')
@@ -65,7 +64,7 @@ class MainMenu(YellowState):
 
 @define
 class InGame(YellowState):
-    def wPlayerID(self, prev: int, value: int, data: GameData) -> GameState:
+    def wPlayerID(self, prev: int, value: int, _data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'player ID changed from {prev} to {value}')
         if value == 0:
             logger.info('game reset')
@@ -76,7 +75,7 @@ class InGame(YellowState):
 
 @define
 class InOverworld(InGame):
-    def wIsInBattle(self, prev: Any, value: Any, data: GameData) -> GameState:
+    def wIsInBattle(self, _p: Any, value: Any, data: GameData) -> GameState:  # noqa: N815
         if value == BATTLE_TYPE_WILD:
             data.battle.set_wild_battle()
             events.on_battle_started.emit()
@@ -93,7 +92,7 @@ class InOverworld(InGame):
             logger.warning(f'unknown battle type: {value}')
         return self
 
-    def wChannelSoundIDs_5(self, prev: Any, value: int, data: GameData) -> GameState:
+    def wChannelSoundIDs_5(self, _p: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
         if value == SFX_SAVE_FILE:
             logger.info('saved game')
             events.on_save_game.emit()
@@ -106,7 +105,7 @@ class InBattle(InGame):
     def is_battle_state(self) -> bool:
         return True
 
-    def wIsInBattle(self, prev: int, value: int, data: GameData) -> GameState:
+    def wIsInBattle(self, _p: int, value: int, data: GameData) -> GameState:  # noqa: N815
         if value == BATTLE_TYPE_NONE:
             # result should be set at this point
             data.battle.ongoing = False
@@ -118,8 +117,8 @@ class InBattle(InGame):
             logger.warning(f'unknown battle type: {value}')
         return self
 
-    def wLowHealthAlarmDisabled(self, prev: int, value: int, data: GameData) -> GameState:
-        if value == ALARM_DISABLED:
+    def wLowHealthAlarmDisabled(self, _p: int, v: bool, data: GameData) -> GameState:  # noqa: N815
+        if v:
             data.battle.set_victory()
             events.on_battle_ended.emit()
             return VictorySequence()
@@ -132,7 +131,7 @@ class VictorySequence(InGame):
     def is_battle_state(self) -> bool:
         return True
 
-    def wIsInBattle(self, prev: int, value: int, data: GameData) -> GameState:
+    def wIsInBattle(self, _p: int, value: int, _d: GameData) -> GameState:  # noqa: N815
         if value == BATTLE_TYPE_NONE:
             return InOverworld()
         elif value in (BATTLE_TYPE_WILD, BATTLE_TYPE_TRAINER, BATTLE_TYPE_LOST):
@@ -141,7 +140,7 @@ class VictorySequence(InGame):
             logger.warning(f'unknown battle type: {value}')
         return self
 
-    def wLowHealthAlarmDisabled(self, prev: int, value: int, data: GameData) -> GameState:
-        if value == ALARM_DISABLED:
-            self.inconsistent('wLowHealthAlarmDisabled', value)
+    def wLowHealthAlarmDisabled(self, _p: int, v: bool, _d: GameData) -> GameState:  # noqa: N815
+        if v:
+            self.inconsistent('wLowHealthAlarmDisabled', v)
         return self
