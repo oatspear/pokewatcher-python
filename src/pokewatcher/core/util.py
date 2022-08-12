@@ -56,7 +56,7 @@ class Attribute:
         for attr in parts[:-1]:
             obj = getattr(obj, attr)
         assert hasattr(obj, parts[-1])
-        return cls(obj, parts[-1])
+        return cls(obj, parts[-1], path=path)
 
 
 # @define
