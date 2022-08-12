@@ -52,8 +52,8 @@ class GameHookBridge:
     hub: Optional[HubConnectionBuilder] = field(init=False, default=None, repr=False)
 
     @property
-    def game_name(self) -> Optional[str]:
-        return self.meta.get('gameName')
+    def game_name(self) -> str:
+        return self.meta.get('gameName', '')
 
     def setup(self, settings: Mapping[str, Any]):
         logger.info('setting up')
