@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Final
+from typing import Any, Callable, Final
 
 import logging
 
@@ -27,6 +27,19 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 
 @define
 class GameState:
+    # transitions: Mapping[str, Callable] = field(init=False, factory=dict)
+
+    # def __attrs_post_init__(self):
+    #     for attr in dir(self):
+    #         if attr.startswith('__'):
+    #             continue
+    #         method = getattr(self, attr)
+    #         if not callable(method):
+    #             continue
+    #         label = getattr(method, 'label')
+    #         if label:
+    #             self.transitions[label] = method
+
     @property
     def name(self) -> str:
         name = type(self).__name__
@@ -46,6 +59,13 @@ def transition(state: GameState, prev: Any, value: Any, data: GameData) -> GameS
     # this is just a template for other transition functions
     logger.debug(f'on state input: {state.name} -> transition ({prev}, {value})')
     return state
+
+
+def transition_label(label: str) -> Callable:
+    def decorator(function: Callable) -> Callable:
+        function.label = label
+        return function
+    return decorator
 
 
 ###############################################################################
