@@ -78,14 +78,31 @@ class DataHandler:
             self.properties[prop] = ghp
         return ghp
 
+    def configure_property(self, prop: str, metadata: Mapping[str, Any]):
+        use_bytes = bool(metadata.get('bytes', False))
+        if use_bytes:
+            self.use_bytes(prop)
+
+        data_type = metadata.get('type', '')
+        key = metadata.get('key')
+        self.convert(prop, data_type, key=key)
+
+        attr = metadata.get('store')
+        if attr:
+            self.store(prop, attr)
+
+        label = metadata.get('label')
+        if label is not None:
+            self.transition(prop, label)
+
     def use_bytes(self, prop: str):
         logger.debug(f'use bytes: {prop}')
-        ghp = self._ensure_property(prop)
+        ghp = self.ensure_property(prop)
         ghp.uses_bytes = True
 
     def convert(self, prop: str, data_type: str, key: Optional[str] = None):
         logger.debug(f'convert data: {prop} -> {data_type}[{repr(key)}]')
-        ghp = self._ensure_property(prop)
+        ghp = self.ensure_property(prop)
         f = TRANSFORMS.get(data_type, identity)
         if key is None:
             ghp.converter = f
@@ -94,17 +111,17 @@ class DataHandler:
 
     def store(self, prop: str, path: str):
         logger.debug(f'data store: {prop} -> {path}')
-        ghp = self._ensure_property(prop)
+        ghp = self.ensure_property(prop)
         ghp.attribute = Attribute.of(self.data, path)
 
     def transition(self, prop: str, label: str):
         logger.debug(f'transition label: {prop} -> {label}')
-        ghp = self._ensure_property(prop)
+        ghp = self.ensure_property(prop)
         ghp.label = label
 
     def do(self, prop: str, handler: Callable):
         logger.debug(f'handle {prop}: {handler}')
-        ghp = self._ensure_property(prop)
+        ghp = self.ensure_property(prop)
         if ghp.handler is noop:
             ghp.handler = handler
         else:
