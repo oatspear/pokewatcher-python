@@ -38,6 +38,11 @@ def identity(x: Any) -> Any:
 class Attribute:
     obj: Any
     name: str
+    path: str = ''
+
+    def __attrs_post_init__(self):
+        if not self.path:
+            self.path = self.name
 
     def get(self) -> Any:
         return getattr(self.obj, self.name)
