@@ -55,7 +55,7 @@ class DataHandler:
         ghp = self.properties.get(prop)
         if ghp is not None:
             # bytes or glossary value?
-            v = byte_value if prop.uses_bytes else value
+            v = byte_value if ghp.uses_bytes else value
             # convert data to something else
             v = ghp.converter(v)
             # store it in GameData
