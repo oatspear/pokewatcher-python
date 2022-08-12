@@ -52,7 +52,7 @@ class GameInterface:
         self.retroarch.setup(retroarch)
         gamehook = settings['gamehook']
         self.gamehook.setup(gamehook)
-        self._load_data_handler(self.gamehook, self.data)
+        self._load_data_handler()
 
     def start(self):
         logger.info('starting low-level components')
