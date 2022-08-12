@@ -21,7 +21,7 @@ from pokewatcher.logic.fsm import StateMachine
 
 logger: Final[logging.Logger] = logging.getLogger(__name__)
 
-P_PLAYER_ID = 'playerId'
+P_PLAYER_ID = 'player.playerId'
 
 P_SPECIES = 'player.team.0.species'
 P_LEVEL = 'player.team.0.level'
