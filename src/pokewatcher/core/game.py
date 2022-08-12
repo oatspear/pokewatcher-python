@@ -85,9 +85,3 @@ class GameInterface:
         self.fsm.state = Initial()
         handler = load_data_handler(self.data, self.fsm)
         self.gamehook.on_change = handler.on_property_changed
-
-        # handle initial data
-        for prop, value in self.gamehook.mapper.items():
-            ghp = handler.properties.get(prop)
-            if ghp is not None and not ghp.uses_bytes:
-                ghp.previous = value

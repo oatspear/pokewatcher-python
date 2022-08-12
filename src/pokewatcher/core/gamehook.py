@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Dict, Final, Mapping, Optional
+from typing import Any, Callable, Dict, Final, List, Mapping, Optional
 
 import json
 import logging
@@ -46,7 +46,8 @@ class GameHookBridge:
     on_change: Callable = noop
     on_load: Callable = noop
     meta: Dict[str, Any] = field(init=False, factory=dict)
-    mapper: Dict[str, Any] = field(init=False, factory=dict)
+    glossary: Dict[str, Any] = field(init=False, factory=dict)
+    properties: List[str] = field(init=False, factory=list)
     url_signalr: str = field(init=False, default='http://localhost:8085/updates')
     url_requests: str = field(init=False, default='http://localhost:8085/mapper')
     hub: Optional[HubConnectionBuilder] = field(init=False, default=None, repr=False)
@@ -117,7 +118,8 @@ class GameHookBridge:
                 data = json.loads(response.text)
                 try:
                     self.meta = data['meta']
-                    self.mapper = data['properties']
+                    self.glossary = data['glossary']
+                    self.properties = data['properties']
                     name = self.meta['gameName']
                     logger.info('received mapper')
                     return name
@@ -130,7 +132,6 @@ class GameHookBridge:
         prop, _address, value, byte_value, _frozen, changed_fields = args
         if 'value' in changed_fields:
             self.on_change(prop, value, byte_value)
-            self.mapper[prop] = value
 
 
 def new():

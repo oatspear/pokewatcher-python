@@ -128,8 +128,8 @@ class DataHandler:
             ghp.handler = self._chain(ghp.handler, handler)
 
     def _chain(self, f: Callable, g: Callable) -> Callable:
-        def gof(prev: Any, value: Any, mapper: Mapping[str, Any]):
-            f(prev, value, mapper)
-            g(prev, value, mapper)
+        def gof(value: Any, data: GameData):
+            f(value, data)
+            g(value, data)
 
         return gof
