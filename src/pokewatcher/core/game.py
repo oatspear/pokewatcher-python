@@ -53,8 +53,7 @@ class GameInterface:
         gamehook = settings['gamehook']
         self.gamehook.setup(gamehook)
 
-        logger.info('setting up event handlers')
-        _load_data_handler(self.gamehook, self.data)
+        self._load_data_handler(self.gamehook, self.data)
 
         self.state = initial_state(self.version.lower(), self.gamehook.mapper)
         # TODO load mapper data type transforms
@@ -75,6 +74,8 @@ class GameInterface:
         self.retroarch.cleanup()
 
     def _load_data_handler(self):
+        logger.info('setting up data handlers')
+
         version = self.gamehook.game_name.lower()
         if 'yellow' in version:
             from pokewatcher.data.yellow.gamehook import load_data_handler
