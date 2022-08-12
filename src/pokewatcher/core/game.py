@@ -11,7 +11,7 @@ import logging
 
 from attrs import define, field
 
-from pokewatcher.core.gamehook import GameHookBridge
+from pokewatcher.core.gamehook import GameHookBridge, GameHookError
 from pokewatcher.core.retroarch import RetroArchBridge
 from pokewatcher.data.structs import GameData
 from pokewatcher.logic.fsm import GameState, StateMachine
@@ -83,7 +83,7 @@ class GameInterface:
             from pokewatcher.data.crystal.gamehook import load_data_handler
             from pokewatcher.logic.crystal.fsm import Initial
         else:
-            raise ValueError(f'Unknown game version: {version}')
+            raise GameHookError.unknown_game(version)
 
         self.fsm.state = Initial()
         handler = load_data_handler(self.data, self.fsm)
