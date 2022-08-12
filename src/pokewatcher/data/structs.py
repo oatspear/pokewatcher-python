@@ -59,6 +59,10 @@ class PartyMon:
     level: int = 1
     stats: MonStats = field(factory=MonStats)
     hp: int = -1
+    move1: int = 0
+    move2: int = 0
+    move3: int = 0
+    move4: int = 0
 
     def __attrs_post_init__(self):
         if self.hp < 0:
@@ -141,6 +145,15 @@ class BattleMonStatStages:
     sp_defense: int = 0
     accuracy: int = 0
     evasion: int = 0
+
+    @property
+    def special(self) -> int:
+        return self.sp_attack
+
+    @special.setter
+    def special(self, value: int):
+        self.sp_attack = value
+        self.sp_defense = value
 
 
 @define
