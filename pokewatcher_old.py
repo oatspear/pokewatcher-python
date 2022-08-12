@@ -8,10 +8,9 @@
 from types import SimpleNamespace
 from typing import Any, Dict, Tuple
 
-from collections import Counter, namedtuple
+from collections import Counter
 import json
 import logging
-import os
 from pathlib import Path
 import shutil
 import socket
@@ -469,7 +468,7 @@ class YellowDataHandler(PokemonDataHandler):
     )
 
     def _handle_location(self, value):
-        print(f'[Data] new location:', value)
+        print('[Data] new location:', value)
         value = str(value)
         self.data['location'] = value
         if value in self.CRITICAL_LOCATIONS:
@@ -869,14 +868,14 @@ class YellowBattleMonitor:
 
         if value == self.ALARM_DISABLED:
             if self.state != self.STATE_IN_BATTLE:
-                print("[Battle] player won but monitor is not in the correct state")
-                print("[Battle] state:", self.state)
+                print('[Battle] player won but monitor is not in the correct state')
+                print('[Battle] state:', self.state)
             self._win_battle()
 
         elif value == self.ALARM_ENABLED:
             # game reset or battle starting after a previous victory
-            # print("[Battle] game reset or battle starting")
-            # print("[Battle] state:", self.state)
+            # print('[Battle] game reset or battle starting')
+            # print('[Battle] state:', self.state)
             pass
 
     def on_stage_attack_changed(self, value):
@@ -1041,16 +1040,16 @@ class CrystalBattleMonitor:
 
         if value == self.ALARM_DISABLED:
             if self.state != self.STATE_IN_BATTLE:
-                print("[Battle] player won but monitor is not in the correct state")
-                print("[Battle] state:", self.state)
+                print('[Battle] player won but monitor is not in the correct state')
+                print('[Battle] state:', self.state)
             self.battle_result = True
             self.state = self.STATE_PLAYER_WON
             self.on_battle_ended()
 
         elif value == self.ALARM_ENABLED:
             # game reset or battle ended
-            # print("[Battle] game reset or battle ended")
-            # print("[Battle] state:", self.state)
+            # print('[Battle] game reset or battle ended')
+            # print('[Battle] state:', self.state)
             pass
 
     def on_battle_type_changed(self, value):
@@ -1505,7 +1504,7 @@ def request_real_time() -> str:
         print('[Time Server] failed to connect')
         warnings.warn('[Time Server] failed to connect')
         logger.error('[Time Server] failed to connect')
-        return time.strftime("%H:%M:%S", time.localtime()) + '.0'
+        return time.strftime('%H:%M:%S', time.localtime()) + '.0'
 
 
 def request_start_timer():
