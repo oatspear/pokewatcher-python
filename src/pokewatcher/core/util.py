@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Optional, Tuple
+from typing import Any, Callable, Optional
 
 import socket
 import time
