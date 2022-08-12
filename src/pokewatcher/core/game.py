@@ -52,11 +52,7 @@ class GameInterface:
         self.retroarch.setup(retroarch)
         gamehook = settings['gamehook']
         self.gamehook.setup(gamehook)
-
         self._load_data_handler(self.gamehook, self.data)
-
-        self.state = initial_state(self.version.lower(), self.gamehook.mapper)
-        # TODO load mapper data type transforms
 
     def start(self):
         logger.info('starting low-level components')
@@ -89,7 +85,9 @@ class GameInterface:
         self.fsm.state = Initial()
         handler = load_data_handler(self.data, self.fsm)
         self.gamehook.on_change = handler.on_property_changed
+
         # handle initial data
-        no_data = {}
         for prop, value in self.gamehook.mapper.items():
-            handler.on_property_changed(prop, None, value, no_data)
+            ghp = handler.properties.get(prop)
+            if ghp is not None and not ghp.uses_bytes:
+                ghp.previous = value
