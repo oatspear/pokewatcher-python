@@ -9,7 +9,7 @@ from typing import Final, Mapping
 
 import logging
 
-import pokewatcher.data.constants as const
+import pokewatcher.data.constants as game_data
 import pokewatcher.data.yellow.constants as yellow
 from pokewatcher.data.gamehook import DataHandler
 from pokewatcher.data.structs import GameData
@@ -73,11 +73,217 @@ P_BADGE6 = 'player.badges.marshBadge'
 P_BADGE7 = 'player.badges.volcanoBadge'
 P_BADGE8 = 'player.badges.earthBadge'
 
-LABELS: Final[Mapping[str, str]] = {
-    P_PLAYER_ID: yellow.WRAM_PLAYER_ID,
-    P_BATTLE_TYPE: yellow.WRAM_BATTLE_TYPE,
-    P_BATTLE_ALARM: yellow.WRAM_LOW_HEALTH_ALARM,
-    P_AUDIO_CH5: yellow.WRAM_AUDIO_CHANNEL5,
+PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
+    P_PLAYER_ID: {
+        'type': 'int',
+        'bytes': True,
+        'label': yellow.WRAM_PLAYER_ID,
+        'store': game_data.VAR_PLAYER_ID,
+    },
+
+    P_GAME_TIME_HOURS: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_GAME_TIME_HOURS,
+    },
+    P_GAME_TIME_MINUTES: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_GAME_TIME_MINUTES,
+    },
+    P_GAME_TIME_SECONDS: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_GAME_TIME_SECONDS,
+    },
+
+    P_SPECIES: {
+        'type': 'string',
+        'key': 'name',
+        'store': game_data.VAR_PARTY_MON1_SPECIES,
+    },
+    P_LEVEL: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_LEVEL,
+    },
+    P_MOVE1: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_MOVE1,
+    },
+    P_MOVE2: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_MOVE2,
+    },
+    P_MOVE3: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_MOVE3,
+    },
+    P_MOVE4: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_MOVE4,
+    },
+    P_MON_ATK: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_ATTACK,
+    },
+    P_MON_DEF: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_DEFENSE,
+    },
+    P_MON_SPD: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_SPEED,
+    },
+    P_MON_SPC: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_SPECIAL,
+    },
+    P_MON_SPATK: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_SP_ATTACK,
+    },
+    P_MON_SPDEF: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_PARTY_MON1_SP_DEFENSE,
+    },
+
+    P_MAP: {
+        'type': 'string',
+        'store': game_data.VAR_MAP,
+    },
+
+    # P_AUDIO_SOUND: {},
+    P_AUDIO_CH5: {
+        'type': 'int',
+        'bytes': True,
+        'label': yellow.WRAM_AUDIO_CHANNEL5,
+    },
+    # P_AUDIO_CH6: {},
+
+    P_BATTLE_TYPE: {
+        'type': 'int',
+        'bytes': True,
+        'label': yellow.WRAM_BATTLE_TYPE,
+    },
+    P_TRAINER_CLASS: {
+        'type': 'string',
+        'store': game_data.VAR_BATTLE_TRAINER_CLASS,
+    },
+    P_TRAINER_NUMBER: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_TRAINER_ID,
+    },
+    # P_GYM_LEADER: {},
+    P_BATTLE_ALARM: {
+        'type': 'int',
+        'bytes': True,
+        'label': yellow.WRAM_LOW_HEALTH_ALARM,
+    },
+
+    P_STAGE_ATK: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_STAGE_ATTACK,
+    },
+    P_STAGE_DEF: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_STAGE_DEFENSE,
+    },
+    P_STAGE_SPD: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_STAGE_SPEED,
+    },
+    P_STAGE_SPC: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_STAGE_SPECIAL,
+    },
+    P_STAGE_ACC: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_STAGE_ACCURACY,
+    },
+    P_STAGE_EVA: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_STAGE_EVASION,
+    },
+
+    P_BATTLE_ATK: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_ATTACK,
+    },
+    P_BATTLE_DEF: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_DEFENSE,
+    },
+    P_BATTLE_SPD: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_SPEED,
+    },
+    P_BATTLE_SPC: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_SPECIAL,
+    },
+
+    P_BADGE1: {
+        'type': 'bool',
+        'bytes': True,
+        'store': game_data.VAR_PLAYER_BADGE1,
+    },
+    P_BADGE2: {
+        'type': 'bool',
+        'bytes': True,
+        'store': game_data.VAR_PLAYER_BADGE2,
+    },
+    P_BADGE3: {
+        'type': 'bool',
+        'bytes': True,
+        'store': game_data.VAR_PLAYER_BADGE3,
+    },
+    P_BADGE4: {
+        'type': 'bool',
+        'bytes': True,
+        'store': game_data.VAR_PLAYER_BADGE4,
+    },
+    P_BADGE5: {
+        'type': 'bool',
+        'bytes': True,
+        'store': game_data.VAR_PLAYER_BADGE5,
+    },
+    P_BADGE6: {
+        'type': 'bool',
+        'bytes': True,
+        'store': game_data.VAR_PLAYER_BADGE6,
+    },
+    P_BADGE7: {
+        'type': 'bool',
+        'bytes': True,
+        'store': game_data.VAR_PLAYER_BADGE7,
+    },
+    P_BADGE8: {
+        'type': 'bool',
+        'bytes': True,
+        'store': game_data.VAR_PLAYER_BADGE8,
+    },
 }
 
 ###############################################################################
@@ -87,53 +293,6 @@ LABELS: Final[Mapping[str, str]] = {
 
 def load_data_handler(data: GameData, fsm: StateMachine) -> DataHandler:
     handler = DataHandler()
-
-    # state machine logic
-    handler.labels.update(LABELS)
-
-    # player data
-    handler.store(P_PLAYER_ID, const.VAR_PLAYER_ID)
-    handler.store(P_GAME_TIME_HOURS, const.VAR_GAME_TIME_HOURS)
-    handler.store(P_GAME_TIME_MINUTES, const.VAR_GAME_TIME_MINUTES)
-    handler.store(P_GAME_TIME_SECONDS, const.VAR_GAME_TIME_SECONDS)
-    handler.store(P_BADGE1, const.VAR_PLAYER_BADGE1)
-    handler.store(P_BADGE2, const.VAR_PLAYER_BADGE2)
-    handler.store(P_BADGE3, const.VAR_PLAYER_BADGE3)
-    handler.store(P_BADGE4, const.VAR_PLAYER_BADGE4)
-    handler.store(P_BADGE5, const.VAR_PLAYER_BADGE5)
-    handler.store(P_BADGE6, const.VAR_PLAYER_BADGE6)
-    handler.store(P_BADGE7, const.VAR_PLAYER_BADGE7)
-    handler.store(P_BADGE8, const.VAR_PLAYER_BADGE8)
-
-    # world data
-    handler.store(P_MAP, const.VAR_MAP)
-
-    # party lead data
-    handler.store(P_SPECIES, const.VAR_PARTY_MON1_SPECIES)
-    handler.store(P_LEVEL, const.VAR_PARTY_MON1_LEVEL)
-    handler.store(P_MON_ATK, const.VAR_PARTY_MON1_ATTACK)
-    handler.store(P_MON_DEF, const.VAR_PARTY_MON1_DEFENSE)
-    handler.store(P_MON_SPD, const.VAR_PARTY_MON1_SPEED)
-    handler.store(P_MON_SPC, const.VAR_PARTY_MON1_SP_ATTACK)
-    handler.store(P_MON_SPC, const.VAR_PARTY_MON1_SP_DEFENSE)
-
-    # battle data
-    # handler.store(P_GYM_LEADER, ?)
-    handler.store(P_TRAINER_CLASS, const.VAR_BATTLE_TRAINER_CLASS)
-    handler.store(P_TRAINER_NUMBER, const.VAR_BATTLE_TRAINER_ID)
-
-    # battle lead data
-    handler.store(P_BATTLE_ATK, const.VAR_BATTLE_PLAYER_ATTACK)
-    handler.store(P_BATTLE_DEF, const.VAR_BATTLE_PLAYER_DEFENSE)
-    handler.store(P_BATTLE_SPD, const.VAR_BATTLE_PLAYER_SPEED)
-    handler.store(P_BATTLE_SPC, const.VAR_BATTLE_PLAYER_SP_ATTACK)
-    handler.store(P_BATTLE_SPC, const.VAR_BATTLE_PLAYER_SP_DEFENSE)
-    handler.store(P_STAGE_ATK, const.VAR_BATTLE_PLAYER_STAGE_ATTACK)
-    handler.store(P_STAGE_DEF, const.VAR_BATTLE_PLAYER_STAGE_DEFENSE)
-    handler.store(P_STAGE_SPD, const.VAR_BATTLE_PLAYER_STAGE_SPEED)
-    handler.store(P_STAGE_SPC, const.VAR_BATTLE_PLAYER_STAGE_SP_ATTACK)
-    handler.store(P_STAGE_SPC, const.VAR_BATTLE_PLAYER_STAGE_SP_DEFENSE)
-    handler.store(P_STAGE_ACC, const.VAR_BATTLE_PLAYER_STAGE_ACCURACY)
-    handler.store(P_STAGE_EVA, const.VAR_BATTLE_PLAYER_STAGE_EVASION)
-
+    for prop, metadata in PROPERTIES.items():
+        handler.configure_property(prop, metadata)
     return handler
