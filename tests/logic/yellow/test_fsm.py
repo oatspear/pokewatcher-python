@@ -7,8 +7,6 @@
 
 from pokewatcher.data.structs import GameData
 from pokewatcher.data.yellow.constants import (
-    ALARM_DISABLED,
-    ALARM_ENABLED,
     BATTLE_TYPE_LOST,
     BATTLE_TYPE_NONE,
     BATTLE_TYPE_TRAINER,
@@ -193,7 +191,7 @@ def test_in_battle_alarm_disabled():
     s1 = InBattle()
     data = GameData()
     data.battle.ongoing = True
-    s2 = s1.wLowHealthAlarmDisabled(ALARM_ENABLED, ALARM_DISABLED, data)
+    s2 = s1.wLowHealthAlarmDisabled(False, True, data)
     assert s2 is not s1
     assert isinstance(s2, VictorySequence)
     assert events.on_battle_ended.count == c + 1
@@ -205,7 +203,7 @@ def test_in_battle_alarm_enabled():
     s1 = InBattle()
     data = GameData()
     data.battle.ongoing = True
-    s2 = s1.wLowHealthAlarmDisabled(ALARM_DISABLED, ALARM_ENABLED, data)
+    s2 = s1.wLowHealthAlarmDisabled(True, False, data)
     assert s2 is s1
     assert events.on_battle_ended.count == c
     assert data.battle.ongoing
@@ -256,7 +254,7 @@ def test_victory_sequence_alarm_disabled():
     s = VictorySequence()
     data = GameData()
     try:
-        s.wLowHealthAlarmDisabled(ALARM_ENABLED, ALARM_DISABLED, data)
+        s.wLowHealthAlarmDisabled(False, True, data)
         raise AssertionError()
     except StateMachineError:
         pass
