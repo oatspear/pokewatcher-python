@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Final, Mapping, Optional
+from typing import Any, Callable, Final, List, Mapping, Optional
 
 import logging
 
@@ -39,6 +39,7 @@ class GameHookProperty:
     name: str
     previous: Any = None
     uses_bytes: bool = False
+    is_little_endian: bool = True
     attribute: Optional[Attribute] = None
     label: Optional[str] = None
     converter: Callable = identity
@@ -51,25 +52,27 @@ class DataHandler:
     fsm: StateMachine
     properties: Mapping[str, GameHookProperty] = field(init=False, factory=dict)
 
-    def on_property_changed(self, prop: str, value: Any, byte_value: int):
+    def on_property_changed(self, prop: str, value: Any, byte_values: List[int]):
         ghp = self.properties.get(prop)
         if ghp is not None:
             # bytes or glossary value?
-            v = byte_value if ghp.uses_bytes else value
+            if ghp.uses_bytes:
+                endianess = 'little' if ghp.is_little_endian else 'big'
+                value = int.from_bytes(byte_values, byteorder=endianess)
             # convert data to something else
-            v = ghp.converter(v)
+            value = ghp.converter(value)
             # store it in GameData
             if ghp.attribute is not None:
                 prev = ghp.attribute.get()
                 ghp.attribute.set(value)
-                on_data_changed.emit(ghp.attribute.path, prev, v)
+                on_data_changed.emit(ghp.attribute.path, prev, value)
             # additional side effects
-            ghp.handler(v, self.data)
+            ghp.handler(value, self.data)
             # feed to StateMachine
             if ghp.label:
-                self.fsm.on_input(ghp.label, ghp.previous, v, self.data)
+                self.fsm.on_input(ghp.label, ghp.previous, value, self.data)
             # store previous value for posterity
-            ghp.previous = v
+            ghp.previous = value
 
     def ensure_property(self, prop: str) -> GameHookProperty:
         ghp = self.properties.get(prop)

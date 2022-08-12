@@ -129,9 +129,9 @@ class GameHookBridge:
         raise GameHookError.get_mapper(self.url_requests)
 
     def _on_property_changed(self, args):
-        prop, _address, value, byte_value, _frozen, changed_fields = args
+        prop, _address, value, byte_values, _frozen, changed_fields = args
         if 'value' in changed_fields:
-            self.on_change(prop, value, byte_value)
+            self.on_change(prop, value, byte_values)
 
 
 def new():
