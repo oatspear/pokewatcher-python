@@ -71,7 +71,7 @@ def _load_game_interface(configs: Dict[str, Any]) -> GameInterface:
     return game
 
 
-def _load_components(configs: Dict[str, Any]) -> List[Any]:
+def _load_components(game: GameInterface, configs: Dict[str, Any]) -> List[Any]:
     logger.info('loading components')
     components = []
     for module in ALL_COMPONENTS:
@@ -79,7 +79,7 @@ def _load_components(configs: Dict[str, Any]) -> List[Any]:
         settings: Dict[str, Any] = configs[key]
         if settings.get('enabled', True):
             logger.info(f'loading component: {key}')
-            instance = module.new()
+            instance = module.new(game)
             instance.setup(settings)
             components.append(instance)
         else:
@@ -136,7 +136,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         configs = load_configs(args)
         setup_logging()
         game = _load_game_interface(configs)
-        components = _load_components(configs)
+        components = _load_components(game, configs)
     except KeyboardInterrupt:
         logger.error('aborted manually')
         return 1

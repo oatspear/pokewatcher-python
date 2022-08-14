@@ -9,6 +9,10 @@ from typing import Any, Final, Mapping
 
 import logging
 
+from attrs import define
+
+from pokewatcher.core.game import GameInterface
+
 ###############################################################################
 # Constants
 ###############################################################################
@@ -20,7 +24,10 @@ logger: Final = logging.getLogger(__name__)
 ###############################################################################
 
 
+@define
 class SplitComponent:
+    game: GameInterface
+
     def setup(self, settings: Mapping[str, Any]):
         logger.info('setting up')
         return
@@ -38,6 +45,6 @@ class SplitComponent:
         return
 
 
-def new():
-    instance = SplitComponent()
+def new(game: GameInterface):
+    instance = SplitComponent(game)
     return instance

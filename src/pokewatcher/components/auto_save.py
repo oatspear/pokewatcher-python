@@ -9,6 +9,10 @@ from typing import Any, Final, Mapping
 
 import logging
 
+from attrs import define
+
+from pokewatcher.core.game import GameInterface
+
 ###############################################################################
 # Constants
 ###############################################################################
@@ -20,7 +24,10 @@ logger: Final = logging.getLogger(__name__)
 ###############################################################################
 
 
+@define
 class AutoSaveComponent:
+    game: GameInterface
+
     def setup(self, settings: Mapping[str, Any]):
         logger.info('setting up')
         return
@@ -38,6 +45,6 @@ class AutoSaveComponent:
         return
 
 
-def new():
-    instance = AutoSaveComponent()
+def new(game: GameInterface):
+    instance = AutoSaveComponent(game)
     return instance
