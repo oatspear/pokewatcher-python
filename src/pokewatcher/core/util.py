@@ -102,12 +102,37 @@ class TimeRecord:
     seconds: int = 0
     millis: int = 0
 
+    @classmethod
+    def from_float_seconds(cls, secs: float) -> 'TimeRecord':
+        # milliseconds
+        i = int(secs)
+        ms = int((secs - i) * 1000)
+
+        # hours
+        h = i // 3600
+        i %= 3600
+
+        # minutes, seconds
+        m = i // 60
+        s = i % 60
+
+        return cls(hours=h, minutes=m, seconds=s, millis=ms)
+
     def formatted(self, zeroes: bool = True, millis: bool = True) -> str:
         t = f'{self.seconds:02}' if not millis else f'{self.seconds:02}.{self.millis:03}'
         if not zeroes:
             if self.hours == 0:
                 return t if self.minutes == 0 else f'{self.minutes:02}:{t}'
         return f'{self.hours:02}:{self.minutes:02}:{t}'
+
+
+@define
+class SimpleClock:
+    time_start: float = field(factory=time.time)
+
+    def get_elapsed_time(self) -> TimeRecord:
+        delta = time.time() - self.time_start
+        return TimeRecord.from_float_seconds(delta)
 
 
 @define
