@@ -8,6 +8,7 @@
 from typing import Any, Final, Mapping, Optional
 
 import logging
+from pathlib import Path
 
 from attrs import define, field
 
@@ -19,6 +20,7 @@ from pokewatcher.errors import PokeWatcherError
 ###############################################################################
 
 GET_STATUS: Final[str] = b'GET_STATUS\n'
+GET_PARAM_SAVE_DIR: Final[str] = b'GET_CONFIG_PARAM savefile_directory\n'
 SAVE_STATE: Final[str] = b'SAVE_STATE\n'
 
 logger: Final = logging.getLogger(__name__)
@@ -34,6 +36,10 @@ class RetroArchError(PokeWatcherError):
         return cls(f'Failed to get ROM status from {address}')
 
     @classmethod
+    def get_savefile_dir(cls, address):
+        return cls(f'Failed to get save file directory from {address}')
+
+    @classmethod
     def save_state(cls, address):
         return cls(f'Failed to save game state at {address}')
 
@@ -41,6 +47,7 @@ class RetroArchError(PokeWatcherError):
 @define
 class RetroArchBridge:
     rom: Optional[str] = field(init=False, default=None)
+    savefile_dir: Optional[Path] = field(init=False, default=None)
     _socket: Optional[UdpConnection] = field(init=False, default=None, repr=False)
 
     def setup(self, settings: Mapping[str, Any]):
@@ -51,6 +58,7 @@ class RetroArchBridge:
         timeout = settings['timeout']
         self._socket = UdpConnection(host, port, timeout=timeout)
         self.request_status()
+        self.request_savefile_dir()
 
     def start(self):
         return
@@ -90,6 +98,28 @@ class RetroArchBridge:
                         return self.rom  # break the loop
         logger.warning('unable to get RetroArch status')
         raise RetroArchError.get_rom(self._socket.address)
+
+    def request_savefile_dir(self) -> str:
+        with SleepLoop(n=3, delay=1.0) as loop:
+            while loop.iterate():
+                logger.info(f'connecting to {self._socket.address}')
+                try:
+                    self._socket.connect()
+                    logger.info('requesting save file directory')
+                    self._socket.send(GET_PARAM_SAVE_DIR)
+                    reply = self._socket.receive(bytes=8192)
+                except ConnectionError as e:
+                    logger.error(f'failed to establish a connection: {e}')
+
+                if not reply.startswith('GET_CONFIG_PARAM savefile_directory '):
+                    logger.warning('unexpected response: ' + reply)
+                else:
+                    reply = reply[36:].strip()
+                    self.savefile_dir = Path(reply)
+                    logger.info(f'got save file directory: {self.savefile_dir}')
+                    return self.savefile_dir  # break the loop
+        logger.warning('unable to get RetroArch save file directory')
+        raise RetroArchError.get_savefile_dir(self._socket.address)
 
     def request_save_state(self):
         with SleepLoop(n=3, delay=0.1) as loop:
