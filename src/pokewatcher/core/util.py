@@ -130,6 +130,9 @@ class TimeRecord:
 class SimpleClock:
     time_start: float = field(factory=time.time)
 
+    def reset_start_time(self):
+        self.time_start = time.time()
+
     def get_elapsed_time(self) -> TimeRecord:
         delta = time.time() - self.time_start
         return TimeRecord.from_float_seconds(delta)

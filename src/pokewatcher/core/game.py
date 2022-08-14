@@ -13,6 +13,7 @@ from attrs import define, field
 
 from pokewatcher.core.gamehook import GameHookBridge, GameHookError
 from pokewatcher.core.retroarch import RetroArchBridge
+from pokewatcher.core.util import SimpleClock
 from pokewatcher.data.structs import GameData
 from pokewatcher.logic.fsm import GameState, StateMachine
 
@@ -30,6 +31,7 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 @define
 class GameInterface:
     data: GameData = field(factory=GameData)
+    clock: SimpleClock = field(factory=SimpleClock)
     retroarch: RetroArchBridge = field(factory=RetroArchBridge)
     gamehook: GameHookBridge = field(factory=GameHookBridge)
     fsm: StateMachine = field(init=False, factory=StateMachine)
@@ -58,6 +60,7 @@ class GameInterface:
         logger.info('starting low-level components')
         self.retroarch.start()
         self.gamehook.start()
+        self.clock.reset_start_time()
 
     def update(self, delta):
         # logger.debug('update')
