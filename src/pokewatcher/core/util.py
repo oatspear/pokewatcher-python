@@ -125,6 +125,24 @@ class TimeRecord:
                 return t if self.minutes == 0 else f'{self.minutes:02}:{t}'
         return f'{self.hours:02}:{self.minutes:02}:{t}'
 
+    def __sub__(self, other: Any) -> 'TimeRecord':
+        if not isinstance(other, TimeRecord):
+            raise TypeError(f'expected TimeRecord, got {type(other)}')
+        h = self.hours - other.hours
+        m = self.minutes - other.minutes
+        s = self.seconds - other.seconds
+        ms = self.millis - other.millis
+        if ms < 0:
+            ms += 1000
+            s -= 1
+        if s < 0:
+            s += 60
+            m -= 1
+        if m < 0:
+            m += 60
+            h -= 1
+        return TimeRecord(hours=h, minutes=m, seconds=s, millis=ms)
+
 
 @define
 class SimpleClock:
