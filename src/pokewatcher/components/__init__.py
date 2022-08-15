@@ -9,7 +9,6 @@ from typing import Final, Tuple
 
 from pokewatcher.components import (
     auto_save,
-    battle_monitor,
     save_backup,
     splitter,
     timer,
@@ -23,7 +22,6 @@ from pokewatcher.components import (
 
 ALL_COMPONENTS: Final[Tuple] = (
     auto_save,
-    battle_monitor,
     save_backup,
     splitter,
     timer,
