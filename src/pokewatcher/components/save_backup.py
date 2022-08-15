@@ -107,6 +107,7 @@ class SaveFileBackupComponent:
             self._last_modified = 0
 
         logger.info('requesting save file backup')
+        self._data = data
         self._timestamp = t
         self.requested = True
 
@@ -139,7 +140,7 @@ class SaveFileBackupComponent:
         self.requested = False
 
         logger.info('create save file backup')
-        filename = self.name_format.format(**self._data)
+        filename = self.file_name_format.format(**self._data)
         dest_file = self.dest_dir / filename
         shutil.copy(save_file, dest_file)
         logger.info('save file backup complete')
