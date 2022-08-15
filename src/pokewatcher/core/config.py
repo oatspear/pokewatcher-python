@@ -38,7 +38,365 @@ DEFAULTS: Dict[str, Any] = {
         'file_name_format': '{rom} - lvl{player.team.slot1.level}-{realtime}-{location}.srm',
         'dest_dir': '.',
     },
-    'splitter': {'enabled': True},
+    'splitter': {
+        'enabled': True,
+        'trainers': {
+            'Pokemon Yellow': [
+                {
+                    'class': 'BROCK',
+                    'number': 1,
+                    'name': 'BROCK',
+                },
+                {
+                    'class': 'MISTY',
+                    'number': 1,
+                    'name': 'MISTY',
+                },
+                {
+                    'class': 'LASS',
+                    'number': 10,
+                    'name': 'ODDISH LASS',
+                },
+                {
+                    'class': 'ROCKET',
+                    'number': 5,
+                    'name': 'ROCKET',
+                },
+                {
+                    'class': 'LT.SURGE',
+                    'number': 1,
+                    'name': 'LT.SURGE',
+                },
+                {
+                    'class': 'JR TRAINER F',
+                    'number': 5,
+                    'name': 'RTG1 - WRAPPING LASS',
+                },
+                {
+                    'class': 'POKEMANIAC',
+                    'number': 7,
+                    'name': 'RTG2 - POKEMANIAC 1',
+                },
+                {
+                    'class': 'POKEMANIAC',
+                    'number': 5,
+                    'name': 'RTG3 - POKEMANIAC 2',
+                },
+                {
+                    'class': 'JR TRAINER F',
+                    'number': 10,
+                    'name': 'RTG4 - STATUS JR TRAINER',
+                },
+                {
+                    'class': 'HIKER',
+                    'number': 9,
+                    'name': 'RTG5 - SELF-DESTRUCTING HIKER',
+                },
+                {
+                    'class': 'JR TRAINER F',
+                    'number': 18,
+                    'name': 'RTG6 - FINISHER',
+                },
+                {
+                    'class': 'ERIKA',
+                    'number': 1,
+                    'name': 'ERIKA',
+                },
+                {
+                    'class': 'KOGA',
+                    'number': 1,
+                    'name': 'KOGA',
+                },
+                {
+                    'class': 'BLAINE',
+                    'number': 1,
+                    'name': 'BLAINE',
+                },
+                {
+                    'class': 'SABRINA',
+                    'number': 1,
+                    'name': 'SABRINA',
+                },
+                {
+                    'class': 'GIOVANNI',
+                    'number': 2,
+                    'name': 'GIOVANNI (SILPH)',
+                },
+                {
+                    'class': 'GIOVANNI',
+                    'number': 3,
+                    'name': 'GIOVANNI',
+                },
+                {
+                    'class': 'LORELEI',
+                    'number': 1,
+                    'name': 'LORELEI',
+                },
+                {
+                    'class': 'BRUNO',
+                    'number': 1,
+                    'name': 'BRUNO',
+                },
+                {
+                    'class': 'AGATHA',
+                    'number': 1,
+                    'name': 'AGATHA',
+                },
+                {
+                    'class': 'LANCE',
+                    'number': 1,
+                    'name': 'LANCE',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 2,
+                    'name': 'RIVAL (OPTIONAL)',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 3,
+                    'name': 'RIVAL (NUGGET BRIDGE)',
+                },
+                {
+                    'class': 'RIVAL2',
+                    'number': 1,
+                    'name': 'RIVAL (SS ANNE)',
+                },
+                {
+                    'class': 'RIVAL2',
+                    'number': 2,
+                    'name': 'RIVAL (PKMN TOWER)',
+                },
+                {
+                    'class': 'RIVAL2',
+                    'number': 3,
+                    'name': 'RIVAL (PKMN TOWER)',
+                },
+                {
+                    'class': 'RIVAL2',
+                    'number': 4,
+                    'name': 'RIVAL (PKMN TOWER)',
+                },
+                {
+                    'class': 'RIVAL2',
+                    'number': 5,
+                    'name': 'RIVAL (SILPH CO.)',
+                },
+                {
+                    'class': 'RIVAL2',
+                    'number': 6,
+                    'name': 'RIVAL (SILPH CO.)',
+                },
+                {
+                    'class': 'RIVAL2',
+                    'number': 7,
+                    'name': 'RIVAL (SILPH CO.)',
+                },
+                {
+                    'class': 'RIVAL2',
+                    'number': 8,
+                    'name': 'RIVAL (FINAL)',
+                },
+                {
+                    'class': 'RIVAL2',
+                    'number': 9,
+                    'name': 'RIVAL (FINAL)',
+                },
+                {
+                    'class': 'RIVAL2',
+                    'number': 10,
+                    'name': 'RIVAL (FINAL)',
+                },
+                {
+                    'class': 'RIVAL3',
+                    'number': 1,
+                    'name': 'CHAMPION',
+                },
+                {
+                    'class': 'RIVAL3',
+                    'number': 2,
+                    'name': 'CHAMPION',
+                },
+                {
+                    'class': 'RIVAL3',
+                    'number': 3,
+                    'name': 'CHAMPION',
+                },
+            ],
+            'Pokemon Crystal': [
+                {
+                    'class': 'RIVAL1',
+                    'number': 1,
+                    'name': 'RIVAL1',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 2,
+                    'name': 'RIVAL1',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 3,
+                    'name': 'RIVAL1',
+                },
+                {
+                    'class': 'FALKNER',
+                    'number': 1,
+                    'name': 'FALKNER',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 4,
+                    'name': 'RIVAL2',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 5,
+                    'name': 'RIVAL2',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 6,
+                    'name': 'RIVAL2',
+                },
+                {
+                    'class': 'BUGSY',
+                    'number': 1,
+                    'name': 'BUGSY',
+                },
+                {
+                    'class': 'WHITNEY',
+                    'number': 1,
+                    'name': 'WHITNEY',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 7,
+                    'name': 'RIVAL3',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 8,
+                    'name': 'RIVAL3',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 9,
+                    'name': 'RIVAL3',
+                },
+                {
+                    'class': 'MORTY',
+                    'number': 1,
+                    'name': 'MORTY',
+                },
+                {
+                    'class': 'CHUCK',
+                    'number': 1,
+                    'name': 'CHUCK',
+                },
+                {
+                    'class': 'PRYCE',
+                    'number': 1,
+                    'name': 'PRYCE',
+                },
+                {
+                    'class': 'JASMINE',
+                    'number': 1,
+                    'name': 'JASMINE',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 10,
+                    'name': 'RIVAL4',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 11,
+                    'name': 'RIVAL4',
+                },
+                {
+                    'class': 'RIVAL1',
+                    'number': 12,
+                    'name': 'RIVAL4',
+                },
+                {
+                    'class': 'CLAIR',
+                    'number': 1,
+                    'name': 'CLAIR',
+                },
+                {
+                    'class': 'WILL',
+                    'number': 1,
+                    'name': 'WILL',
+                },
+                {
+                    'class': 'KOGA',
+                    'number': 1,
+                    'name': 'KOGA',
+                },
+                {
+                    'class': 'BRUNO',
+                    'number': 1,
+                    'name': 'BRUNO',
+                },
+                {
+                    'class': 'KAREN',
+                    'number': 1,
+                    'name': 'KAREN',
+                },
+                {
+                    'class': 'CHAMPION',
+                    'number': 1,
+                    'name': 'CHAMPION',
+                },
+                {
+                    'class': 'SABRINA',
+                    'number': 1,
+                    'name': 'SABRINA',
+                },
+                {
+                    'class': 'ERIKA',
+                    'number': 1,
+                    'name': 'ERIKA',
+                },
+                {
+                    'class': 'MISTY',
+                    'number': 1,
+                    'name': 'MISTY',
+                },
+                {
+                    'class': 'LT. SURGE',
+                    'number': 1,
+                    'name': 'LT. SURGE',
+                },
+                {
+                    'class': 'BROCK',
+                    'number': 1,
+                    'name': 'BROCK',
+                },
+                {
+                    'class': 'BLAINE',
+                    'number': 1,
+                    'name': 'BLAINE',
+                },
+                {
+                    'class': 'JANINE',
+                    'number': 1,
+                    'name': 'JANINE',
+                },
+                {
+                    'class': 'BLUE',
+                    'number': 1,
+                    'name': 'BLUE',
+                },
+                {
+                    'class': 'RED',
+                    'number': 1,
+                    'name': 'RED',
+                },
+            ],
+        },
+    },
     'timer': {'enabled': True},
     'video_record': {'enabled': True},
 }
