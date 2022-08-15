@@ -125,6 +125,9 @@ class TimeRecord:
                 return t if self.minutes == 0 else f'{self.minutes:02}:{t}'
         return f'{self.hours:02}:{self.minutes:02}:{t}'
 
+    def __str__(self) -> str:
+        return self.formatted(zeroes=True, millis=True)
+
     def __sub__(self, other: Any) -> 'TimeRecord':
         if not isinstance(other, TimeRecord):
             raise TypeError(f'expected TimeRecord, got {type(other)}')
