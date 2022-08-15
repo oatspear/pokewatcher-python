@@ -107,6 +107,7 @@ class SaveFileBackupComponent:
             self._last_modified = 0
 
         logger.info('requesting save file backup')
+        logger.debug(f'game data: {data}')
         self._data = data
         self._timestamp = t
         self.requested = True
