@@ -64,14 +64,15 @@ class Initial(YellowState):
 class MainMenu(YellowState):
     def wPlayerID(self, prev: int, value: int, _data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'player ID changed from {prev} to {value}')
-        if value != 0 and prev == 0:
-            logger.info('continue previous game')
-            events.on_continue.emit()
-            return InOverworld()
-        elif value != 0 and prev > 0:
-            logger.info('starting a new game')
-            events.on_new_game.emit()
-            return InOverworld()
+        if value != 0:
+            if prev <= 0:
+                logger.info('continue previous game')
+                events.on_continue.emit()
+                return InOverworld()
+            else:
+                logger.info('starting a new game')
+                events.on_new_game.emit()
+                return InOverworld()
         return self
 
 
