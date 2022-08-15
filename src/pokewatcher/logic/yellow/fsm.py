@@ -125,7 +125,11 @@ class InBattle(InGame):
             data.battle.ongoing = False
             events.on_battle_ended()
             return InOverworld()
-        elif value in (BATTLE_TYPE_WILD, BATTLE_TYPE_TRAINER, BATTLE_TYPE_LOST):
+        if value == BATTLE_TYPE_LOST:
+            data.battle.set_defeat()
+            events.on_battle_ended()
+            return InOverworld()
+        elif value == BATTLE_TYPE_WILD or value == BATTLE_TYPE_TRAINER:
             self.inconsistent('wIsInBattle', value)
         else:
             logger.warning(f'unknown battle type: {value}')
