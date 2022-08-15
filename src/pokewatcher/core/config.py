@@ -35,7 +35,7 @@ DEFAULTS: Dict[str, Any] = {
         'n_checks': 5,
         'check_interval': 3.0,
         'min_backup_interval': 1.0,
-        'file_name_format': '{rom} - lvl{player["team"]["slot1"]["level"]}-{realtime}-{location}.srm',
+        'file_name_format': '{rom} - lvl{player[team][slot1][level]}-{realtime}-{location}.srm',
         'dest_dir': '.',
     },
     'splitter': {'enabled': True},
