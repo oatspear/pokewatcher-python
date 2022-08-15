@@ -87,13 +87,18 @@ class SaveFileBackupComponent:
             logger.warning('unable to get save file path')
             return
 
-        data = self.game.data.serialize()
-        data['rom'] = self.game.rom or 'NULL'
-        data['version'] = self.game.version or 'NULL'
+        data = {
+            'rom': self.game.rom or 'NULL',
+            'version': self.game.version or 'NULL',
+            'realtime': '0:00:00.0',
+            'player': self.game.data.player,
+            'time': self.game.data.time,
+            'location': self.game.data.location or 'NULL',
+            'battle': self.game.data.battle,
+        }
+        self.game.data.serialize()
 
-        location = data['location'] or 'NULL'
-        location = location.replace(' ', '').replace('-', '')
-        data['location'] = location
+        data['location'] = data['location'].replace(' ', '').replace('-', '')
 
         if '{realtime}' in self.file_name_format:
             tr = self.game.clock.get_elapsed_time()
