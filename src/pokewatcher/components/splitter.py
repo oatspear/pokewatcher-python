@@ -5,8 +5,8 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Final, List, Mapping, Optional
 from types import SimpleNamespace
+from typing import Any, Final, List, Mapping, Optional
 
 from collections import Counter, defaultdict
 import logging
