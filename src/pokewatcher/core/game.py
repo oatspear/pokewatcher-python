@@ -53,7 +53,7 @@ class GameInterface:
             'rom': self.rom or 'NULL',
             'version': self.version or 'NULL',
             'state': self.state.name,
-            'realtime': self.clock.time,
+            'realtime': self.clock.get_elapsed_time(),
             'player': self.data.player,
             'time': self.data.time,
             'location': self.data.location,
