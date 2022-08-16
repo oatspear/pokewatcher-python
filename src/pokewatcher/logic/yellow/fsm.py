@@ -95,8 +95,7 @@ class InOverworld(InGame):
             events.on_battle_started.emit()
             return InBattle()
         elif value == BATTLE_TYPE_TRAINER:
-            assert not data.battle.is_vs_wild
-            data.battle.ongoing = True
+            data.battle.set_trainer_battle()
             events.on_battle_started.emit()
             return InBattle()
         elif value == BATTLE_TYPE_LOST:
@@ -121,8 +120,10 @@ class InBattle(InGame):
 
     def wIsInBattle(self, _p: int, value: int, data: GameData) -> GameState:  # noqa: N815
         if value == BATTLE_TYPE_NONE:
-            # result should be set at this point
-            data.battle.ongoing = False
+            if data.battle.is_vs_wild:
+                data.battle.ongoing = False
+            else:
+                data.battle.set_defeat()
             events.on_battle_ended()
             return InOverworld()
         if value == BATTLE_TYPE_LOST:
