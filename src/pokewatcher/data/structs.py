@@ -44,6 +44,16 @@ class MonStats:
         self.sp_attack = value
         self.sp_defense = value
 
+    def copy(self) -> 'MonStats':
+        return MonStats(
+            hp=self.hp,
+            attack=self.attack,
+            defense=self.defense,
+            speed=self.speed,
+            sp_attack=self.sp_attack,
+            sp_defense=self.sp_defense,
+        )
+
 
 @define
 class MonSpecies:
@@ -80,6 +90,19 @@ class PartyMon:
     def is_valid_species(self) -> bool:
         return self.species != ''
 
+    def copy(self) -> 'PartyMon':
+        return PartyMon(
+            species=self.species,
+            name=self.name,
+            level=self.level,
+            stats=self.stats.copy(),
+            hp=self.hp,
+            move1=self.move1,
+            move2=self.move2,
+            move3=self.move3,
+            move4=self.move4,
+        )
+
 
 @define
 class TrainerParty:
@@ -105,6 +128,17 @@ class TrainerParty:
     @property
     def last(self) -> PartyMon:
         return self.slot6
+
+    def copy(self) -> 'TrainerParty':
+        return TrainerParty(
+            size=self.size,
+            slot1=self.slot1.copy(),
+            slot2=self.slot2.copy(),
+            slot3=self.slot3.copy(),
+            slot4=self.slot4.copy(),
+            slot5=self.slot5.copy(),
+            slot6=self.slot6.copy(),
+        )
 
     def __getitem__(self, i: int) -> PartyMon:
         return self.slots[i]
@@ -223,6 +257,18 @@ class BadgeData:
     badge7: bool = False
     badge8: bool = False
 
+    def copy(self) -> 'BadgeData':
+        return BadgeData(
+            badge1=self.badge1,
+            badge2=self.badge2,
+            badge3=self.badge3,
+            badge4=self.badge4,
+            badge5=self.badge5,
+            badge6=self.badge6,
+            badge7=self.badge7,
+            badge8=self.badge8,
+        )
+
     def __getitem__(self, i: Any) -> bool:
         if i == 0:
             return self.badge1
@@ -278,6 +324,15 @@ class PlayerData:
     def lead(self) -> PartyMon:
         return self.team.lead
 
+    def copy(self) -> 'PlayerData':
+        return PlayerData(
+            name=self.name,
+            number=self.number,
+            badges=self.badges.copy(),
+            team=self.team.copy(),
+            money=self.money,
+        )
+
 
 ###############################################################################
 # Map Data
@@ -308,12 +363,23 @@ class GameTime:
     seconds: int = 0
     frames: int = 0
 
+    def copy(self) -> 'GameTime':
+        return GameTime(
+            hours=self.hours,
+            minutes=self.minutes,
+            seconds=self.seconds,
+            frames=self.frames,
+        )
+
     def formatted(self, zeroes: bool = True, frames: bool = True) -> str:
         t = f'{self.seconds:02}' if not frames else f'{self.seconds:02}.{self.frames:02}'
         if not zeroes:
             if self.hours == 0:
                 return t if self.minutes == 0 else f'{self.minutes:02}:{t}'
         return f'{self.hours:02}:{self.minutes:02}:{t}'
+
+    def __str__(self) -> str:
+        return self.formatted(zeroes=True, frames=True)
 
 
 @define
