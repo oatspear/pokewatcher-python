@@ -118,6 +118,21 @@ class TimeRecord:
 
         return cls(hours=h, minutes=m, seconds=s, millis=ms)
 
+    @classmethod
+    def converter(cls, value: Any) -> 'TimeRecord':
+        if isinstance(value, TimeRecord):
+            return cls(
+                hours=value.hours,
+                minutes=value.minutes,
+                seconds=value.seconds,
+                millis=value.millis,
+            )
+        if isinstance(value, float):
+            return cls.from_float_seconds(value)
+        if isinstance(value, int):
+            return cls.from_float_seconds(float(value))
+        raise TypeError(f'expected TimeRecord, int or float, got {type(value)}')
+
     def copy(self) -> 'TimeRecord':
         return TimeRecord(
             hours=self.hours,
@@ -157,8 +172,8 @@ class TimeRecord:
 
 @define
 class TimeInterval:
-    start: TimeRecord = field(factory=time.time, converter=TimeRecord.from_float_seconds)
-    end: TimeRecord = field(factory=time.time, converter=TimeRecord.from_float_seconds)
+    start: TimeRecord = field(factory=time.time, converter=TimeRecord.converter)
+    end: TimeRecord = field(factory=time.time, converter=TimeRecord.converter)
 
     @property
     def duration(self) -> TimeRecord:
@@ -173,7 +188,7 @@ class TimeInterval:
 
 @define
 class SimpleClock:
-    time_start: TimeRecord = field(factory=time.time, converter=TimeRecord.from_float_seconds)
+    time_start: TimeRecord = field(factory=time.time, converter=TimeRecord.converter)
 
     def reset_start_time(self):
         self.time_start = TimeRecord.from_float_seconds(time.time())
@@ -182,8 +197,7 @@ class SimpleClock:
         return TimeRecord.from_float_seconds(time.time()) - self.time_start
 
     def get_elapsed_time(self) -> TimeInterval:
-        now = TimeRecord.from_float_seconds(time.time())
-        return TimeInterval(start=self.time_start.copy(), end=now)
+        return TimeInterval(start=self.time_start, end=time.time())
 
 
 @define
