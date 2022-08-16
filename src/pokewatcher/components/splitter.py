@@ -6,19 +6,19 @@
 ###############################################################################
 
 from typing import Any, Final, List, Mapping, Optional
+from types import SimpleNamespace
 
 from collections import Counter, defaultdict
 import logging
 from pathlib import Path
 from threading import Lock
-from types import SimpleNamespace
 
 from attrs import asdict, define, field
 from attrs.validators import instance_of
 
 from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import Attribute, TimeInterval, TimeRecord
-from pokewatcher.data.structs import BadgeData, GameTime, TrainerParty
+from pokewatcher.data.structs import BadgeData, GameData, GameTime, TrainerParty
 from pokewatcher.events import on_battle_ended, on_battle_started, on_reset
 
 ###############################################################################

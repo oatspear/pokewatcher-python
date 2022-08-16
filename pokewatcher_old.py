@@ -1440,6 +1440,7 @@ class BattleTimeSplitter:
             str(resets),
         )
 
+
 BattleTimeSplitter.BOSSES['Pokemon Red and Blue'] = BattleTimeSplitter.BOSSES['Pokemon Yellow']
 
 

@@ -7,13 +7,7 @@
 
 from typing import Final, Tuple
 
-from pokewatcher.components import (
-    auto_save,
-    save_backup,
-    splitter,
-    timer,
-    video_record,
-)
+from pokewatcher.components import auto_save, save_backup, splitter, timer, video_record
 
 ###############################################################################
 # Interface
