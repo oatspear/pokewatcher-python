@@ -164,23 +164,26 @@ class TimeInterval:
     def duration(self) -> TimeRecord:
         return self.end - self.start
 
+    def copy(self) -> 'TimeInterval':
+        return TimeInterval(start=self.start.copy(), end=self.end.copy())
+
     def __str__(self) -> str:
         return str(self.duration)
 
 
 @define
 class SimpleClock:
-    time: TimeInterval = field(factory=TimeInterval)
+    time_start: TimeRecord = field(factory=time.time, converter=TimeRecord.from_float_seconds)
 
     def reset_start_time(self):
-        self.time.start = TimeRecord.from_float_seconds(time.time())
-        self.time.end = self.time.start.copy()
+        self.time_start = TimeRecord.from_float_seconds(time.time())
 
-    def get_elapsed_time(self) -> TimeRecord:
-        return TimeRecord.from_float_seconds(time.time()) - self.time.start
+    def get_current_time(self) -> TimeRecord:
+        return TimeRecord.from_float_seconds(time.time()) - self.time_start
 
-    def stop(self):
-        self.time.end = TimeRecord.from_float_seconds(time.time())
+    def get_elapsed_time(self) -> TimeInterval:
+        now = TimeRecord.from_float_seconds(time.time())
+        return TimeInterval(start=self.time_start.copy(), end=now)
 
 
 @define
