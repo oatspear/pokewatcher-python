@@ -148,6 +148,19 @@ class TimeRecord:
 
 
 @define
+class TimeInterval:
+    start: TimeRecord
+    end: TimeRecord
+
+    @property
+    def duration(self) -> TimeRecord:
+        return self.end - self.start
+
+    def __str__(self) -> str:
+        return str(self.duration)
+
+
+@define
 class SimpleClock:
     time_start: float = field(factory=time.time)
 
