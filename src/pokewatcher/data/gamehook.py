@@ -85,7 +85,7 @@ class DataHandler:
     def configure_property(self, prop: str, metadata: Mapping[str, Any]):
         use_bytes = bool(metadata.get('bytes', False))
         if use_bytes:
-            self.use_bytes(prop)
+            self.use_bytes(prop, is_little_endian=metadata.get('little_endian', False))
 
         data_type = metadata.get('type', '')
         key = metadata.get('key')
@@ -99,10 +99,11 @@ class DataHandler:
         if label is not None:
             self.transition(prop, label)
 
-    def use_bytes(self, prop: str):
+    def use_bytes(self, prop: str, is_little_endian=False):
         logger.debug(f'use bytes: {prop}')
         ghp = self.ensure_property(prop)
         ghp.uses_bytes = True
+        ghp.is_little_endian = is_little_endian
 
     def convert(self, prop: str, data_type: str, key: Optional[str] = None):
         logger.debug(f'convert data: {prop} -> {data_type}[{repr(key)}]')
