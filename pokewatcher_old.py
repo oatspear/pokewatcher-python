@@ -147,6 +147,10 @@ class GameWatcher:
             self.data_handler = YellowDataHandler(rom, version, data)
         elif 'crystal' in game_string:
             self.data_handler = CrystalDataHandler(rom, version, data)
+        elif 'blue' in game_string:
+            self.data_handler = YellowDataHandler(rom, version, data)
+        elif 'red' in game_string:
+            self.data_handler = YellowDataHandler(rom, version, data)
         else:
             raise ValueError(f'[Watcher] unknown game version: {version}')
         print('[GameHook] initial data received')
@@ -1436,6 +1440,8 @@ class BattleTimeSplitter:
             str(resets),
         )
 
+BattleTimeSplitter.BOSSES['Pokemon Red and Blue'] = BattleTimeSplitter.BOSSES['Pokemon Yellow']
+
 
 ################################################################################
 # Requests
@@ -1469,14 +1475,12 @@ def request_save_state():
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
             s.connect(RETROARCH_HOST)
-            with SleepLoop(DEFAULT_LOOP_ITERATIONS) as loop:
-                while loop.iterate():
-                    print('[RetroArch] request save state')
-                    s.send(b'SAVE_STATE\n')
-                    # no reply
-                    # print('[RetroArch] request increment save slot')
-                    # s.send(b'STATE_SLOT_PLUS\n')
-                    # no reply
+            print('[RetroArch] request save state')
+            s.send(b'SAVE_STATE\n')
+            # no reply
+            # print('[RetroArch] request increment save slot')
+            # s.send(b'STATE_SLOT_PLUS\n')
+            # no reply
     except ConnectionError as e:
         print('[RetroArch] failed to save state')
         logger.error(f'[RetroArch] {e}')
