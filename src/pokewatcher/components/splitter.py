@@ -97,11 +97,12 @@ class OutputHandler:
         self.records.append(rec)
 
     def store_records(self):
-        try:
-            self._store()
-            self.records = []
-        except OSError as e:
-            logger.error(f'unable to write to {self.filepath}: {e}')
+        if self.records:
+            try:
+                self._store()
+                self.records = []
+            except OSError as e:
+                logger.error(f'unable to write to {self.filepath}: {e}')
 
     def _store(self):
         # to override
@@ -118,13 +119,12 @@ class CsvHandler(OutputHandler):
 
     def _write_headers(self):
         logger.debug(f'write CSV headers for {self.filepath}')
-        headers = list(map(self.attributes, lambda k: self.labels.get(k, k)))
+        headers = list(map(lambda k: self.labels.get(k, k), self.attributes))
         text = ','.join(headers) + '\n'
         self.filepath.write_text(text, encoding='utf-8')
 
     def _write_contents(self):
-        records = list(map(self.records, str))
-        contents = list(','.join(r) for r in records)
+        contents = list(','.join(map(str, r)) for r in self.records)
         contents.append('')
         text = '\n'.join(contents)
         logger.debug(f'write CSV entries:\n{text}')
@@ -249,7 +249,7 @@ class SplitComponent:
     def _record_victory(self):
         assert self._tracked is not None
         data = self.game.data_dict()
-        data.update(asdict(self._tracked, recursive=False))
+        data.update(asdict(self._tracked, recurse=False))
         data['resets'] = self._resets[self._tracked.key]
         ns = SimpleNamespace(**data)
         with self._lock:
