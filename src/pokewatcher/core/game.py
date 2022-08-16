@@ -48,6 +48,18 @@ class GameInterface:
     def state(self) -> GameState:
         return self.fsm.state
 
+    def data_dict(self) -> Mapping[str, Any]:
+        return {
+            'rom': self.rom or 'NULL',
+            'version': self.version or 'NULL',
+            'state': self.state.name,
+            'realtime': self.clock.time,
+            'player': self.data.player,
+            'time': self.data.time,
+            'location': self.data.location,
+            'battle': self.data.battle,
+        }
+
     def setup(self, settings: Mapping[str, Any]):
         logger.info('setting up infrastructure')
         retroarch = settings['retroarch']
