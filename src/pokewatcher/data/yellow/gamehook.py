@@ -112,23 +112,23 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'store': game_data.VAR_PARTY_MON1_LEVEL,
     },
     P_MOVE1: {
-        'type': 'int',
-        'bytes': True,
+        'type': 'string',
+        # 'bytes': True,
         'store': game_data.VAR_PARTY_MON1_MOVE1,
     },
     P_MOVE2: {
-        'type': 'int',
-        'bytes': True,
+        'type': 'string',
+        # 'bytes': True,
         'store': game_data.VAR_PARTY_MON1_MOVE2,
     },
     P_MOVE3: {
-        'type': 'int',
-        'bytes': True,
+        'type': 'string',
+        # 'bytes': True,
         'store': game_data.VAR_PARTY_MON1_MOVE3,
     },
     P_MOVE4: {
-        'type': 'int',
-        'bytes': True,
+        'type': 'string',
+        # 'bytes': True,
         'store': game_data.VAR_PARTY_MON1_MOVE4,
     },
     P_MON_ATK: {
