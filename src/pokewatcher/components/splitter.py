@@ -18,7 +18,7 @@ from attrs.validators import instance_of
 
 from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import Attribute, TimeInterval, TimeRecord
-from pokewatcher.data.structs import MonStats
+from pokewatcher.data.structs import BadgeData, GameTime, TrainerParty
 from pokewatcher.events import on_battle_ended, on_battle_started, on_reset
 
 ###############################################################################
@@ -35,12 +35,29 @@ BattleRecord = List[Any]
 
 
 @define
+class PreviousData:
+    badges: BadgeData
+    team: TrainerParty
+    money: int
+    time: GameTime
+
+    @classmethod
+    def from_data(cls, data: GameData) -> 'PreviousData':
+        return cls(
+            data.player.badges.copy(),
+            data.player.team.copy(),
+            data.player.money,
+            data.time.copy(),
+        )
+
+
+@define
 class TrackedBattle:
     trainer_class: str
     trainer_id: int
     trainer_name: str
     realtime: TimeInterval
-    stats: MonStats  # hack
+    previous: PreviousData
 
     @property
     def key(self) -> str:
@@ -50,16 +67,9 @@ class TrackedBattle:
     def from_data(cls, data: GameData, name: str, t: TimeRecord) -> 'TrackedBattle':
         tc = data.battle.trainer.trainer_class
         tid = data.battle.trainer.number
-        stats = MonStats(
-            hp=data.player.team.slot1.stats.hp,
-            attack=data.player.team.slot1.stats.attack,
-            defense=data.player.team.slot1.stats.defense,
-            speed=data.player.team.slot1.stats.speed,
-            sp_attack=data.player.team.slot1.stats.sp_attack,
-            sp_defense=data.player.team.slot1.stats.sp_defense,
-        )
+        prev = PreviousData.from_data(data)
         rt = TimeInterval(start=t)
-        return cls(tc, tid, name, rt, stats)
+        return cls(tc, tid, name, rt, prev)
 
 
 @define
@@ -94,7 +104,9 @@ class OutputHandler:
             logger.error(f'unable to write to {self.filepath}: {e}')
 
     def _store(self):
-        raise NotImplementedError()
+        # to override
+        for rec in self.records:
+            logger.debug(f'store record: {rec}')
 
 
 @define
@@ -105,6 +117,7 @@ class CsvHandler(OutputHandler):
         self._write_contents()
 
     def _write_headers(self):
+        logger.debug(f'write CSV headers for {self.filepath}')
         headers = list(map(self.attributes, lambda k: self.labels.get(k, k)))
         text = ','.join(headers) + '\n'
         self.filepath.write_text(text, encoding='utf-8')
@@ -114,6 +127,7 @@ class CsvHandler(OutputHandler):
         contents = list(','.join(r) for r in records)
         contents.append('')
         text = '\n'.join(contents)
+        logger.debug(f'write CSV entries:\n{text}')
         with self.filepath.open(mode='a', encoding='utf-8') as f:
             f.write(text)
 
@@ -130,7 +144,6 @@ class SplitComponent:
     default_labels: Mapping[str, str] = field(factory=dict)
     _tracked: Optional[TrackedBattle] = field(init=False, default=None, eq=False, repr=False)
     _lock: Lock = field(init=False, factory=Lock, eq=False, repr=False)
-    _records: List[BattleRecord] = field(init=False, factory=list, eq=False, repr=False)
     _resets: Counter = field(init=False, factory=Counter, eq=False, repr=False)
     _outputs: List[OutputHandler] = field(init=False, factory=list, eq=False, repr=False)
 
@@ -152,16 +165,11 @@ class SplitComponent:
         logger.info('starting')
         return
 
-    def update(self, delta):
+    def update(self, _delta):
+        # runs in main thread
         with self._lock:
-            if not self._records:
-                return
-            records = self._records
-            self._records = []
-            data = self.game.data_dict()
-
-        for handler in self._outputs:
-            pass
+            for handler in self._outputs:
+                handler.store_records()
 
     def cleanup(self):
         logger.info('cleaning up')
@@ -186,8 +194,9 @@ class SplitComponent:
         name = self._tracked.trainer_name
         trainer_class = self._tracked.trainer_class
         trainer_id = self._tracked.trainer_id
-        time_start = self._tracked.time_start
+        time_start = self._tracked.realtime.start
         time_end = self.game.clock.get_current_time()
+        self._tracked.realtime.end = time_end
         duration = time_end - time_start
         logger.info(f'end of tracked battle vs {name} ({trainer_class} {trainer_id})')
         logger.info(f'started at {time_start}, ended at {time_end}, lasted {duration}')
@@ -202,10 +211,10 @@ class SplitComponent:
         self._tracked = None
 
     def on_reset(self):
-        if self._tracked is None:
-            return
-        self._record_failure()
-        self._tracked = None
+        if self._tracked is not None:
+            logger.info('failed attempt: detected game reset')
+            self._record_failure()
+            self._tracked = None
 
     def _register_trainer(self, data: Mapping[str, Any]):
         trainer_class = data['class']
