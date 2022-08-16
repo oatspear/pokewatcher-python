@@ -19,7 +19,7 @@ import sys
 import time
 import warnings
 
-import keyboard
+# import keyboard
 import requests
 from signalrcore.hub_connection_builder import HubConnectionBuilder
 
@@ -254,7 +254,7 @@ class PokemonDataHandler:
             if prev == 0 and self.is_new_game:
                 print('[New Game] starting a new game')
                 # autohotkey(AHK_RECORD_VIDEO)
-                keyboard.send(KEY_RECORD_VIDEO)
+                # keyboard.send(KEY_RECORD_VIDEO)
                 request_start_timer()
             self.is_new_game = False
 
