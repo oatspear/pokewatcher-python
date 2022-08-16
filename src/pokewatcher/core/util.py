@@ -118,6 +118,14 @@ class TimeRecord:
 
         return cls(hours=h, minutes=m, seconds=s, millis=ms)
 
+    def copy(self) -> 'TimeRecord':
+        return TimeRecord(
+            hours=self.hours,
+            minutes=self.minutes,
+            seconds=self.seconds,
+            millis=self.millis,
+        )
+
     def formatted(self, zeroes: bool = True, millis: bool = True) -> str:
         t = f'{self.seconds:02}' if not millis else f'{self.seconds:02}.{self.millis:03}'
         if not zeroes:
@@ -149,8 +157,8 @@ class TimeRecord:
 
 @define
 class TimeInterval:
-    start: TimeRecord
-    end: TimeRecord
+    start: TimeRecord = field(factory=time.time, converter=TimeRecord.from_float_seconds)
+    end: TimeRecord = field(factory=time.time, converter=TimeRecord.from_float_seconds)
 
     @property
     def duration(self) -> TimeRecord:
@@ -162,14 +170,17 @@ class TimeInterval:
 
 @define
 class SimpleClock:
-    time_start: float = field(factory=time.time)
+    time: TimeInterval = field(factory=TimeInterval)
 
     def reset_start_time(self):
-        self.time_start = time.time()
+        self.time.start = TimeRecord.from_float_seconds(time.time())
+        self.time.end = self.time.start.copy()
 
     def get_elapsed_time(self) -> TimeRecord:
-        delta = time.time() - self.time_start
-        return TimeRecord.from_float_seconds(delta)
+        return TimeRecord.from_float_seconds(time.time()) - self.time.start
+
+    def stop(self):
+        self.time.end = TimeRecord.from_float_seconds(time.time())
 
 
 @define
