@@ -69,10 +69,10 @@ class PartyMon:
     level: int = 1
     stats: MonStats = field(factory=MonStats)
     hp: int = -1
-    move1: int = 0
-    move2: int = 0
-    move3: int = 0
-    move4: int = 0
+    move1: str = ''
+    move2: str = ''
+    move3: str = ''
+    move4: str = ''
 
     def __attrs_post_init__(self):
         if self.hp < 0:
@@ -202,14 +202,11 @@ class BattleMon:
 @define
 class BattleData:
     ongoing: bool = False
+    is_vs_wild: bool = False
     result: int = BATTLE_RESULT_WIN
     player: BattleMon = field(factory=BattleMon)
     enemy: BattleMon = field(factory=BattleMon)
     trainer: TrainerData = field(factory=TrainerData)
-
-    @property
-    def is_vs_wild(self) -> bool:
-        return not self.trainer.trainer_class
 
     @property
     def is_victory(self) -> bool:
@@ -225,8 +222,13 @@ class BattleData:
 
     def set_wild_battle(self):
         self.ongoing = True
+        self.is_vs_wild = True
         self.result = BATTLE_RESULT_DRAW
-        self.trainer.reset()
+
+    def set_trainer_battle(self):
+        self.ongoing = True
+        self.is_vs_wild = False
+        self.result = BATTLE_RESULT_DRAW
 
     def set_victory(self):
         self.ongoing = False
