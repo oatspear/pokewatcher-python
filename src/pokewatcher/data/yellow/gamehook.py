@@ -102,10 +102,10 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_GAME_TIME_SECONDS,
     },
-    P_COUNT_GAME_TIME: {
-        'type': 'bool',
-        'label': yellow.WRAM_COUNT_PLAY_TIME,
-    },
+    # P_COUNT_GAME_TIME: {
+    #     'type': 'bool',
+    #     'label': yellow.WRAM_COUNT_PLAY_TIME,
+    # },
     P_SPECIES: {
         'type': 'string',
         'key': 'name',
