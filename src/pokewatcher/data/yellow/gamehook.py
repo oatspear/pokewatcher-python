@@ -164,6 +164,9 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     P_MAP: {
         'type': 'string',
         'store': game_data.VAR_MAP,
+        'processors': [
+            ['prefix', 'Kanto/'],
+        ],
     },
     # P_AUDIO_SOUND: {},
     P_AUDIO_CH5: {
