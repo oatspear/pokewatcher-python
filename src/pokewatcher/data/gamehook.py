@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Final, List, Mapping, Optional
+from typing import Any, Callable, Final, Iterable, List, Mapping, Optional
 
 import logging
 
@@ -29,6 +29,46 @@ TRANSFORMS: Final[Mapping[str, Callable]] = {
     'string': str,
 }
 
+
+def _pp_prefix(arg: Any) -> Callable:
+    return lambda value: f'{arg}{value}'
+
+
+def _pp_suffix(arg: Any) -> Callable:
+    return lambda value: f'{value}{arg}'
+
+
+def _pp_add(arg: Any) -> Callable:
+    return lambda value: value + arg
+
+
+def _pp_subtract(arg: Any) -> Callable:
+    return lambda value: value - arg
+
+
+def _pp_multiply(arg: Any) -> Callable:
+    return lambda value: value * arg
+
+
+def _pp_divide(arg: Any) -> Callable:
+    return lambda value: value / arg
+
+
+def _pp_modulo(arg: Any) -> Callable:
+    return lambda value: value % arg
+
+
+PROCESSORS: Final[Mapping[str, Callable]] = {
+    'prefix': _pp_prefix,
+    'suffix': _pp_suffix,
+    'add': _pp_add,
+    'subtract': _pp_subtract,
+    'multiply': _pp_multiply,
+    'divide': _pp_divide,
+    'modulo': _pp_modulo,
+}
+
+
 ###############################################################################
 # Interface
 ###############################################################################
@@ -44,6 +84,7 @@ class GameHookProperty:
     attribute: Optional[Attribute] = None
     label: Optional[str] = None
     converter: Callable = identity
+    processors: List[Callable] = field(factory=list)
     handler: Callable = noop
 
 
@@ -65,6 +106,9 @@ class DataHandler:
             # convert data to something else
             if value is not None:
                 value = ghp.converter(value)
+            if value is not None:
+                for processor in ghp.processors:
+                    value = processor(value)
             # store it in GameData
             if ghp.attribute is not None:
                 ghp.previous = ghp.attribute.get()
@@ -94,6 +138,11 @@ class DataHandler:
         key = metadata.get('key')
         self.convert(prop, data_type, key=key)
 
+        for pp in metadata.get('processors', ()):
+            func = pp[0]
+            args = pp[1:]
+            self.process(prop, func, args)
+
         attr = metadata.get('store')
         default = metadata.get('default')
         if attr:
@@ -117,6 +166,19 @@ class DataHandler:
             ghp.converter = f
         else:
             ghp.converter = lambda d: f(d[key])
+
+    def process(self, prop: str, func: str, args: Iterable[Any]):
+        logger.debug(f'process data: {prop} -> {func}{args}')
+        ghp = self.ensure_property(prop)
+        f = PROCESSORS.get(func)
+        if f is None:
+            logger.error(f'{prop}: processor {func} does not exist')
+        else:
+            try:
+                processor = f(*args)
+                ghp.processors.append(processor)
+            except TypeError as e:
+                logger.error(f'{prop}: processor {func}: {e}')
 
     def store(self, prop: str, path: str, default: Any = None):
         logger.debug(f'data store: {prop} -> {path}')
