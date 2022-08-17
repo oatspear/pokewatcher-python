@@ -12,6 +12,7 @@ import logging
 from attrs import define
 
 from pokewatcher.data.structs import GameData
+
 # from pokewatcher.data.yellow.constants import (
 #     BATTLE_TYPE_LOST,
 #     BATTLE_TYPE_NONE,
