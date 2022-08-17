@@ -30,12 +30,12 @@ P_MOVE1 = 'player.team.0.move1'
 P_MOVE2 = 'player.team.0.move2'
 P_MOVE3 = 'player.team.0.move3'
 P_MOVE4 = 'player.team.0.move4'
-P_MON_ATK = 'player.team.0.Attack'
-P_MON_DEF = 'player.team.0.Defense'
-P_MON_SPD = 'player.team.0.Speed'
-P_MON_SPC = 'player.team.0.Special'
-P_MON_SPATK = 'player.team.0.SpecialAttack'
-P_MON_SPDEF = 'player.team.0.SpecialDefense'
+P_MON_ATK = 'player.team.0.attack'
+P_MON_DEF = 'player.team.0.defense'
+P_MON_SPD = 'player.team.0.speed'
+P_MON_SPC = 'player.team.0.special'
+P_MON_SPATK = 'player.team.0.specialAttack'
+P_MON_SPDEF = 'player.team.0.specialDefense'
 
 P_MAP = 'overworld.map'
 
@@ -194,33 +194,33 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     },
     P_STAGE_ATK: {
         'type': 'int',
-        'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_STAGE_ATTACK,
+        'default': 0,
     },
     P_STAGE_DEF: {
         'type': 'int',
-        'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_STAGE_DEFENSE,
+        'default': 0,
     },
     P_STAGE_SPD: {
         'type': 'int',
-        'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_STAGE_SPEED,
+        'default': 0,
     },
     P_STAGE_SPC: {
         'type': 'int',
-        'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_STAGE_SPECIAL,
+        'default': 0,
     },
     P_STAGE_ACC: {
         'type': 'int',
-        'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_STAGE_ACCURACY,
+        'default': 0,
     },
     P_STAGE_EVA: {
         'type': 'int',
-        'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_STAGE_EVASION,
+        'default': 0,
     },
     P_BATTLE_ATK: {
         'type': 'int',
