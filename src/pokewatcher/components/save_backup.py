@@ -89,7 +89,13 @@ class SaveFileBackupComponent:
 
         data = self.game.data_dict()
 
-        data['location'] = data['location'].replace(' ', '').replace('-', '')
+        data['location'] = (
+            data['location']
+            .replace(' ', '')
+            .replace('-', '')
+            .replace('/', '')
+            .replace("'", '')
+        )
 
         if '{realtime}' in self.file_name_format:
             tr = self.game.clock.get_current_time()
