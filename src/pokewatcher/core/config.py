@@ -73,6 +73,7 @@ DEFAULTS: Dict[str, Any] = {
                         "Agatha's Room",
                         "Lance's Room",
                         'Champions Room',
+                        'Route 22',
                     ]
                 },
                 'once': {
@@ -111,7 +112,6 @@ DEFAULTS: Dict[str, Any] = {
                         'Route 19',
                         'Route 20',
                         'Route 21',
-                        'Route 22',
                         'Route 23',
                         'Route 24',
                         'Route 25',
@@ -173,14 +173,15 @@ DEFAULTS: Dict[str, Any] = {
                     'rom',
                     VAR_PARTY_MON1_SPECIES,
                     'trainer_name',
-                    'realtime.end.hours',
-                    'realtime.end.minutes',
-                    'realtime.end.seconds',
-                    'realtime.end.millis',
                     'realtime.start',
                     'realtime.end',
                     'time',
                     VAR_PARTY_MON1_LEVEL,
+                    'resets',
+                    'realtime.end.hours',
+                    'realtime.end.minutes',
+                    'realtime.end.seconds',
+                    'realtime.end.millis',
                     VAR_PARTY_MON1_MOVE1,
                     VAR_PARTY_MON1_MOVE2,
                     VAR_PARTY_MON1_MOVE3,
@@ -202,7 +203,6 @@ DEFAULTS: Dict[str, Any] = {
                     VAR_BATTLE_PLAYER_SP_ATTACK,
                     VAR_BATTLE_PLAYER_SP_DEFENSE,
                     VAR_BATTLE_PLAYER_SPEED,
-                    'resets',
                 ],
             }
         },
@@ -287,7 +287,7 @@ DEFAULTS: Dict[str, Any] = {
                 {
                     'class': 'GIOVANNI',
                     'number': 2,
-                    'name': 'GIOVANNI (SILPH)',
+                    'name': 'Giovanni (Silph)',
                 },
                 {
                     'class': 'GIOVANNI',
