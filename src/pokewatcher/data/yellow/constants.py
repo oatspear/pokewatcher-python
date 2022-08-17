@@ -26,5 +26,6 @@ WRAM_BATTLE_TYPE: Final[str] = 'wIsInBattle'
 WRAM_LOW_HEALTH_ALARM: Final[str] = 'wLowHealthAlarmDisabled'
 WRAM_AUDIO_CHANNEL5: Final[str] = 'wChannelSoundIDs_5'
 WRAM_CUR_MAP: Final[str] = 'wCurMap'
+WRAM_COUNT_PLAY_TIME: Final[str] = 'wd732_0'
 
 ALL_WRAM: Final[Tuple] = tuple(v for k, v in globals().items() if k.startswith('WRAM_'))
