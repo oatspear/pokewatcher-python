@@ -19,7 +19,7 @@ from attrs.validators import instance_of
 from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import Attribute, TimeInterval, TimeRecord
 from pokewatcher.data.structs import BadgeData, GameData, GameTime, TrainerParty
-from pokewatcher.events import on_battle_ended, on_battle_started, on_reset, on_data_changed
+from pokewatcher.events import on_battle_ended, on_battle_started, on_reset
 
 ###############################################################################
 # Constants
@@ -32,13 +32,6 @@ BattleRecord = List[Any]
 ###############################################################################
 # Helper Classes
 ###############################################################################
-
-
-def helpme(attr, previous, value):
-    if attr == 'player.team.slot1.species':
-        logger.info(f'changed species: {previous} -> {value}')
-    elif attr == 'player.team.slot1.move1':
-        logger.info(f'changed move1: {previous} -> {value}')
 
 
 @define
@@ -167,7 +160,6 @@ class SplitComponent:
         on_battle_started.watch(self.on_battle_started)
         on_battle_ended.watch(self.on_battle_ended)
         on_reset.watch(self.on_reset)
-        on_data_changed.watch(helpme)
 
     def start(self):
         logger.info('starting')
