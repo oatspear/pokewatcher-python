@@ -167,6 +167,7 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'processors': [
             ['prefix', 'Kanto/'],
         ],
+        'label': yellow.WRAM_CUR_MAP,
     },
     # P_AUDIO_SOUND: {},
     P_AUDIO_CH5: {
