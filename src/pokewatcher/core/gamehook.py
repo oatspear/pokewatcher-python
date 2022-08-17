@@ -131,7 +131,7 @@ class GameHookBridge:
 
     def _on_property_changed(self, args):
         prop, _address, value, byte_values, _frozen, changed_fields = args
-        if 'value' in changed_fields:
+        if 'bytes' in changed_fields:
             self.on_change(prop, value, byte_values)
 
 
