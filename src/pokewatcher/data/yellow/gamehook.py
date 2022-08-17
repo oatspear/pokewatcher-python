@@ -64,6 +64,7 @@ P_BATTLE_SPC = 'battle.yourPokemon.battleStatSpecial'
 P_GAME_TIME_HOURS = 'gameTime.hours'
 P_GAME_TIME_MINUTES = 'gameTime.minutes'
 P_GAME_TIME_SECONDS = 'gameTime.seconds'
+P_COUNT_GAME_TIME = 'events.overworldFlags.countPlayTime'
 
 P_BADGE1 = 'player.badges.boulderBadge'
 P_BADGE2 = 'player.badges.cascadeBadge'
