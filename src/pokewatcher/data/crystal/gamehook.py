@@ -12,6 +12,7 @@ import logging
 import pokewatcher.data.constants as game_data
 from pokewatcher.data.gamehook import DataHandler
 from pokewatcher.data.structs import GameData
+
 # import pokewatcher.data.yellow.constants as yellow
 from pokewatcher.logic.fsm import StateMachine
 
