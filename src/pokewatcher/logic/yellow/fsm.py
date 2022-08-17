@@ -40,6 +40,7 @@ class YellowState(GameState):
     wIsInBattle = transition  # noqa: N815
     wChannelSoundIDs_5 = transition  # noqa: N815
     wLowHealthAlarmDisabled = transition  # noqa: N815
+    wCurMap = transition  # noqa: N815
 
 
 @define
@@ -109,6 +110,11 @@ class InOverworld(InGame):
         if value == SFX_SAVE_FILE:
             logger.info('saved game')
             events.on_save_game.emit()
+        return self
+
+    def wCurMap(self, _p: Any, value: str, _d: GameData) -> GameState:  # noqa: N815
+        logger.info(f'map changed: {value}')
+        events.on_map_changed.emit()
         return self
 
 
