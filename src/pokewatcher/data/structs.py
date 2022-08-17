@@ -352,6 +352,10 @@ class GameMap:
     def uid(self) -> str:
         return f'{self.group}/{self.name}'
 
+    @staticmethod
+    def make_uid(group: str, name: str) -> str:
+        return f'{group}/{name}'
+
 
 ###############################################################################
 # Game Data
