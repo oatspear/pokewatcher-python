@@ -38,6 +38,7 @@ TRANSFORMS: Final[Mapping[str, Callable]] = {
 class GameHookProperty:
     name: str
     previous: Any = None
+    default: Any = None
     uses_bytes: bool = False
     is_little_endian: bool = True
     attribute: Optional[Attribute] = None
@@ -55,6 +56,8 @@ class DataHandler:
     def on_property_changed(self, prop: str, value: Any, byte_values: List[int]):
         ghp = self.properties.get(prop)
         if ghp is not None:
+            if value is None:
+                value = ghp.default
             # bytes or glossary value?
             if ghp.uses_bytes:
                 endianess = 'little' if ghp.is_little_endian else 'big'
@@ -92,8 +95,9 @@ class DataHandler:
         self.convert(prop, data_type, key=key)
 
         attr = metadata.get('store')
+        default = metadata.get('default')
         if attr:
-            self.store(prop, attr)
+            self.store(prop, attr, default=default)
 
         label = metadata.get('label')
         if label is not None:
@@ -114,11 +118,12 @@ class DataHandler:
         else:
             ghp.converter = lambda d: f(d[key])
 
-    def store(self, prop: str, path: str):
+    def store(self, prop: str, path: str, default: Any = None):
         logger.debug(f'data store: {prop} -> {path}')
         ghp = self.ensure_property(prop)
         ghp.attribute = Attribute.of(self.data, path)
         ghp.previous = ghp.attribute.get()
+        ghp.default = default
 
     def transition(self, prop: str, label: str):
         logger.debug(f'transition label: {prop} -> {label}')
