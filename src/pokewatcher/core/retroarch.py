@@ -132,10 +132,10 @@ class RetroArchBridge:
                     # logger.info('requesting increment save slot')
                     # self._socket.send(b'STATE_SLOT_PLUS\n')
                     # no reply
+                    return
                 except ConnectionError as e:
                     logger.error(f'failed to establish a connection: {e}')
-                return
-        logger.warning('unable to create a saved state')
+        logger.warning('unable to save state')
         raise RetroArchError.save_state(self._socket.address)
 
 
