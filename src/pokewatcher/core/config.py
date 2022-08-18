@@ -564,7 +564,12 @@ DEFAULTS: Dict[str, Any] = {
             ],
         },
     },
-    'livesplit': {'enabled': True},
+    'livesplit': {
+        'enabled': True,
+        'host': 'localhost',
+        'port': 16834,
+        'timeout': 3.0,
+    },
     'video_record': {'enabled': True},
 }
 
