@@ -16,6 +16,10 @@ class PokeWatcherError(Exception):
     pass
 
 
+class PokeWatcherComponentError(PokeWatcherError):
+    pass
+
+
 class StateMachineError(PokeWatcherError):
     @classmethod
     def no_transition(cls, state: str, label: str, value: Any) -> 'StateMachineError':
