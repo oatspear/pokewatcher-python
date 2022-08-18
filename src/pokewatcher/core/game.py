@@ -48,6 +48,10 @@ class GameInterface:
     def state(self) -> GameState:
         return self.fsm.state
 
+    @property
+    def has_custom_clock(self) -> bool:
+        return type(self.clock) != SimpleClock
+
     def data_dict(self) -> Mapping[str, Any]:
         return {
             'rom': self.rom or 'NULL',
