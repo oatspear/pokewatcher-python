@@ -564,7 +564,7 @@ DEFAULTS: Dict[str, Any] = {
             ],
         },
     },
-    'timer': {'enabled': True},
+    'livesplit': {'enabled': True},
     'video_record': {'enabled': True},
 }
 
