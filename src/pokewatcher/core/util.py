@@ -283,6 +283,10 @@ class SocketConnection:
     def protocol(self) -> socket.SocketKind:
         raise NotImplementedError()
 
+    @property
+    def is_connected(self) -> bool:
+        return self._socket is not None
+
     def connect(self):
         if self._socket is None:
             self._socket = socket.socket(socket.AF_INET, self.protocol)
