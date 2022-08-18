@@ -84,6 +84,7 @@ class RetroArchBridge:
                     reply = self._socket.receive(bytes=4096)
                 except ConnectionError as e:
                     logger.error(f'failed to establish a connection: {e}')
+                    continue
 
                 if not reply.startswith('GET_STATUS '):
                     logger.warning('unexpected response: ' + reply)
