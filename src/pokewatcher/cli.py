@@ -28,6 +28,7 @@ from pokewatcher.components import ALL_COMPONENTS
 from pokewatcher.core.config import load as load_configs, setup_logging
 from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import SleepLoop
+from pokewatcher.errors import PokeWatcherComponentError
 
 ###############################################################################
 # Constants
@@ -79,9 +80,12 @@ def _load_components(game: GameInterface, configs: Dict[str, Any]) -> List[Any]:
         settings: Dict[str, Any] = configs[key]
         if settings.get('enabled', True):
             logger.info(f'loading component: {key}')
-            instance = module.new(game)
-            instance.setup(settings)
-            components.append(instance)
+            try:
+                instance = module.new(game)
+                instance.setup(settings)
+                components.append(instance)
+            except PokeWatcherComponentError as e:
+                logger.error(f'skipping faulty component {key}: {e}')
         else:
             logger.info(f'skipping disabled component: {key}')
     return components
