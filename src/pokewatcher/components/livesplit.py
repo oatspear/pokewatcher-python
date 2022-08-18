@@ -12,6 +12,7 @@ import logging
 from attrs import define
 
 from pokewatcher.core.game import GameInterface
+from pokewatcher.errors import PokeWatcherComponentError
 
 ###############################################################################
 # Constants
@@ -30,6 +31,9 @@ class LiveSplitInterface:
 
     def setup(self, settings: Mapping[str, Any]):
         logger.info('setting up')
+        if self.game.has_custom_clock:
+            name = type(self.game.clock).__name__
+            raise PokeWatcherComponentError(f'found pre-existing custom clock: {name}')
         return
 
     def start(self):
@@ -45,6 +49,20 @@ class LiveSplitInterface:
         return
 
 
-def new(game: GameInterface):
+@define
+class LivesplitClock:
+    time_start: TimeRecord = field(factory=time.time, converter=TimeRecord.converter)
+
+    def reset_start_time(self):
+        self.time_start = TimeRecord.from_float_seconds(time.time())
+
+    def get_current_time(self) -> TimeRecord:
+        return TimeRecord.from_float_seconds(time.time()) - self.time_start
+
+    def get_elapsed_time(self) -> TimeInterval:
+        return TimeInterval(start=self.time_start, end=time.time())
+
+
+def new(game: GameInterface) -> LiveSplitInterface:
     instance = LiveSplitInterface(game)
     return instance
