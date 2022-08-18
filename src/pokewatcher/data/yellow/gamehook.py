@@ -67,6 +67,7 @@ P_BATTLE_SPC = 'battle.yourPokemon.battleStatSpecial'
 P_GAME_TIME_HOURS = 'gameTime.hours'
 P_GAME_TIME_MINUTES = 'gameTime.minutes'
 P_GAME_TIME_SECONDS = 'gameTime.seconds'
+P_GAME_TIME_FRAMES = 'gameTime.frames'
 P_COUNT_GAME_TIME = 'events.overworldFlags.countPlayTime'
 
 P_BADGE1 = 'player.badges.boulderBadge'
@@ -77,6 +78,8 @@ P_BADGE5 = 'player.badges.soulBadge'
 P_BADGE6 = 'player.badges.marshBadge'
 P_BADGE7 = 'player.badges.volcanoBadge'
 P_BADGE8 = 'player.badges.earthBadge'
+
+P_CUR_MENU_ITEM = 'screen.menu.currentItem'
 
 PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     P_PLAYER_ID: {
@@ -95,25 +98,39 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'label': yellow.WRAM_JOY_IGNORE,
     },
+    P_CUR_MENU_ITEM: {
+        'type': 'int',
+        'bytes': True,
+        'label': yellow.WRAM_CURRENT_MENU_ITEM,
+    },
     P_GAME_TIME_HOURS: {
         'type': 'int',
         'bytes': True,
         'store': game_data.VAR_GAME_TIME_HOURS,
+        'label': yellow.WRAM_PLAY_TIME_HOURS,
     },
     P_GAME_TIME_MINUTES: {
         'type': 'int',
         'bytes': True,
         'store': game_data.VAR_GAME_TIME_MINUTES,
+        'label': yellow.WRAM_PLAY_TIME_MINUTES,
     },
     P_GAME_TIME_SECONDS: {
         'type': 'int',
         'bytes': True,
         'store': game_data.VAR_GAME_TIME_SECONDS,
+        'label': yellow.WRAM_PLAY_TIME_SECONDS,
     },
-    # P_COUNT_GAME_TIME: {
-    #     'type': 'bool',
-    #     'label': yellow.WRAM_COUNT_PLAY_TIME,
-    # },
+    P_GAME_TIME_FRAMES: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_GAME_TIME_FRAMES,
+        'label': yellow.WRAM_PLAY_TIME_FRAMES,
+    },
+    P_COUNT_GAME_TIME: {
+        'type': 'bool',
+        'label': yellow.WRAM_COUNT_PLAY_TIME,
+    },
     P_SPECIES: {
         'type': 'string',
         'key': 'name',
