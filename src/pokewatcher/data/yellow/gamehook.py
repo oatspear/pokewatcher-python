@@ -23,6 +23,7 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 
 P_PLAYER_ID = 'player.playerId'
 P_PLAYER_NAME = 'player.name'
+P_JOYPAD_IGNORE = 'player.joypadIgnore'
 
 P_SPECIES = 'player.team.0.species'
 P_LEVEL = 'player.team.0.level'
@@ -38,6 +39,8 @@ P_MON_SPATK = 'player.team.0.specialAttack'
 P_MON_SPDEF = 'player.team.0.specialDefense'
 
 P_MAP = 'overworld.map'
+P_X_COORD = 'overworld.x'
+P_Y_COORD = 'overworld.y'
 
 P_AUDIO_SOUND = 'audio.currentSound'
 P_AUDIO_CH5 = 'audio.channel5'
@@ -86,6 +89,11 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'type': 'string',
         'label': yellow.WRAM_PLAYER_NAME,
         'store': game_data.VAR_PLAYER_NAME,
+    },
+    P_JOYPAD_IGNORE: {
+        'type': 'int',
+        'bytes': True,
+        'label': yellow.WRAM_JOY_IGNORE,
     },
     P_GAME_TIME_HOURS: {
         'type': 'int',
@@ -173,6 +181,14 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
             ['prefix', 'Kanto/'],
         ],
         'label': yellow.WRAM_CUR_MAP,
+    },
+    P_X_COORD: {
+        'type': 'int',
+        'label': yellow.WRAM_X_COORD,
+    },
+    P_Y_COORD: {
+        'type': 'int',
+        'label': yellow.WRAM_Y_COORD,
     },
     # P_AUDIO_SOUND: {},
     P_AUDIO_CH5: {
