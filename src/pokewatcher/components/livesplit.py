@@ -12,6 +12,7 @@ import logging
 from attrs import define
 
 from pokewatcher.core.game import GameInterface
+from pokewatcher.core.util import TcpConnection, TimeInterval, TimeRecord
 from pokewatcher.errors import PokeWatcherComponentError
 
 ###############################################################################
@@ -31,14 +32,31 @@ class LiveSplitInterface:
 
     def setup(self, settings: Mapping[str, Any]):
         logger.info('setting up')
+        logger.debug(f'settings: {settings}')
+
         if self.game.has_custom_clock:
-            name = type(self.game.clock).__name__
-            raise PokeWatcherComponentError(f'found pre-existing custom clock: {name}')
-        return
+            if not isinstance(self.game.clock, LivesplitClock):
+                name = type(self.game.clock).__name__
+                raise PokeWatcherComponentError(f'found pre-existing custom clock: {name}')
+
+        host = settings['host']
+        port = settings['port']
+        timeout = settings['timeout']
+        socket = TcpConnection(host, port, timeout=timeout)
+
+        logger.info('setting livesplit as the default time server')
+        if isinstance(self.game.clock, LivesplitClock):
+            self.game.clock._socket.disconnect()
+        self.game.clock = LivesplitClock(socket)
 
     def start(self):
         logger.info('starting')
-        return
+        if not isinstance(self.game.clock, LivesplitClock):
+            name = type(self.game.clock).__name__
+            raise PokeWatcherComponentError(f'found unexpected custom clock: {name}')
+
+        logger.info('connect to livesplit')
+        self.game.clock._socket.connect()
 
     def update(self, delta):
         # logger.debug('update')
@@ -46,21 +64,78 @@ class LiveSplitInterface:
 
     def cleanup(self):
         logger.info('cleaning up')
-        return
+        logger.info('disconnect from livesplit')
+        self.game.clock._socket.disconnect()
 
 
 @define
 class LivesplitClock:
-    time_start: TimeRecord = field(factory=time.time, converter=TimeRecord.converter)
+    _socket: TcpConnection
+    time_start: TimeRecord = field(factory=TimeRecord)
 
     def reset_start_time(self):
-        self.time_start = TimeRecord.from_float_seconds(time.time())
+        if self._socket.is_connected:
+            try:
+                self.request_reset()
+            except ConnectionError as e:
+                logger.error(f'unable to reset start time: {e}')
 
     def get_current_time(self) -> TimeRecord:
-        return TimeRecord.from_float_seconds(time.time()) - self.time_start
+        if self._socket.is_connected:
+            try:
+                return self.request_current_time()
+            except ConnectionError as e:
+                logger.error(f'unable to get current time: {e}')
+        return TimeRecord()
 
     def get_elapsed_time(self) -> TimeInterval:
-        return TimeInterval(start=self.time_start, end=time.time())
+        if self._socket.is_connected:
+            try:
+                now = self.request_current_time()
+                return TimeInterval(start=self.time_start, end=now)
+            except ConnectionError as e:
+                logger.error(f'unable to get current time: {e}')
+        return TimeInterval()
+
+    def request_reset(self):
+        logger.debug('request reset timer')
+        self._socket.send(b'reset\r\n')
+        # no reply
+
+    def request_start(self):
+        logger.debug('request start timer')
+        self._socket.send(b'starttimer\r\n')
+        # no reply
+
+    def request_pause(self):
+        logger.debug('request pause timer')
+        self._socket.send(b'pause\r\n')
+        # no reply
+
+    def request_current_time(self) -> TimeRecord:
+        logger.debug('request get current time')
+        self._socket.send(b'getcurrenttime\r\n')
+        reply = self._socket.recv(1024)
+        time_string = reply.decode('utf-8').strip()
+        if '.' not in time_string:
+            time_string = time_string + '.0'
+        if ':' not in time_string:
+            time_string = f'0:0:{time_string}'
+        elif time_string.count(':') < 2:
+            time_string = f'0:{time_string}'
+
+        parts = time_string.rsplit('.', maxsplit=1)
+        try:
+            ms = int(parts[1])
+            parts = parts[0].rsplit(':', maxsplit=2)
+            h = int(parts[0])
+            m = int(parts[1])
+            s = int(parts[2])
+            return TimeRecord(hours=h, minutes=m, seconds=s, millis=ms)
+        except (IndexError, ValueError) as e:
+            logger.error(f'getcurrenttime: unexpected reply: {reply}')
+            logger.error(str(e))
+            return TimeRecord()
 
 
 def new(game: GameInterface) -> LiveSplitInterface:
