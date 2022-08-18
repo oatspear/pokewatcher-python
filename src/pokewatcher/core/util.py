@@ -269,7 +269,7 @@ class SleepLoop:
 
 
 @define
-class UdpConnection:
+class SocketConnection:
     host: str
     port: int
     timeout: float = 0.0
@@ -279,9 +279,13 @@ class UdpConnection:
     def address(self) -> str:
         return f'{self.host}:{self.port}'
 
+    @property
+    def protocol(self) -> socket.SocketKind:
+        raise NotImplementedError()
+
     def connect(self):
         if self._socket is None:
-            self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self._socket = socket.socket(socket.AF_INET, self.protocol)
             if self.timeout > 0.0:
                 # timeout mode instead of blocking mode
                 self._socket.settimeout(self.timeout)
@@ -313,3 +317,17 @@ class UdpConnection:
 
     def __exit__(self, type, value, traceback):
         self.disconnect()
+
+
+@define
+class UdpConnection(SocketConnection):
+    @property
+    def protocol(self) -> socket.SocketKind:
+        return socket.SOCK_DGRAM
+
+
+@define
+class TcpConnection(SocketConnection):
+    @property
+    def protocol(self) -> socket.SocketKind:
+        return socket.SOCK_STREAM
