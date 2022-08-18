@@ -50,6 +50,12 @@ To run tests:
 tox
 ```
 
+To run manual tests:
+
+```bash
+tox -e debug
+```
+
 To build the package:
 
 ```bash
@@ -60,6 +66,12 @@ To build the package (with `build`):
 
 ```bash
 python -m build
+```
+
+To build a standalone executable for the host platform (output in `./dist`):
+
+```bash
+tox -e exe
 ```
 
 To clean the previous build files:
