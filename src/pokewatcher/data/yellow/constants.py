@@ -17,6 +17,7 @@ BATTLE_TYPE_TRAINER: Final[int] = 0x02
 BATTLE_TYPE_LOST: Final[int] = 0xFF
 
 SFX_SAVE_FILE: Final[int] = 0xB6
+SFX_PRESS_A_B: Final[int] = 0x90
 
 DEFAULT_PLAYER_NAME: Final[str] = 'NINTEN'
 
@@ -31,6 +32,10 @@ JOY_MASK_D_DOWN: Final[int] = 0x80
 JOY_MASK_ALL: Final[int] = 0xFF
 JOY_MASK_NONE: Final[int] = 0x00
 
+MENU_ITEM_CONTINUE: Final[int] = 0
+MENU_ITEM_NEW_GAME: Final[int] = 1
+MENU_ITEM_OPTIONS: Final[int] = 2
+
 WRAM_PLAYER_ID: Final[str] = 'wPlayerID'
 WRAM_PLAYER_NAME: Final[str] = 'wPlayerName'
 WRAM_BATTLE_TYPE: Final[str] = 'wIsInBattle'
@@ -41,5 +46,10 @@ WRAM_X_COORD: Final[str] = 'wXCoord'
 WRAM_Y_COORD: Final[str] = 'wYCoord'
 WRAM_COUNT_PLAY_TIME: Final[str] = 'wd732_0'
 WRAM_JOY_IGNORE: Final[str] = 'wJoyIgnore'
+WRAM_CURRENT_MENU_ITEM: Final[str] = 'wCurrentMenuItem'
+WRAM_PLAY_TIME_HOURS: Final[str] = 'wPlayTimeHours'
+WRAM_PLAY_TIME_MINUTES: Final[str] = 'wPlayTimeMinutes'
+WRAM_PLAY_TIME_SECONDS: Final[str] = 'wPlayTimeSeconds'
+WRAM_PLAY_TIME_FRAMES: Final[str] = 'wPlayTimeFrames'
 
 ALL_WRAM: Final[Tuple] = tuple(v for k, v in globals().items() if k.startswith('WRAM_'))
