@@ -7,7 +7,7 @@
 
 from typing import Final, Tuple
 
-from pokewatcher.components import auto_save, livesplit, save_backup, splitter, video_record
+from pokewatcher.components import auto_save, livesplit, obsstudio, save_backup, splitter
 
 ###############################################################################
 # Interface
@@ -17,7 +17,7 @@ from pokewatcher.components import auto_save, livesplit, save_backup, splitter, 
 ALL_COMPONENTS: Final[Tuple] = (
     auto_save,
     livesplit,
+    obsstudio,
     save_backup,
     splitter,
-    video_record,
 )
