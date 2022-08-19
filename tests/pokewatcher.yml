@@ -1,0 +1,379 @@
+%YAML 1.1
+---
+auto_save:
+  enabled: true
+  maps:
+    Pokemon Red and Blue: Pokemon Yellow
+    Pokemon Yellow:
+      always:
+        Kanto:
+        - Viridian Forest
+        - Silph Co - 1F
+        - Indigo Plateau - Lobby
+        - Viridian City - Gym
+        - Pewter City - Gym
+        - Cerulean City - Gym
+        - Vermilion City - Gym
+        - Celadon City - Gym
+        - Fuchsia City - Gym
+        - Saffron City - Gym
+        - Cinnabar Island - Gym
+        - Lorelei's Room
+        - Bruno's Room
+        - Agatha's Room
+        - Lance's Room
+        - Champions Room
+        - Route 22
+      once:
+        Kanto:
+        - Viridian City
+        - Pewter City
+        - Cerulean City
+        - Lavender Town
+        - Vermilion City
+        - Celadon City
+        - Fuchsia City
+        - Cinnabar Island
+        - Saffron City
+        - Rock Tunnel - 1
+        - Mt Moon - 1
+        - Victory Road
+        - Pokemon Tower - 1F
+        - Route 1
+        - Route 2
+        - Route 3
+        - Route 4
+        - Route 5
+        - Route 6
+        - Route 7
+        - Route 8
+        - Route 9
+        - Route 10
+        - Route 11
+        - Route 12
+        - Route 13
+        - Route 14
+        - Route 15
+        - Route 16
+        - Route 17
+        - Route 18
+        - Route 19
+        - Route 20
+        - Route 21
+        - Route 23
+        - Route 24
+        - Route 25
+gamehook:
+  url:
+    requests: http://localhost:8085/mapper
+    signalr: http://localhost:8085/updates
+livesplit:
+  enabled: true
+  host: localhost
+  port: 16834
+  timeout: 3.0
+obsstudio:
+  enabled: true
+  password: ObH0UK3sW67Q6kvW
+  url: ws://localhost:4455
+options:
+  update_frequency: 50.0
+retroarch:
+  host: 127.0.0.1
+  port: 55355
+  timeout: 3.0
+save_backup:
+  check_interval: 3.0
+  dest_dir: .
+  enabled: true
+  file_name_format: '{rom} - lvl{player.team.slot1.level}-{realtime}-{location}.srm'
+  min_backup_interval: 1.0
+  n_checks: 5
+splitter:
+  enabled: true
+  labels: {}
+  output:
+    csv:
+      attributes:
+      - rom
+      - player.team.slot1.species
+      - trainer_name
+      - realtime.start
+      - realtime.end
+      - time
+      - player.team.slot1.level
+      - resets
+      - realtime.end.hours
+      - realtime.end.minutes
+      - realtime.end.seconds
+      - realtime.end.millis
+      - player.team.slot1.move1
+      - player.team.slot1.move2
+      - player.team.slot1.move3
+      - player.team.slot1.move4
+      - previous.team.slot1.stats.attack
+      - previous.team.slot1.stats.defense
+      - previous.team.slot1.stats.sp_attack
+      - previous.team.slot1.stats.sp_defense
+      - previous.team.slot1.stats.speed
+      - battle.player.stages.attack
+      - battle.player.stages.defense
+      - battle.player.stages.sp_attack
+      - battle.player.stages.sp_defense
+      - battle.player.stages.speed
+      - battle.player.stages.accuracy
+      - battle.player.stages.evasion
+      - battle.player.stats.attack
+      - battle.player.stats.defense
+      - battle.player.stats.sp_attack
+      - battle.player.stats.sp_defense
+      - battle.player.stats.speed
+      labels:
+        battle.player.stages.accuracy: Accuracy Stage
+        battle.player.stages.attack: Attack Stage
+        battle.player.stages.defense: Defense Stage
+        battle.player.stages.evasion: Evasion Stage
+        battle.player.stages.sp_attack: Sp. Attack Stage
+        battle.player.stages.sp_defense: Sp. Defense Stage
+        battle.player.stages.speed: Speed Stage
+        battle.player.stats.attack: Battle Attack
+        battle.player.stats.defense: Battle Defense
+        battle.player.stats.sp_attack: Battle Sp. Attack
+        battle.player.stats.sp_defense: Battle Sp. Defense
+        battle.player.stats.speed: Battle Speed
+        player.team.slot1.level: Level
+        player.team.slot1.move1: Move 1
+        player.team.slot1.move2: Move 2
+        player.team.slot1.move3: Move 3
+        player.team.slot1.move4: Move 4
+        player.team.slot1.species: Species
+        previous.team.slot1.stats.attack: Attack
+        previous.team.slot1.stats.defense: Defense
+        previous.team.slot1.stats.sp_attack: Sp. Attack
+        previous.team.slot1.stats.sp_defense: Sp. Defense
+        previous.team.slot1.stats.speed: Speed
+        realtime.end: Real Time
+        realtime.end.hours: RTHours
+        realtime.end.millis: RTMilliseconds
+        realtime.end.minutes: RTMinutes
+        realtime.end.seconds: RTSeconds
+        realtime.start: Start Time
+        resets: Resets
+        rom: ROM
+        time: Game Time
+        trainer_name: Trainer
+      path: '{rom}.csv'
+  trainers:
+    Pokemon Crystal:
+    - class: RIVAL1
+      name: Rival 1
+      number: 1
+    - class: RIVAL1
+      name: Rival 1
+      number: 2
+    - class: RIVAL1
+      name: Rival 1
+      number: 3
+    - class: FALKNER
+      name: Falkner
+      number: 1
+    - class: RIVAL1
+      name: Rival 2
+      number: 4
+    - class: RIVAL1
+      name: Rival 2
+      number: 5
+    - class: RIVAL1
+      name: Rival 2
+      number: 6
+    - class: BUGSY
+      name: Bugsy
+      number: 1
+    - class: WHITNEY
+      name: Whitney
+      number: 1
+    - class: RIVAL1
+      name: Rival 3
+      number: 7
+    - class: RIVAL1
+      name: Rival 3
+      number: 8
+    - class: RIVAL1
+      name: Rival 3
+      number: 9
+    - class: MORTY
+      name: Morty
+      number: 1
+    - class: CHUCK
+      name: Chuck
+      number: 1
+    - class: PRYCE
+      name: Pryce
+      number: 1
+    - class: JASMINE
+      name: Jasmine
+      number: 1
+    - class: RIVAL1
+      name: Rival 4
+      number: 10
+    - class: RIVAL1
+      name: Rival 4
+      number: 11
+    - class: RIVAL1
+      name: Rival 4
+      number: 12
+    - class: CLAIR
+      name: Clair
+      number: 1
+    - class: WILL
+      name: Will
+      number: 1
+    - class: KOGA
+      name: Koga
+      number: 1
+    - class: BRUNO
+      name: Bruno
+      number: 1
+    - class: KAREN
+      name: Karen
+      number: 1
+    - class: Champion
+      name: Champion
+      number: 1
+    - class: SABRINA
+      name: Sabrina
+      number: 1
+    - class: ERIKA
+      name: Erika
+      number: 1
+    - class: MISTY
+      name: Misty
+      number: 1
+    - class: LT. SURGE
+      name: Lt. Surge
+      number: 1
+    - class: BROCK
+      name: Brock
+      number: 1
+    - class: BLAINE
+      name: Blaine
+      number: 1
+    - class: JANINE
+      name: Janine
+      number: 1
+    - class: BLUE
+      name: Blue
+      number: 1
+    - class: RED
+      name: Red
+      number: 1
+    Pokemon Red and Blue: Pokemon Yellow
+    Pokemon Yellow:
+    - class: BROCK
+      name: Brock
+      number: 1
+    - class: MISTY
+      name: Misty
+      number: 1
+    - class: LASS
+      name: Oddish Lass
+      number: 10
+    - class: ROCKET
+      name: Rocket
+      number: 5
+    - class: LT.SURGE
+      name: Lt. Surge
+      number: 1
+    - class: JR TRAINER F
+      name: RTG1 - Wrapping Lass
+      number: 5
+    - class: POKEMANIAC
+      name: RTG2 - Pokemaniac 1
+      number: 7
+    - class: POKEMANIAC
+      name: RTG3 - Pokemaniac 2
+      number: 5
+    - class: JR TRAINER F
+      name: RTG4 - Status Jr Trainer
+      number: 10
+    - class: HIKER
+      name: RTG5 - Self-destructing Hiker
+      number: 9
+    - class: JR TRAINER F
+      name: RTG6 - Finisher
+      number: 18
+    - class: ERIKA
+      name: Erika
+      number: 1
+    - class: KOGA
+      name: Koga
+      number: 1
+    - class: BLAINE
+      name: Blaine
+      number: 1
+    - class: SABRINA
+      name: Sabrina
+      number: 1
+    - class: GIOVANNI
+      name: Giovanni (Silph)
+      number: 2
+    - class: GIOVANNI
+      name: Giovanni
+      number: 3
+    - class: LORELEI
+      name: Lorelei
+      number: 1
+    - class: BRUNO
+      name: Bruno
+      number: 1
+    - class: AGATHA
+      name: Agatha
+      number: 1
+    - class: LANCE
+      name: Lance
+      number: 1
+    - class: RIVAL1
+      name: Rival (Optional)
+      number: 2
+    - class: RIVAL1
+      name: Rival (Nugget Bridge)
+      number: 3
+    - class: RIVAL2
+      name: Rival (SS Anne)
+      number: 1
+    - class: RIVAL2
+      name: Rival (Pokemon Tower)
+      number: 2
+    - class: RIVAL2
+      name: Rival (Pokemon Tower)
+      number: 3
+    - class: RIVAL2
+      name: Rival (Pokemon Tower)
+      number: 4
+    - class: RIVAL2
+      name: Rival (Silph Co.)
+      number: 5
+    - class: RIVAL2
+      name: Rival (Silph Co.)
+      number: 6
+    - class: RIVAL2
+      name: Rival (Silph Co.)
+      number: 7
+    - class: RIVAL2
+      name: Rival (Final)
+      number: 8
+    - class: RIVAL2
+      name: Rival (Final)
+      number: 9
+    - class: RIVAL2
+      name: Rival (Final)
+      number: 10
+    - class: RIVAL3
+      name: Champion
+      number: 1
+    - class: RIVAL3
+      name: Champion
+      number: 2
+    - class: RIVAL3
+      name: Champion
+      number: 3
