@@ -9,7 +9,7 @@ from typing import Any, Final, Mapping
 
 import logging
 
-from attrs import define
+from attrs import define, field
 
 from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import TcpConnection, TimeInterval, TimeRecord
@@ -79,6 +79,12 @@ class LiveSplitInterface:
         logger.info('pausing timer on champion victory')
         self.game.clock.request_pause()
 
+    # def on_battle_ended(self):
+    #     battle = self.game.data.battle
+    #     if not battle.is_vs_wild:
+    #         if 'RIVAL' in battle.trainer.trainer_class:
+    #             self.game.clock.request_pause()
+
 
 @define
 class LivesplitClock:
@@ -127,8 +133,8 @@ class LivesplitClock:
     def request_current_time(self) -> TimeRecord:
         logger.debug('request get current time')
         self._socket.send(b'getcurrenttime\r\n')
-        reply = self._socket.recv(1024)
-        time_string = reply.decode('utf-8').strip()
+        reply = self._socket.receive(bytes=1024, encoding='utf-8')
+        time_string = reply.strip()
         if '.' not in time_string:
             time_string = time_string + '.0'
         if ':' not in time_string:
