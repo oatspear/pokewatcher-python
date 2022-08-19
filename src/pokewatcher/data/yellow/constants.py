@@ -36,6 +36,8 @@ MENU_ITEM_CONTINUE: Final[int] = 0
 MENU_ITEM_NEW_GAME: Final[int] = 1
 MENU_ITEM_OPTIONS: Final[int] = 2
 
+TRAINER_CLASS_CHAMPION: Final[str] = 'RIVAL3'
+
 WRAM_PLAYER_ID: Final[str] = 'wPlayerID'
 WRAM_PLAYER_NAME: Final[str] = 'wPlayerName'
 WRAM_BATTLE_TYPE: Final[str] = 'wIsInBattle'
