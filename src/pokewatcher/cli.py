@@ -22,10 +22,11 @@ from typing import Any, Dict, Final, List, Optional
 
 import argparse
 import logging
+from pathlib import Path
 
 from pokewatcher import __version__ as current_version
 from pokewatcher.components import ALL_COMPONENTS
-from pokewatcher.core.config import load as load_configs, setup_logging
+from pokewatcher.core.config import dump as dump_configs, load as load_configs, setup_logging
 from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import SleepLoop
 from pokewatcher.errors import PokeWatcherComponentError
@@ -35,6 +36,9 @@ from pokewatcher.errors import PokeWatcherComponentError
 ###############################################################################
 
 logger: Final[logging.Logger] = logging.getLogger(__name__)
+
+CMD_DUMP_DEFAULTS: Final[str] = 'dump-defaults'
+CMD_VALIDATE: Final[str] = 'validate'
 
 ###############################################################################
 # Argument Parsing
@@ -53,8 +57,19 @@ def parse_arguments(argv: Optional[List[str]]) -> Dict[str, Any]:
     )
 
     parser.add_argument(
-        'args', metavar='ARG', nargs=argparse.ZERO_OR_MORE, help='An argument for the program.'
+        '--config',
+        type=Path,
+        dest='config_path',
+        help='Path to a YAML configuration file.',
     )
+
+    parser.add_argument(
+        'cmd', nargs='?', choices=[CMD_DUMP_DEFAULTS, CMD_VALIDATE], help='Run a special command.'
+    )
+
+    # parser.add_argument(
+    #     'args', metavar='ARG', nargs=argparse.ZERO_OR_MORE, help='An argument for the program.'
+    # )
 
     args = parser.parse_args(args=argv)
     return vars(args)
@@ -133,6 +148,26 @@ def cleanup(game: GameInterface, components: List[Any]) -> None:
 
 def main(argv: Optional[List[str]] = None) -> int:
     args = parse_arguments(argv)
+
+    # short-circuit commands ---------------------------------------------------
+    cmd = args.get('cmd')
+    if cmd:
+        try:
+            if cmd == CMD_DUMP_DEFAULTS:
+                logger.info(f'running special command {cmd}')
+                dump_configs(args)
+                return 0
+            elif cmd == CMD_VALIDATE:
+                logger.info(f'running special command {cmd}')
+                load_configs(args)
+                logger.info('settings are valid')
+                return 0
+        except KeyboardInterrupt:
+            logger.error('aborted manually')
+            return 1
+        except Exception:
+            logger.exception('exception during special command')
+            return 1
 
     # setup phase --------------------------------------------------------------
     logger.info('running setup operations')
