@@ -570,7 +570,11 @@ DEFAULTS: Dict[str, Any] = {
         'port': 16834,
         'timeout': 3.0,
     },
-    'video_record': {'enabled': True},
+    'obsstudio': {
+        'enabled': True,
+        'url': 'ws://localhost:4455',
+        'password': 'ObH0UK3sW67Q6kvW',
+    },
 }
 
 LOGGING_CONFIG = {
