@@ -121,7 +121,7 @@ class DictParam(Param):
                 raise PokeWatcherConfigurationError.expects_map(key)
             if len(value) == 0 and not self.allows_empty:
                 raise PokeWatcherConfigurationError.no_empty(key)
-            for k, item in value.values():
+            for k, item in value.items():
                 if not isinstance(item, self.types):
                     path = f'{key}[{k}]'
                     raise PokeWatcherConfigurationError.bad_type(path, self.types, item)
@@ -164,7 +164,7 @@ SCHEMA: Final[Dict[str, Param]] = {
                 'attributes': ListParam.required(str, allows_empty=False),
             }
         },
-        'trainers': DictParam.optional_alias(list),
+        'trainers': DictParam.optional(str, list),
     },
     'livesplit': {
         'enabled': Param.with_default(False),
@@ -823,7 +823,7 @@ class SanityChecker:
                     self._fail_expects_map(key)
             else:
                 assert isinstance(param, Param), f'{param!r} ({type(param)})'
-                param.validate(value)
+                param.validate(value, subpath)
 
     def _fail_expects_map(self, path: str):
         raise PokeWatcherConfigurationError.expects_map(path)
