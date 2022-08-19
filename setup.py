@@ -78,6 +78,7 @@ setup(
         'pyyaml>=5.3.1',
         'requests>=2.28',
         'signalrcore<=1.0',
+        'simpleobsws>=1.0',
     ],
     extras_require={
         'dev': ['pytest', 'tox'],
