@@ -72,11 +72,11 @@ class LiveSplitInterface:
         self.game.clock._socket.disconnect()
 
     def on_new_game(self):
-        logger.info('starting timer on new game')
+        logger.info('new game: start timer')
         self.game.clock.request_start()
 
     def on_champion_victory(self):
-        logger.info('pausing timer on champion victory')
+        logger.info('champion victory: pause timer')
         self.game.clock.request_pause()
 
     # def on_battle_ended(self):
