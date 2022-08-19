@@ -41,7 +41,7 @@ class ObsStudioInterface:
 
     def start(self):
         logger.info('starting')
-        asyncio.run(self.connect())
+        self.ws.loop.run_until_complete(self.connect())
 
     def update(self, delta):
         # logger.debug('update')
@@ -49,11 +49,11 @@ class ObsStudioInterface:
 
     def cleanup(self):
         logger.info('cleaning up')
-        asyncio.run(self.disconnect())
+        self.ws.loop.run_until_complete(self.disconnect())
 
     def on_new_game(self):
         logger.info('new game: start OBS recording')
-        asyncio.run(self.start_record())
+        self.ws.loop.run_until_complete(self.start_record())
 
     async def connect(self):
         logger.info('connect to OBS websocket')
