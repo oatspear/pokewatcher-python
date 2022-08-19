@@ -14,6 +14,8 @@ from attrs import define, field
 from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import TcpConnection, TimeInterval, TimeRecord
 from pokewatcher.errors import PokeWatcherComponentError
+
+# from pokewatcher.events import on_battle_ended
 from pokewatcher.events import on_champion_victory, on_new_game
 
 ###############################################################################
@@ -52,6 +54,7 @@ class LiveSplitInterface:
 
         on_new_game.watch(self.on_new_game)
         on_champion_victory.watch(self.on_champion_victory)
+        # on_battle_ended.watch(self.on_battle_ended)
 
     def start(self):
         logger.info('starting')
