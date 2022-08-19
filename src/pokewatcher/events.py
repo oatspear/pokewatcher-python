@@ -92,4 +92,5 @@ on_map_changed: Final[Event] = Event(name='on_map_changed')
 
 on_battle_started: Final[Event] = Event(name='on_battle_started')
 on_battle_ended: Final[Event] = Event(name='on_battle_ended')
+on_champion_victory: Final[Event] = Event(name='on_champion_victory')
 on_blackout: Final[Event] = Event(name='on_blackout')
