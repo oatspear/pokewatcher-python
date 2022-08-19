@@ -14,7 +14,7 @@ from attrs import define
 from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import TcpConnection, TimeInterval, TimeRecord
 from pokewatcher.errors import PokeWatcherComponentError
-from pokewatcher.events import on_battle_ended, on_new_game
+from pokewatcher.events import on_champion_victory, on_new_game
 
 ###############################################################################
 # Constants
@@ -51,7 +51,7 @@ class LiveSplitInterface:
         self.game.clock = LivesplitClock(socket)
 
         on_new_game.watch(self.on_new_game)
-        on_battle_ended.watch(self.on_battle_ended)
+        on_champion_victory.watch(self.on_champion_victory)
 
     def start(self):
         logger.info('starting')
@@ -72,11 +72,12 @@ class LiveSplitInterface:
         self.game.clock._socket.disconnect()
 
     def on_new_game(self):
+        logger.info('starting timer on new game')
         self.game.clock.request_start()
 
-    def on_battle_ended(self):
-        # self.game.clock.request_pause()
-        return
+    def on_champion_victory(self):
+        logger.info('pausing timer on champion victory')
+        self.game.clock.request_pause()
 
 
 @define
