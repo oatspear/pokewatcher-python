@@ -22,7 +22,6 @@ from pokewatcher.data.yellow.constants import (
     JOY_MASK_NONE,
     MENU_ITEM_CONTINUE,
     MENU_ITEM_NEW_GAME,
-    SFX_PRESS_A_B,
     SFX_SAVE_FILE,
     TRAINER_CLASS_CHAMPION,
 )
