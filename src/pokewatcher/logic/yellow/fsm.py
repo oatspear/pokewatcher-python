@@ -252,8 +252,8 @@ class InBattle(InGame):
         if v:
             data.battle.set_victory()
             events.on_battle_ended.emit()
-            if not data.is_vs_wild:
-                if data.trainer.trainer_class == TRAINER_CLASS_CHAMPION:
+            if not data.battle.is_vs_wild:
+                if data.battle.trainer.trainer_class == TRAINER_CLASS_CHAMPION:
                     events.on_champion_victory.emit()
             return VictorySequence()
         return self
