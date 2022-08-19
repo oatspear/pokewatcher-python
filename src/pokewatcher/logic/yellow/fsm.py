@@ -24,6 +24,7 @@ from pokewatcher.data.yellow.constants import (
     MENU_ITEM_NEW_GAME,
     SFX_PRESS_A_B,
     SFX_SAVE_FILE,
+    TRAINER_CLASS_CHAMPION,
 )
 import pokewatcher.events as events
 from pokewatcher.logic.fsm import GameState, transition
@@ -252,6 +253,9 @@ class InBattle(InGame):
         if v:
             data.battle.set_victory()
             events.on_battle_ended.emit()
+            if not data.is_vs_wild:
+                if data.trainer.trainer_class == TRAINER_CLASS_CHAMPION:
+                    events.on_champion_victory.emit()
             return VictorySequence()
         return self
 
