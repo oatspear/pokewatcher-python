@@ -11,10 +11,25 @@ from pokewatcher.data.yellow.constants import (
     BATTLE_TYPE_NONE,
     BATTLE_TYPE_TRAINER,
     BATTLE_TYPE_WILD,
+    DEFAULT_PLAYER_NAME,
+    JOY_MASK_ALL,
+    JOY_MASK_A_BUTTON,
+    JOY_MASK_NONE,
+    WRAM_BATTLE_TYPE,
+    WRAM_JOY_IGNORE,
+    WRAM_PLAYER_ID,
+    WRAM_PLAYER_NAME,
 )
 from pokewatcher.errors import StateMachineError
 import pokewatcher.events as events
-from pokewatcher.logic.yellow.fsm import InBattle, Initial, InOverworld, MainMenu, VictorySequence
+from pokewatcher.logic.yellow.fsm import (
+    InBattle,
+    Initial,
+    InOverworld,
+    MainMenu,
+    MainMenuContinue,
+    VictorySequence,
+)
 
 ###############################################################################
 # Initial State
@@ -27,24 +42,25 @@ def test_initial_attributes():
     assert not s.is_battle_state
 
 
-def test_initial_player_id_no_transition():
-    c = events.on_new_game.count
-    s1 = Initial()
-    data = GameData()
-    inputs = [(1, 0), (1, 2), (0, 0)]
-    for prev, value in inputs:
-        s2 = s1.wPlayerID(prev, value, data)
-        assert s2 is s1
-        assert events.on_new_game.count == c
+def test_initial_player_name_no_transition():
+    check_no_transition(
+        Initial,
+        WRAM_PLAYER_NAME,
+        (DEFAULT_PLAYER_NAME, 'TEST'),
+        (DEFAULT_PLAYER_NAME, ''),
+        emitted=(),
+    )
 
 
-def test_initial_player_id_new_game():
-    c = events.on_new_game.count
-    s1 = Initial()
-    data = GameData()
-    s2 = s1.wPlayerID(0, 1, data)
-    assert isinstance(s2, InOverworld)
-    assert events.on_new_game.count == c + 1
+def test_initial_player_name_transition():
+    check_transition_happens(
+        Initial,
+        MainMenu,
+        WRAM_PLAYER_NAME,
+        ('', DEFAULT_PLAYER_NAME),
+        ('TEST', DEFAULT_PLAYER_NAME),
+        emitted=(),
+    )
 
 
 ###############################################################################
@@ -59,23 +75,150 @@ def test_main_menu_attributes():
 
 
 def test_main_menu_player_id_no_transition():
-    c = events.on_continue.count
-    s1 = MainMenu()
-    data = GameData()
-    inputs = [(1, 0), (1, 2), (0, 0)]
-    for prev, value in inputs:
-        s2 = s1.wPlayerID(prev, value, data)
-        assert s2 is s1
-        assert events.on_continue.count == c
+    check_no_transition(
+        MainMenu,
+        WRAM_PLAYER_ID,
+        (1, 2),
+        emitted=(),
+    )
 
 
-def test_main_menu_player_id_continue():
-    c = events.on_continue.count
-    s1 = MainMenu()
-    data = GameData()
-    s2 = s1.wPlayerID(0, 1, data)
-    assert isinstance(s2, InOverworld)
-    assert events.on_continue.count == c + 1
+def test_main_menu_player_id_reset():
+    check_transition_happens(
+        MainMenu,
+        Initial,
+        WRAM_PLAYER_ID,
+        (-1, 0),
+        (1, 0),
+        emitted=['on_reset'],
+    )
+
+
+def test_main_menu_player_id_new_game():
+    check_transition_happens(
+        MainMenu,
+        InOverworld,
+        WRAM_PLAYER_ID,
+        (-1, 1),
+        (0, 1),
+        emitted=['on_new_game'],
+    )
+
+
+def test_main_menu_player_name_no_transition():
+    check_no_transition(
+        MainMenu,
+        WRAM_PLAYER_NAME,
+        ('', DEFAULT_PLAYER_NAME),
+        ('TEST', DEFAULT_PLAYER_NAME),
+        ('TEST', ''),
+        ('TEST', '   '),
+        (DEFAULT_PLAYER_NAME, ''),
+        (DEFAULT_PLAYER_NAME, '   '),
+        emitted=(),
+    )
+
+
+def test_main_menu_player_name_saved_game():
+    check_transition_happens(
+        MainMenu,
+        MainMenuContinue,
+        WRAM_PLAYER_NAME,
+        ('', 'TEST'),
+        ('       ', 'TEST'),
+        (DEFAULT_PLAYER_NAME, 'TEST'),
+        emitted=(),
+    )
+
+
+###############################################################################
+# MainMenuContinue State
+###############################################################################
+
+
+def test_menu_continue_attributes():
+    s = MainMenuContinue()
+    assert s.name == 'MainMenuContinue'
+    assert not s.is_battle_state
+
+
+def test_menu_continue_player_id_no_transition():
+    check_no_transition(
+        MainMenuContinue,
+        WRAM_PLAYER_ID,
+        (0, 1),
+        (-1, 1),
+        emitted=(),
+    )
+
+
+def test_menu_continue_player_id_reset():
+    check_transition_happens(
+        MainMenuContinue,
+        Initial,
+        WRAM_PLAYER_ID,
+        (-1, 0),
+        (1, 0),
+        emitted=['on_reset'],
+    )
+
+
+def test_menu_continue_player_id_new_game():
+    check_transition_happens(
+        MainMenuContinue,
+        InOverworld,
+        WRAM_PLAYER_ID,
+        (1, 2),
+        emitted=['on_new_game'],
+    )
+
+
+def test_menu_continue_player_name_no_transition():
+    check_no_transition(
+        MainMenuContinue,
+        WRAM_PLAYER_NAME,
+        ('TEST', DEFAULT_PLAYER_NAME),
+        ('TEST', ''),
+        ('TEST', '   '),
+        (DEFAULT_PLAYER_NAME, ''),
+        (DEFAULT_PLAYER_NAME, '   '),
+        ('', 'TEST'),
+        ('       ', 'TEST'),
+        (DEFAULT_PLAYER_NAME, 'TEST'),
+        emitted=(),
+    )
+
+
+def test_menu_continue_player_name_new_game():
+    check_transition_happens(
+        MainMenuContinue,
+        InOverworld,
+        WRAM_PLAYER_NAME,
+        ('', DEFAULT_PLAYER_NAME),
+        ('    ', DEFAULT_PLAYER_NAME),
+        emitted=['on_new_game'],
+    )
+
+
+def test_menu_continue_joy_ignore_no_transition():
+    check_no_transition(
+        MainMenuContinue,
+        WRAM_JOY_IGNORE,
+        (JOY_MASK_NONE, JOY_MASK_A_BUTTON),
+        (JOY_MASK_ALL, JOY_MASK_A_BUTTON),
+        (JOY_MASK_A_BUTTON, JOY_MASK_ALL),
+        emitted=(),
+    )
+
+
+def test_menu_continue_joy_ignore_continue():
+    check_transition_happens(
+        MainMenuContinue,
+        InOverworld,
+        WRAM_JOY_IGNORE,
+        (JOY_MASK_NONE, JOY_MASK_ALL),
+        emitted=['on_continue'],
+    )
 
 
 ###############################################################################
@@ -90,11 +233,26 @@ def test_in_overworld_attributes():
 
 
 def test_in_overworld_player_id_no_transition():
-    _in_game_player_id_no_transition(InOverworld())
+    check_no_transition(
+        InOverworld,
+        WRAM_PLAYER_ID,
+        (-1, 1),
+        (0, 1),
+        (1, 2),
+        emitted=(),
+    )
 
 
 def test_in_overworld_player_id_reset():
-    _in_game_player_id_reset(InOverworld())
+    check_transition_happens(
+        InOverworld,
+        Initial,
+        WRAM_PLAYER_ID,
+        (0, 0),
+        (1, 0),
+        (-1, 0),
+        emitted=['on_reset'],
+    )
 
 
 def test_in_overworld_battle_type_wild():
@@ -123,21 +281,21 @@ def test_in_overworld_battle_type_trainer():
 
 
 def test_in_overworld_battle_type_lost():
-    c = events.on_blackout.count
-    s1 = InOverworld()
-    data = GameData()
-    s2 = s1.wIsInBattle(BATTLE_TYPE_NONE, BATTLE_TYPE_LOST, data)
-    assert s2 is s1
-    assert events.on_blackout.count == c + 1
+    check_no_transition(
+        InOverworld,
+        WRAM_BATTLE_TYPE,
+        (BATTLE_TYPE_NONE, BATTLE_TYPE_LOST),
+        emitted=['on_blackout'],
+    )
 
 
 def test_in_overworld_battle_type_none():
-    c = events.on_battle_started.count
-    s1 = InOverworld()
-    data = GameData()
-    s2 = s1.wIsInBattle(BATTLE_TYPE_WILD, BATTLE_TYPE_NONE, data)
-    assert s2 is s1
-    assert events.on_battle_started.count == c
+    check_no_transition(
+        InOverworld,
+        WRAM_BATTLE_TYPE,
+        (BATTLE_TYPE_WILD, BATTLE_TYPE_NONE),
+        emitted=(),
+    )
 
 
 ###############################################################################
@@ -152,11 +310,26 @@ def test_in_battle_attributes():
 
 
 def test_in_battle_player_id_no_transition():
-    _in_game_player_id_no_transition(InBattle())
+    check_no_transition(
+        InBattle,
+        WRAM_PLAYER_ID,
+        (-1, 1),
+        (0, 1),
+        (1, 2),
+        emitted=(),
+    )
 
 
 def test_in_battle_player_id_reset():
-    _in_game_player_id_reset(InBattle())
+    check_transition_happens(
+        InBattle,
+        Initial,
+        WRAM_PLAYER_ID,
+        (0, 0),
+        (1, 0),
+        (-1, 0),
+        emitted=['on_reset'],
+    )
 
 
 def test_in_battle_battle_type_none():
@@ -171,12 +344,25 @@ def test_in_battle_battle_type_none():
     assert data.battle.ongoing is False
 
 
+def test_in_battle_battle_type_lost():
+    c = events.on_battle_ended.count
+    s1 = InBattle()
+    data = GameData()
+    data.battle.ongoing = True
+    s2 = s1.wIsInBattle(BATTLE_TYPE_WILD, BATTLE_TYPE_LOST, data)
+    assert s2 is not s1
+    assert isinstance(s2, InOverworld)
+    assert events.on_battle_ended.count == c + 1
+    assert data.battle.ongoing is False
+    assert data.battle.is_defeat
+
+
 def test_in_battle_battle_type_other():
     c = events.on_battle_ended.count
     s = InBattle()
     data = GameData()
     data.battle.ongoing = True
-    values = [BATTLE_TYPE_WILD, BATTLE_TYPE_TRAINER, BATTLE_TYPE_LOST]
+    values = [BATTLE_TYPE_WILD, BATTLE_TYPE_TRAINER]
     for value in values:
         try:
             s.wIsInBattle(BATTLE_TYPE_WILD, value, data)
@@ -221,21 +407,36 @@ def test_victory_sequence_attributes():
 
 
 def test_victory_sequence_player_id_no_transition():
-    _in_game_player_id_no_transition(VictorySequence())
+    check_no_transition(
+        VictorySequence,
+        WRAM_PLAYER_ID,
+        (-1, 1),
+        (0, 1),
+        (1, 2),
+        emitted=(),
+    )
 
 
 def test_victory_sequence_player_id_reset():
-    _in_game_player_id_reset(VictorySequence())
+    check_transition_happens(
+        VictorySequence,
+        Initial,
+        WRAM_PLAYER_ID,
+        (0, 0),
+        (1, 0),
+        (-1, 0),
+        emitted=['on_reset'],
+    )
 
 
 def test_victory_sequence_battle_type_none():
-    c = events.on_battle_ended.count
-    s1 = VictorySequence()
-    data = GameData()
-    s2 = s1.wIsInBattle(BATTLE_TYPE_WILD, BATTLE_TYPE_NONE, data)
-    assert s2 is not s1
-    assert isinstance(s2, InOverworld)
-    assert events.on_battle_ended.count == c
+    check_transition_happens(
+        VictorySequence,
+        InOverworld,
+        WRAM_BATTLE_TYPE,
+        (BATTLE_TYPE_WILD, BATTLE_TYPE_NONE),
+        emitted=(),
+    )
 
 
 def test_victory_sequence_battle_type_other():
@@ -265,22 +466,30 @@ def test_victory_sequence_alarm_disabled():
 ###############################################################################
 
 
-def _in_game_player_id_no_transition(s1):
-    c = events.on_reset.count
+def check_transition_happens(state1, state2, label, *inputs, emitted=()):
+    counts = [getattr(events, name).count for name in emitted]
+    s1 = state1()
     data = GameData()
-    inputs = [(0, 1), (1, 2)]
     for prev, value in inputs:
-        s2 = s1.wPlayerID(prev, value, data)
-        assert s2 is s1
-        assert events.on_reset.count == c
+        transition = getattr(s1, label)
+        s2 = transition(prev, value, data)
+        assert s2 != s1, f'expected different state: {s1} == {s2}'
+        assert isinstance(s2, state2), f'expected {state2.__name__}, got {s2}'
+        for i in range(len(emitted)):
+            c = counts[i]
+            e = getattr(events, emitted[i])
+            assert e.count > c, f'expected one event: {e} ({e.count} <= {c})'
 
 
-def _in_game_player_id_reset(s1):
+def check_no_transition(state1, label, *inputs, emitted=()):
+    counts = [getattr(events, name).count for name in emitted]
+    s1 = state1()
     data = GameData()
-    inputs = [(0, 0), (1, 0)]
     for prev, value in inputs:
-        c = events.on_reset.count
-        s2 = s1.wPlayerID(prev, value, data)
-        assert s2 is not s1
-        assert isinstance(s2, MainMenu)
-        assert events.on_reset.count == c + 1
+        transition = getattr(s1, label)
+        s2 = transition(prev, value, data)
+        assert s2 is s1, f'expected same state: {s1} != {s2}'
+        for i in range(len(emitted)):
+            c = counts[i]
+            e = getattr(events, emitted[i])
+            assert e.count > c, f'expected one event: {e} ({e.count} <= {c})'
