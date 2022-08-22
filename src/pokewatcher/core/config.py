@@ -139,10 +139,8 @@ SCHEMA: Final[Dict[str, Param]] = {
         'timeout': Param.with_default(3.0),
     },
     'gamehook': {
-        'url': {
-            'signalr': Param.with_default('http://localhost:8085/updates'),
-            'requests': Param.with_default('http://localhost:8085/mapper'),
-        },
+        'host': Param.with_default('localhost'),
+        'port': Param.with_default(8085),
     },
     'auto_save': {
         'enabled': Param.with_default(False),
@@ -176,7 +174,8 @@ SCHEMA: Final[Dict[str, Param]] = {
     },
     'obsstudio': {
         'enabled': Param.with_default(False),
-        'url': Param.with_default('ws://localhost:4455'),
+        'host': Param.with_default('localhost'),
+        'port': Param.with_default(4455),
         'password': Param.optional(str),
     },
 }

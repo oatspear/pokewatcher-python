@@ -64,9 +64,8 @@ auto_save:
         - Route 24
         - Route 25
 gamehook:
-  url:
-    requests: http://localhost:8085/mapper
-    signalr: http://localhost:8085/updates
+  host: localhost
+  port: 8085
 livesplit:
   enabled: true
   host: localhost
@@ -75,7 +74,8 @@ livesplit:
 obsstudio:
   enabled: true
   password: ObH0UK3sW67Q6kvW
-  url: ws://localhost:4455
+  host: localhost
+  port: 4455
 options:
   update_frequency: 50.0
 retroarch:
