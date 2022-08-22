@@ -59,9 +59,10 @@ class GameHookBridge:
     def setup(self, settings: Mapping[str, Any]):
         logger.info('setting up')
         logger.debug(f'settings: {settings}')
-        urls = settings['url']
-        self.url_signalr = urls['signalr']
-        self.url_requests = urls['requests']
+        host = settings['host']
+        port = settings['port']
+        self.url_signalr = f'http://{host}:{port}/updates'
+        self.url_requests = f'http://{host}:{port}/mapper'
         self.request_mapper()
 
     def start(self):

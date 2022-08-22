@@ -29,6 +29,182 @@ logger: Final = logging.getLogger(__name__)
 
 BattleRecord = List[Any]
 
+DEFAULTS: Final[Mapping[str, Any]] = 'splitter': {
+    'enabled': True,
+    'labels': {},
+    'output': {
+        'csv': {
+            'path': '{rom}.csv',
+            'labels': {
+                'rom': 'ROM',
+                'trainer_name': 'Trainer',
+                'realtime.end': 'Real Time',
+                'time': 'Game Time',
+                'resets': 'Resets',
+            },
+            'attributes': [
+                'rom',
+                'trainer_name',
+                'realtime.end',
+                'time',
+                'resets',
+            ],
+        }
+    },
+    'trainers': {
+        'Pokemon Red and Blue': 'Pokemon Yellow',
+        'Pokemon Yellow': [
+            {
+                'class': 'BROCK',
+                'number': 1,
+                'name': 'Brock',
+            },
+            {
+                'class': 'MISTY',
+                'number': 1,
+                'name': 'Misty',
+            },
+            {
+                'class': 'LT.SURGE',
+                'number': 1,
+                'name': 'Lt. Surge',
+            },
+            {
+                'class': 'ERIKA',
+                'number': 1,
+                'name': 'Erika',
+            },
+            {
+                'class': 'KOGA',
+                'number': 1,
+                'name': 'Koga',
+            },
+            {
+                'class': 'BLAINE',
+                'number': 1,
+                'name': 'Blaine',
+            },
+            {
+                'class': 'SABRINA',
+                'number': 1,
+                'name': 'Sabrina',
+            },
+            {
+                'class': 'GIOVANNI',
+                'number': 3,
+                'name': 'Giovanni',
+            },
+            {
+                'class': 'RIVAL3',
+                'number': 1,
+                'name': 'Champion',
+            },
+            {
+                'class': 'RIVAL3',
+                'number': 2,
+                'name': 'Champion',
+            },
+            {
+                'class': 'RIVAL3',
+                'number': 3,
+                'name': 'Champion',
+            },
+        ],
+        'Pokemon Crystal': [
+            {
+                'class': 'FALKNER',
+                'number': 1,
+                'name': 'Falkner',
+            },
+            {
+                'class': 'BUGSY',
+                'number': 1,
+                'name': 'Bugsy',
+            },
+            {
+                'class': 'WHITNEY',
+                'number': 1,
+                'name': 'Whitney',
+            },
+            {
+                'class': 'MORTY',
+                'number': 1,
+                'name': 'Morty',
+            },
+            {
+                'class': 'CHUCK',
+                'number': 1,
+                'name': 'Chuck',
+            },
+            {
+                'class': 'PRYCE',
+                'number': 1,
+                'name': 'Pryce',
+            },
+            {
+                'class': 'JASMINE',
+                'number': 1,
+                'name': 'Jasmine',
+            },
+            {
+                'class': 'CLAIR',
+                'number': 1,
+                'name': 'Clair',
+            },
+            {
+                'class': 'CHAMPION',
+                'number': 1,
+                'name': 'Champion',
+            },
+            {
+                'class': 'BROCK',
+                'number': 1,
+                'name': 'Brock',
+            },
+            {
+                'class': 'MISTY',
+                'number': 1,
+                'name': 'Misty',
+            },
+            {
+                'class': 'LT. SURGE',
+                'number': 1,
+                'name': 'Lt. Surge',
+            },
+            {
+                'class': 'ERIKA',
+                'number': 1,
+                'name': 'Erika',
+            },
+            {
+                'class': 'JANINE',
+                'number': 1,
+                'name': 'Janine',
+            },
+            {
+                'class': 'SABRINA',
+                'number': 1,
+                'name': 'Sabrina',
+            },
+            {
+                'class': 'BLAINE',
+                'number': 1,
+                'name': 'Blaine',
+            },
+            {
+                'class': 'BLUE',
+                'number': 1,
+                'name': 'Blue',
+            },
+            {
+                'class': 'RED',
+                'number': 1,
+                'name': 'Red',
+            },
+        ],
+    },
+}
+
 ###############################################################################
 # Helper Classes
 ###############################################################################
@@ -264,3 +440,7 @@ class SplitComponent:
 def new(game: GameInterface) -> SplitComponent:
     instance = SplitComponent(game)
     return instance
+
+
+def default_settings() -> Mapping[str, Any]:
+    return dict(DEFAULTS)

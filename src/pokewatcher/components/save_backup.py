@@ -29,6 +29,15 @@ FILE_CHECK_INTERVAL: Final[float] = 3.0  # seconds
 MIN_BACKUP_INTERVAL: Final[float] = 1.0  # seconds
 FILE_NAME_FORMAT: Final[str] = '{rom}-{realtime}-{location}.srm'
 
+DEFAULTS: Final[Mapping[str, Any]] = {
+    'enabled': True,
+    'n_checks': 5,
+    'check_interval': 3.0,
+    'min_backup_interval': 1.0,
+    'file_name_format': '{rom} - {realtime}.srm',
+    'dest_dir': '.',
+}
+
 ###############################################################################
 # Interface
 ###############################################################################
@@ -155,6 +164,10 @@ class SaveFileBackupComponent:
         return d / f'{rom}.srm'
 
 
-def new(game: GameInterface):
+def new(game: GameInterface) -> SaveFileBackupComponent:
     instance = SaveFileBackupComponent(game)
     return instance
+
+
+def default_settings() -> Mapping[str, Any]:
+    return dict(DEFAULTS)

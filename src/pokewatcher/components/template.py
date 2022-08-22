@@ -19,6 +19,8 @@ from pokewatcher.core.game import GameInterface
 
 logger: Final = logging.getLogger(__name__)
 
+DEFAULTS: Final[Mapping[str, Any]] = {'enabled': True}
+
 ###############################################################################
 # Interface
 ###############################################################################
@@ -45,6 +47,10 @@ class Component:
         return
 
 
-def new(game: GameInterface):
+def new(game: GameInterface) -> Component:
     instance = Component(game)
     return instance
+
+
+def default_settings() -> Mapping[str, Any]:
+    return dict(DEFAULTS)

@@ -92,7 +92,17 @@ def _load_components(game: GameInterface, configs: Dict[str, Any]) -> List[Any]:
     components = []
     for module in ALL_COMPONENTS:
         key = module.__name__.split('.')[-1]
-        settings: Dict[str, Any] = configs[key]
+        settings = configs.get(key, module.default_settings())
+
+        if settings is False:
+            logger.warning(f'skipping disabled component {key}')
+            continue
+
+        if not isinstance(settings, dict):
+            logger.error(f'skipping misconfigured component {key}')
+            logger.debug(f'bad settings: {settings!r}')
+            continue
+
         if settings.get('enabled', True):
             logger.info(f'loading component: {key}')
             try:
@@ -124,7 +134,7 @@ def workflow(
     for component in components:
         component.start()
 
-    freq = configs['options']['update_frequency']
+    freq = configs['options']['loop_frequency']
     delay = 1.0 / freq  # hz to sec
     with SleepLoop(delay=delay) as loop:
         while loop.iterate():

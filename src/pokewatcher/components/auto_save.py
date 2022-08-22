@@ -22,6 +22,77 @@ from pokewatcher.events import on_map_changed, on_reset, on_save_game
 
 logger: Final = logging.getLogger(__name__)
 
+DEFAULTS: Final[Mapping[str, Any]] = {
+    'enabled': False,
+    'maps': {
+        'Pokemon Red and Blue': 'Pokemon Yellow',
+        'Pokemon Yellow': {
+            'always': {
+                'Kanto': [
+                    'Indigo Plateau - Lobby',
+                    'Viridian City - Gym',
+                    'Pewter City - Gym',
+                    'Cerulean City - Gym',
+                    'Vermilion City - Gym',
+                    'Celadon City - Gym',
+                    'Fuchsia City - Gym',
+                    'Saffron City - Gym',
+                    'Cinnabar Island - Gym',
+                    "Lorelei's Room",
+                    "Bruno's Room",
+                    "Agatha's Room",
+                    "Lance's Room",
+                    'Champions Room',
+                ]
+            },
+            'once': {
+                'Kanto': [
+                    'Viridian City',
+                    'Pewter City',
+                    'Cerulean City',
+                    'Lavender Town',
+                    'Vermilion City',
+                    'Celadon City',
+                    'Fuchsia City',
+                    'Cinnabar Island',
+                    'Saffron City',
+                    'Viridian Forest',
+                    'Rock Tunnel - 1',
+                    'Mt Moon - 1',
+                    'Victory Road',
+                    'Pokemon Tower - 1F',
+                    'Silph Co - 1F',
+                    'Route 1',
+                    'Route 2',
+                    'Route 3',
+                    'Route 4',
+                    'Route 5',
+                    'Route 6',
+                    'Route 7',
+                    'Route 8',
+                    'Route 9',
+                    'Route 10',
+                    'Route 11',
+                    'Route 12',
+                    'Route 13',
+                    'Route 14',
+                    'Route 15',
+                    'Route 16',
+                    'Route 17',
+                    'Route 18',
+                    'Route 19',
+                    'Route 20',
+                    'Route 21',
+                    'Route 22',
+                    'Route 23',
+                    'Route 24',
+                    'Route 25',
+                ]
+            },
+        },
+    },
+}
+
 ###############################################################################
 # Interface
 ###############################################################################
@@ -113,3 +184,7 @@ class AutoSaveComponent:
 def new(game: GameInterface) -> AutoSaveComponent:
     instance = AutoSaveComponent(game)
     return instance
+
+
+def default_settings() -> Mapping[str, Any]:
+    return dict(DEFAULTS)

@@ -22,6 +22,13 @@ from pokewatcher.events import on_new_game
 
 logger: Final = logging.getLogger(__name__)
 
+DEFAULTS: Final[Mapping[str, Any]] = {
+    'enabled': False,
+    'host': 'localhost',
+    'port': 4455,
+    'password': '',
+}
+
 ###############################################################################
 # Interface
 ###############################################################################
@@ -34,7 +41,9 @@ class ObsStudioInterface:
 
     def setup(self, settings: Mapping[str, Any]):
         logger.info('setting up')
-        self.ws.url = settings['url']
+        host = settings['host']
+        port = settings['port']
+        self.ws.url = f'ws://{host}:{port}'
         self.ws.password = settings['password']
 
         on_new_game.watch(self.on_new_game)
@@ -79,3 +88,7 @@ class ObsStudioInterface:
 def new(game: GameInterface) -> ObsStudioInterface:
     instance = ObsStudioInterface(game)
     return instance
+
+
+def default_settings() -> Mapping[str, Any]:
+    return dict(DEFAULTS)

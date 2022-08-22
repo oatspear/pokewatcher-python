@@ -24,6 +24,13 @@ from pokewatcher.events import on_champion_victory, on_new_game
 
 logger: Final = logging.getLogger(__name__)
 
+DEFAULTS: Final[Mapping[str, Any]] = {
+    'enabled': False,
+    'host': 'localhost',
+    'port': 16834,
+    'timeout': 3.0,
+}
+
 ###############################################################################
 # Interface
 ###############################################################################
@@ -162,3 +169,7 @@ class LivesplitClock:
 def new(game: GameInterface) -> LiveSplitInterface:
     instance = LiveSplitInterface(game)
     return instance
+
+
+def default_settings() -> Mapping[str, Any]:
+    return dict(DEFAULTS)
