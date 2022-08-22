@@ -29,7 +29,7 @@ logger: Final = logging.getLogger(__name__)
 
 BattleRecord = List[Any]
 
-DEFAULTS: Final[Mapping[str, Any]] = 'splitter': {
+DEFAULTS: Final[Mapping[str, Any]] = {
     'enabled': True,
     'labels': {},
     'output': {
