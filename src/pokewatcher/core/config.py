@@ -42,6 +42,8 @@ from pokewatcher.errors import PokeWatcherConfigurationError
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_SETTINGS_PATH: Final[Path] = Path.cwd() / 'pokewatcher.yml'
+
 
 @frozen
 class Param:
@@ -768,8 +770,10 @@ LOGGING_CONFIG = {
 def load(args: Dict[str, Any]) -> Dict[str, Any]:
     path = args.get('config_path')
     if path is None:
-        logger.info('using default settings')
-        return DEFAULTS
+        path = DEFAULT_SETTINGS_PATH
+        if not path.is_file():
+            logger.info('using default settings')
+            return DEFAULTS
 
     logger.info(f'loading settings from {path}')
     try:
@@ -788,7 +792,7 @@ def load(args: Dict[str, Any]) -> Dict[str, Any]:
 def dump(args: Dict[str, Any]) -> None:
     path = args.get('config_path')
     if path is None:
-        path = Path.cwd() / 'pokewatcher.yml'
+        path = DEFAULT_SETTINGS_PATH
     text = yaml.dump(DEFAULTS, default_flow_style=False)
     logger.info(f'dumping default settings to {path}')
     path.write_text(text, encoding='utf-8')
