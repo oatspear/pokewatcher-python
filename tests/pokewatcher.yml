@@ -77,7 +77,7 @@ obsstudio:
   host: localhost
   port: 4455
 options:
-  update_frequency: 50.0
+  loop_frequency: 50.0
 retroarch:
   host: 127.0.0.1
   port: 55355

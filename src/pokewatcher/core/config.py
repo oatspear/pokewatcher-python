@@ -131,7 +131,7 @@ class DictParam(Param):
 
 SCHEMA: Final[Dict[str, Param]] = {
     'options': {
-        'update_frequency': Param.with_default(50.0),
+        'loop_frequency': Param.with_default(50.0),
     },
     'retroarch': {
         'host': Param.with_default('127.0.0.1'),
