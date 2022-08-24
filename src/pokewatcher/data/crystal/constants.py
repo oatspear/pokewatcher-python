@@ -11,6 +11,8 @@ from typing import Final, Tuple
 # Constants
 ###############################################################################
 
+SFX_SAVE_FILE = 9472
+
 WRAM_PLAYER_ID: Final[str] = 'wPlayerID'
 WRAM_PLAY_TIME_HOURS: Final[str] = 'wGameTimeHours'
 WRAM_PLAY_TIME_MINUTES: Final[str] = 'wGameTimeMinutes'
