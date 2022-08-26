@@ -52,99 +52,65 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 # On a change to wPlayerID, we must jump to a NewGameOrContinue state.
 # In this state, a change to wPartySpecies triggers a New Game, while a change
 # to wPlayerName triggers a Continue, or transitions to another state that awaits
-# the entrance to the overworld. 
+# the entrance to the overworld.
 
 class CrystalState(GameState):
     wPlayerID = transition  # noqa: N815
     wPlayerName = transition  # noqa: N815
-    wIsInBattle = transition  # noqa: N815
-    wChannelSoundIDs_5 = transition  # noqa: N815
-    wLowHealthAlarmDisabled = transition  # noqa: N815
+    wMoney = transition  # noqa: N815
+    wGameTimeFrames = transition  # noqa: N815
+    wChannel5MusicID = transition  # noqa: N815
+    wBattleLowHealthAlarm = transition  # noqa: N815
 
 
 @define
 class Initial(CrystalState):
-    def wPlayerName(self, prev: str, value: str, _data: GameData) -> GameState:  # noqa: N815
-        logger.debug(f'player name changed: {prev!r} -> {value!r}')
-        if value == DEFAULT_PLAYER_NAME:
-            # title screen
-            return MainMenu()
-        return self
-
-
-@define
-class MainMenu(CrystalState):
     def wPlayerID(self, prev: int, value: int, _data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'player ID changed: {prev} -> {value}')
         if value == 0:
             return _reset_game()
         if prev <= 0:
-            return _press_new_game()
+            return NewGameOrContinue()
         return self
 
+
+@define
+class NewGameOrContinue(CrystalState):
     def wPlayerName(self, prev: str, value: str, _data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'player name changed: {prev!r} -> {value!r}')
-        # this should update before wPlayerID
-        if value == DEFAULT_PLAYER_NAME:
-            return self
-        return self._check_saved_game(value.strip())
-
-    # def wd732_0(self, _p: Any, value: bool, _data: GameData) -> GameState:  # noqa: N815
-    #     logger.debug(f'count play time changed: {value}')
-    #     return self._check_saved_game(value)
-
-    # def wPlayTimeHours(self, _p: Any, value: int, _data: GameData) -> GameState:  # noqa: N815
-    #     logger.debug(f'play time hours changed: {value}')
-    #     return self._check_saved_game(value)
-
-    # def wPlayTimeMinutes(self, _p: Any, value: int, _data: GameData) -> GameState:  # noqa: N815
-    #     logger.debug(f'play time minutes changed: {value}')
-    #     return self._check_saved_game(value)
-
-    # def wPlayTimeSeconds(self, _p: Any, value: int, _data: GameData) -> GameState:  # noqa: N815
-    #     logger.debug(f'play time seconds changed: {value}')
-    #     return self._check_saved_game(value)
-
-    # def wPlayTimeFrames(self, _p: Any, value: int, _data: GameData) -> GameState:  # noqa: N815
-    #     logger.debug(f'play time frames changed: {value}')
-    #     return self._check_saved_game(value)
-
-    def _check_saved_game(self, value: Any) -> GameState:
         if value:
             logger.info('found saved game')
             return MainMenuContinue()
         return self
 
+    def wMoney(self, prev: int, value: int, _data: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'player money changed: {prev!r} -> {value!r}')
+        if value > 0:
+            return _press_new_game()
+        return self
+
 
 @define
 class MainMenuContinue(CrystalState):
-    _menu_item: int = field(init=False, default=MENU_ITEM_CONTINUE, eq=False, repr=False)
     _map_changed: bool = field(init=False, default=False, eq=False, repr=False)
     _x_changed: bool = field(init=False, default=False, eq=False, repr=False)
     _y_changed: bool = field(init=False, default=False, eq=False, repr=False)
+    _time_changed: bool = field(init=False, default=False, eq=False, repr=False)
 
     def wPlayerID(self, prev: int, value: int, _data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'player ID changed: {prev} -> {value}')
         if value == 0:
             return _reset_game()
-        if prev > 0:
-            return _press_new_game()
-        return self
+        return _press_new_game()
 
-    def wPlayerName(self, prev: str, value: str, _data: GameData) -> GameState:  # noqa: N815
-        logger.debug(f'player name changed: {prev!r} -> {value!r}')
-        if value == DEFAULT_PLAYER_NAME and not prev.strip():
-            return _press_new_game()
-        return self
-
-    def wCurrentMenuItem(self, prev: int, value: int, _data: GameData) -> GameState:  # noqa: N815
-        logger.debug(f'current menu item changed: {prev} -> {value}')
-        self._menu_item = value
-        return self
-
-    def wJoyIgnore(self, prev: int, value: int, _data: GameData) -> GameState:  # noqa: N815
-        logger.debug(f'joypad ignore mask changed: {prev} -> {value}')
-        if value == JOY_MASK_ALL and prev == JOY_MASK_NONE:
+    def wGameTimeFrames(self, _p: Any, value: int, _data: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'play time frames changed: {value}')
+        if not self._time_changed:
+            # first loaded game time
+            self._time_changed = True
+            return self
+        if value != 0:
+            # both overflow and reset will turn into zero
             return _press_continue()
         return self
 
@@ -154,12 +120,8 @@ class MainMenuContinue(CrystalState):
             # first loaded map
             self._map_changed = True
             return self
-        if self._menu_item == MENU_ITEM_CONTINUE:
-            # already late
-            return _press_continue()
-        elif self._menu_item == MENU_ITEM_NEW_GAME:
-            return _press_new_game()
-        return self
+        # already late
+        return _press_continue()
 
     def wXCoord(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
         # safety net in case we miss an update to wJoyIgnore
@@ -168,12 +130,8 @@ class MainMenuContinue(CrystalState):
             # first loaded coordinates
             self._x_changed = True
             return self
-        if self._menu_item == MENU_ITEM_CONTINUE:
-            # already late
-            return _press_continue()
-        elif self._menu_item == MENU_ITEM_NEW_GAME:
-            return _press_new_game()
-        return self
+        # already late
+        return _press_continue()
 
     def wYCoord(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
         # safety net in case we miss an update to wJoyIgnore
@@ -182,12 +140,8 @@ class MainMenuContinue(CrystalState):
             # first loaded coordinates
             self._y_changed = True
             return self
-        if self._menu_item == MENU_ITEM_CONTINUE:
-            # already late
-            return _press_continue()
-        elif self._menu_item == MENU_ITEM_NEW_GAME:
-            return _press_new_game()
-        return self
+        # already late
+        return _press_continue()
 
 
 @define
