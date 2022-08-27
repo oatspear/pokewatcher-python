@@ -114,6 +114,7 @@ class MapTracker:
 # to wPlayerName triggers a Continue, or transitions to another state that awaits
 # the entrance to the overworld.
 
+
 class CrystalState(GameState):
     wPlayerID = transition  # noqa: N815
     wPlayerName = transition  # noqa: N815
