@@ -63,16 +63,120 @@ auto_save:
         - Route 23
         - Route 24
         - Route 25
+    Pokemon Gold & Silver: Pokemon Crystal
+    Pokemon Crystal:
+      always:
+        New Bark:
+        - '01'
+        Cherrygrove:
+        - '01'
+        Violet:
+        - '01'
+        Azalea:
+        - '01'
+        Goldenrod:
+        - '01'
+        Ecruteak:
+        - '01'
+        Olivine:
+        - '01'
+        Cianwood:
+        - '01'
+        Mahogany:
+        - '01'
+        Lake of Rage:
+        - '01'
+        Blackthorn:
+        - '01'
+        Indigo:
+        - '01'
+        Pallet:
+        - '01'
+        Viridian:
+        - '01'
+        Pewter:
+        - '01'
+        Cerulean:
+        - '01'
+        Vermilion:
+        - '01'
+        Lavender:
+        - '01'
+        Celadon:
+        - '01'
+        Saffron:
+        - '01'
+        Fuchsia:
+        - '01'
+        Cinnabar:
+        - '01'
+        Dungeons:
+        - '01'
+        Silver:
+        - '01'
+        Fast Ship:
+        - '01'
+      once:
+        New Bark:
+        - '01'
+        Cherrygrove:
+        - '01'
+        Violet:
+        - '01'
+        Azalea:
+        - '01'
+        Goldenrod:
+        - '01'
+        Ecruteak:
+        - '01'
+        Olivine:
+        - '01'
+        Cianwood:
+        - '01'
+        Mahogany:
+        - '01'
+        Lake of Rage:
+        - '01'
+        Blackthorn:
+        - '01'
+        Indigo:
+        - '01'
+        Pallet:
+        - '01'
+        Viridian:
+        - '01'
+        Pewter:
+        - '01'
+        Cerulean:
+        - '01'
+        Vermilion:
+        - '01'
+        Lavender:
+        - '01'
+        Celadon:
+        - '01'
+        Saffron:
+        - '01'
+        Fuchsia:
+        - '01'
+        Cinnabar:
+        - '01'
+        Dungeons:
+        - '01'
+        Silver:
+        - '01'
+        Fast Ship:
+        - '01'
 gamehook:
   host: localhost
   port: 8085
 livesplit:
-  enabled: true
+  enabled: false
   host: localhost
   port: 16834
   timeout: 3.0
 obsstudio:
-  enabled: true
+  enabled: false
   password: ObH0UK3sW67Q6kvW
   host: localhost
   port: 4455
