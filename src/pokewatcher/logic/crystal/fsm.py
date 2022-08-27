@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Final
+from typing import Any, Final, Optional
 
 import logging
 
@@ -38,24 +38,6 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 ###############################################################################
 
 
-def _press_new_game() -> GameState:
-    logger.info('starting a new game')
-    events.on_new_game.emit()
-    return InOverworld()
-
-
-def _press_continue() -> GameState:
-    logger.info('continue previous game')
-    events.on_continue.emit()
-    return InOverworld()
-
-
-def _reset_game() -> GameState:
-    logger.info('game reset')
-    events.on_reset.emit()
-    return Initial()
-
-
 @define
 class MapTracker:
     _map_group: int = 0
@@ -82,12 +64,35 @@ class MapTracker:
 
     def commit(self, data: GameData):
         if self._changed:
-            group = MAP_GROUPS[self._map_group]
+            group = MAP_GROUPS.get(self._map_group)
+            if group is None:
+                logger.warning(f'map changed to unknown group: {self._map_group!r}')
+                group = 'UNKNOWN'
             map = f'{self._map_number:02d}'
             data.location = f'{group}/{map}'
             logger.info(f'map changed: {data.location}')
             events.on_map_changed.emit()
             self._changed = False
+
+
+def _press_new_game(map_tracker: Optional[MapTracker] = None) -> GameState:
+    logger.info('starting a new game')
+    events.on_new_game.emit()
+    map_tracker = map_tracker or MapTracker()
+    return InOverworld(map_tracker=map_tracker)
+
+
+def _press_continue(map_tracker: Optional[MapTracker] = None) -> GameState:
+    logger.info('continue previous game')
+    events.on_continue.emit()
+    map_tracker = map_tracker or MapTracker()
+    return InOverworld(map_tracker=map_tracker)
+
+
+def _reset_game() -> GameState:
+    logger.info('game reset')
+    events.on_reset.emit()
+    return Initial()
 
 
 ###############################################################################
@@ -119,6 +124,9 @@ class CrystalState(GameState):
     wPlayerID = transition  # noqa: N815
     wPlayerName = transition  # noqa: N815
     wMoney = transition  # noqa: N815
+    wGameTimeHours = transition  # noqa: N815
+    wGameTimeMinutes = transition  # noqa: N815
+    wGameTimeSeconds = transition  # noqa: N815
     wGameTimeFrames = transition  # noqa: N815
     wChannel5MusicID = transition  # noqa: N815
     wBattleLowHealthAlarm = transition  # noqa: N815
@@ -160,7 +168,7 @@ class NewGameOrContinue(CrystalState):
 
 @define
 class MainMenuContinue(CrystalState):
-    map_tracker: MapTracker = field(init=False, factory=MapTracker, eq=False, repr=False)
+    map_tracker: MapTracker = field(factory=MapTracker, eq=False, repr=False)
     _map_group_changed: bool = field(init=False, default=False, eq=False, repr=False)
     _map_number_changed: bool = field(init=False, default=False, eq=False, repr=False)
     _x_changed: bool = field(init=False, default=False, eq=False, repr=False)
@@ -171,7 +179,7 @@ class MainMenuContinue(CrystalState):
         logger.debug(f'player ID changed: {prev} -> {value}')
         if value == 0:
             return _reset_game()
-        return _press_new_game()
+        return _press_new_game(map_tracker=self.map_tracker)
 
     def wGameTimeFrames(self, _p: Any, value: int, _data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'play time frames changed: {value}')
@@ -181,7 +189,7 @@ class MainMenuContinue(CrystalState):
             return self
         if value != 0:
             # both overflow and reset will turn into zero
-            return _press_continue()
+            return _press_continue(map_tracker=self.map_tracker)
         return self
 
     def wMapGroup(self, prev: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
@@ -192,7 +200,7 @@ class MainMenuContinue(CrystalState):
             self._map_group_changed = True
             return self
         # already late
-        return _press_continue()
+        return _press_continue(map_tracker=self.map_tracker)
 
     def wMapNumber(self, prev: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
         logger.debug(f'map number changed: {prev!r} -> {value!r}')
@@ -202,7 +210,7 @@ class MainMenuContinue(CrystalState):
             self._map_number_changed = True
             return self
         # already late
-        return _press_continue()
+        return _press_continue(map_tracker=self.map_tracker)
 
     def wXCoord(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'player x coordinate changed: {prev} -> {value}')
@@ -212,7 +220,7 @@ class MainMenuContinue(CrystalState):
             self._x_changed = True
             return self
         # already late
-        return _press_continue()
+        return _press_continue(map_tracker=self.map_tracker)
 
     def wYCoord(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'player y coordinate changed: {prev} -> {value}')
@@ -222,7 +230,7 @@ class MainMenuContinue(CrystalState):
             self._y_changed = True
             return self
         # already late
-        return _press_continue()
+        return _press_continue(map_tracker=self.map_tracker)
 
 
 @define
@@ -236,7 +244,7 @@ class InGame(CrystalState):
 
 @define
 class InOverworld(InGame):
-    map_tracker: MapTracker = field(init=False, factory=MapTracker, eq=False, repr=False)
+    map_tracker: MapTracker = field(factory=MapTracker, eq=False, repr=False)
 
     def wBattleMode(self, prev: Any, value: int, data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'battle mode changed: {prev!r} -> {value!r}')
@@ -291,7 +299,7 @@ class InBattle(InGame):
 
     def wBattleMode(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
         logger.debug(f'battle mode changed: {prev!r} -> {value!r}')
-        if value == self.BATTLE_MODE_NONE:
+        if value == BATTLE_MODE_NONE:
             data.battle.ongoing = False
             events.on_battle_ended()
             return InOverworld()
