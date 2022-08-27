@@ -254,14 +254,14 @@ class InOverworld(InGame):
             data.battle.set_victory()
             data.battle.ongoing = True
             events.on_battle_started.emit()
-            return InBattle()
+            return InBattle(self.map_tracker)
         if value == BATTLE_MODE_TRAINER:
             logger.info('trainer battle started')
             data.battle.set_trainer_battle()
             data.battle.set_victory()
             data.battle.ongoing = True
             events.on_battle_started.emit()
-            return InBattle()
+            return InBattle(self.map_tracker)
         return self
 
     def wChannel5MusicID(self, _p: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
@@ -293,6 +293,8 @@ class InOverworld(InGame):
 
 @define
 class InBattle(InGame):
+    map_tracker: MapTracker = field(eq=False, repr=False)
+
     @property
     def is_battle_state(self) -> bool:
         return True
@@ -302,7 +304,7 @@ class InBattle(InGame):
         if value == BATTLE_MODE_NONE:
             data.battle.ongoing = False
             events.on_battle_ended()
-            return InOverworld()
+            return InOverworld(map_tracker=self.map_tracker)
         else:
             self.inconsistent('wBattleMode', value)
         return self
@@ -327,12 +329,14 @@ class InBattle(InGame):
             if not data.battle.is_vs_wild:
                 if data.battle.trainer.trainer_class == TRAINER_CLASS_CHAMPION:
                     events.on_champion_victory.emit()
-            return VictorySequence()
+            return VictorySequence(self.map_tracker)
         return self
 
 
 @define
 class VictorySequence(InGame):
+    map_tracker: MapTracker = field(eq=False, repr=False)
+
     @property
     def is_battle_state(self) -> bool:
         return True
@@ -340,7 +344,7 @@ class VictorySequence(InGame):
     def wBattleMode(self, prev: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
         logger.debug(f'battle mode changed: {prev!r} -> {value!r}')
         if value == BATTLE_MODE_NONE:
-            return InOverworld()
+            return InOverworld(map_tracker=self.map_tracker)
         elif value == BATTLE_MODE_WILD or value == BATTLE_MODE_TRAINER:
             self.inconsistent('wBattleMode', value)
         else:
