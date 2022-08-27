@@ -63,28 +63,30 @@ P_BATTLE_SPATK: Final[str] = 'battle.yourPokemon.battleStatSpecialAttack'
 P_BATTLE_SPDEF: Final[str] = 'battle.yourPokemon.battleStatSpecialDefense'
 
 P_PLAYER_ID: Final[str] = 'player.playerId'
+P_PLAYER_NAME: Final[str] = 'player.name'
+P_PLAYER_MONEY: Final[str] = 'player.money'
 P_GAME_TIME_HOURS: Final[str] = 'gameTime.hours'
 P_GAME_TIME_MINUTES: Final[str] = 'gameTime.minutes'
 P_GAME_TIME_SECONDS: Final[str] = 'gameTime.seconds'
 P_GAME_TIME_FRAMES: Final[str] = 'gameTime.frames'
 
-P_BADGE1: Final[str] = 'player.badges.zephyrBadge'
-P_BADGE2: Final[str] = 'player.badges.hiveBadge'
-P_BADGE3: Final[str] = 'player.badges.plainBadge'
-P_BADGE4: Final[str] = 'player.badges.fogBadge'
-P_BADGE5: Final[str] = 'player.badges.stormBadge'
-P_BADGE6: Final[str] = 'player.badges.mineralBadge'
-P_BADGE7: Final[str] = 'player.badges.glacierBadge'
-P_BADGE8: Final[str] = 'player.badges.risingBadge'
+P_BADGE1: Final[str] = 'player.badges.badge1'
+P_BADGE2: Final[str] = 'player.badges.badge2'
+P_BADGE3: Final[str] = 'player.badges.badge3'
+P_BADGE4: Final[str] = 'player.badges.badge4'
+P_BADGE5: Final[str] = 'player.badges.badge5'
+P_BADGE6: Final[str] = 'player.badges.badge6'
+P_BADGE7: Final[str] = 'player.badges.badge7'
+P_BADGE8: Final[str] = 'player.badges.badge8'
 
-P_KANTO_BADGE1: Final[str] = 'player.badges.boulderBadge'
-P_KANTO_BADGE2: Final[str] = 'player.badges.cascadeBadge'
-P_KANTO_BADGE3: Final[str] = 'player.badges.thunderBadge'
-P_KANTO_BADGE4: Final[str] = 'player.badges.rainbowBadge'
-P_KANTO_BADGE5: Final[str] = 'player.badges.soulBadge'
-P_KANTO_BADGE6: Final[str] = 'player.badges.marshBadge'
-P_KANTO_BADGE7: Final[str] = 'player.badges.volcanoBadge'
-P_KANTO_BADGE8: Final[str] = 'player.badges.earthBadge'
+P_KANTO_BADGE1: Final[str] = 'player.badges.badge9'
+P_KANTO_BADGE2: Final[str] = 'player.badges.badge10'
+P_KANTO_BADGE3: Final[str] = 'player.badges.badge11'
+P_KANTO_BADGE4: Final[str] = 'player.badges.badge12'
+P_KANTO_BADGE5: Final[str] = 'player.badges.badge13'
+P_KANTO_BADGE6: Final[str] = 'player.badges.badge14'
+P_KANTO_BADGE7: Final[str] = 'player.badges.badge15'
+P_KANTO_BADGE8: Final[str] = 'player.badges.badge16'
 
 PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     P_PLAYER_ID: {
@@ -92,6 +94,15 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'label': crystal.WRAM_PLAYER_ID,
         'store': game_data.VAR_PLAYER_ID,
+    },
+    P_PLAYER_NAME: {
+        'type': 'string',
+        'label': crystal.WRAM_PLAYER_NAME,
+    },
+    P_PLAYER_MONEY: {
+        'type': 'int',
+        'bytes': True,
+        'label': crystal.WRAM_PLAYER_MONEY,
     },
     P_GAME_TIME_HOURS: {
         'type': 'int',
@@ -173,12 +184,14 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'store': game_data.VAR_PARTY_MON1_SP_DEFENSE,
     },
     P_MAP_GROUP: {
-        'type': 'string',
+        'type': 'int',
+        'bytes': True,
         # 'store': game_data.VAR_MAP,
         'label': crystal.WRAM_MAP_GROUP,
     },
     P_MAP_NUMBER: {
         'type': 'int',
+        'bytes': True,
         # 'store': game_data.VAR_MAP,
         'label': crystal.WRAM_MAP_NUMBER,
     },
@@ -193,6 +206,7 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     P_AUDIO_CHANNEL5: {
         'type': 'int',
         'bytes': True,
+        'little_endian': False,
         'label': crystal.WRAM_AUDIO_CHANNEL5,
     },
     P_BATTLE_MODE: {
