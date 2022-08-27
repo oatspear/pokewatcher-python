@@ -10,10 +10,9 @@ from typing import Any, Final, Mapping
 import logging
 
 import pokewatcher.data.constants as game_data
+import pokewatcher.data.crystal.constants as crystal
 from pokewatcher.data.gamehook import DataHandler
 from pokewatcher.data.structs import GameData
-
-import pokewatcher.data.crystal.constants as crystal
 from pokewatcher.logic.fsm import StateMachine
 
 ###############################################################################

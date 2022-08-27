@@ -5,13 +5,11 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Final, Optional
+from typing import Any, Final
 
 import logging
 
-from attrs import define
-
-from pokewatcher.data.structs import GameData
+from attrs import define, field
 
 from pokewatcher.data.crystal.constants import (
     BATTLE_MODE_NONE,
@@ -22,7 +20,9 @@ from pokewatcher.data.crystal.constants import (
     BATTLE_RESULT_WIN,
     MAP_GROUPS,
     SFX_SAVE_FILE,
+    TRAINER_CLASS_CHAMPION,
 )
+from pokewatcher.data.structs import GameData
 import pokewatcher.events as events
 from pokewatcher.logic.fsm import GameState, transition
 
@@ -39,21 +39,21 @@ logger: Final[logging.Logger] = logging.getLogger(__name__)
 
 
 def _press_new_game() -> GameState:
-logger.info('starting a new game')
-events.on_new_game.emit()
-return InOverworld()
+    logger.info('starting a new game')
+    events.on_new_game.emit()
+    return InOverworld()
 
 
 def _press_continue() -> GameState:
-logger.info('continue previous game')
-events.on_continue.emit()
-return InOverworld()
+    logger.info('continue previous game')
+    events.on_continue.emit()
+    return InOverworld()
 
 
 def _reset_game() -> GameState:
-logger.info('game reset')
-events.on_reset.emit()
-return Initial()
+    logger.info('game reset')
+    events.on_reset.emit()
+    return Initial()
 
 
 @define

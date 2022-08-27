@@ -64,7 +64,7 @@ MAP_GROUPS: Final[Mapping[int, str]] = {
     0x1A: 'CHERRYGROVE',
 }
 
-
+TRAINER_CLASS_CHAMPION: Final[str] = 'CHAMPION'
 
 WRAM_PLAYER_ID: Final[str] = 'wPlayerID'
 WRAM_PLAYER_NAME: Final[str] = 'wPlayerName'

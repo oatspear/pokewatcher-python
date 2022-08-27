@@ -7,7 +7,6 @@
 
 from typing import Any, Final, Mapping
 
-import asyncio
 import logging
 
 from attrs import define, field
@@ -72,7 +71,7 @@ class ObsStudioInterface:
 
     async def disconnect(self):
         logger.info('disconnect from OBS websocket')
-        await ws.disconnect()
+        await self.ws.disconnect()
 
     async def start_record(self):
         request = Request('StartRecord')

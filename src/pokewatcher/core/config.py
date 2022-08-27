@@ -5,35 +5,15 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Callable, Dict, Final, Iterable, List, Tuple
+from typing import Any, Callable, Dict, Final, Iterable, Tuple
 
 import logging
 from logging.config import dictConfig
 from pathlib import Path
 
-from attrs import define, field, frozen
+from attrs import field, frozen
 import yaml
 
-from pokewatcher.data.constants import (
-    VAR_BATTLE_PLAYER_ATTACK,
-    VAR_BATTLE_PLAYER_DEFENSE,
-    VAR_BATTLE_PLAYER_SP_ATTACK,
-    VAR_BATTLE_PLAYER_SP_DEFENSE,
-    VAR_BATTLE_PLAYER_SPEED,
-    VAR_BATTLE_PLAYER_STAGE_ACCURACY,
-    VAR_BATTLE_PLAYER_STAGE_ATTACK,
-    VAR_BATTLE_PLAYER_STAGE_DEFENSE,
-    VAR_BATTLE_PLAYER_STAGE_EVASION,
-    VAR_BATTLE_PLAYER_STAGE_SP_ATTACK,
-    VAR_BATTLE_PLAYER_STAGE_SP_DEFENSE,
-    VAR_BATTLE_PLAYER_STAGE_SPEED,
-    VAR_PARTY_MON1_LEVEL,
-    VAR_PARTY_MON1_MOVE1,
-    VAR_PARTY_MON1_MOVE2,
-    VAR_PARTY_MON1_MOVE3,
-    VAR_PARTY_MON1_MOVE4,
-    VAR_PARTY_MON1_SPECIES,
-)
 from pokewatcher.errors import PokeWatcherConfigurationError
 
 ###############################################################################
