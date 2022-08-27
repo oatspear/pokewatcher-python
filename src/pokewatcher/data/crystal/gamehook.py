@@ -106,25 +106,25 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     P_GAME_TIME_HOURS: {
         'type': 'int',
         'bytes': True,
-        'label': crystal.WRAM_PLAY_TIME_HOURS,
+        'label': crystal.WRAM_GAME_TIME_HOURS,
         'store': game_data.VAR_GAME_TIME_HOURS,
     },
     P_GAME_TIME_MINUTES: {
         'type': 'int',
         'bytes': True,
-        'label': crystal.WRAM_PLAY_TIME_MINUTES,
+        'label': crystal.WRAM_GAME_TIME_MINUTES,
         'store': game_data.VAR_GAME_TIME_MINUTES,
     },
     P_GAME_TIME_SECONDS: {
         'type': 'int',
         'bytes': True,
-        'label': crystal.WRAM_PLAY_TIME_SECONDS,
+        'label': crystal.WRAM_GAME_TIME_SECONDS,
         'store': game_data.VAR_GAME_TIME_SECONDS,
     },
     P_GAME_TIME_FRAMES: {
         'type': 'int',
         'bytes': True,
-        'label': crystal.WRAM_PLAY_TIME_FRAMES,
+        'label': crystal.WRAM_GAME_TIME_FRAMES,
         'store': game_data.VAR_GAME_TIME_FRAMES,
     },
     P_SPECIES: {
