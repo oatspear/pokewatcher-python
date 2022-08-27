@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Final
+from typing import Any, Final, Optional
 
 import logging
 
@@ -13,14 +13,16 @@ from attrs import define
 
 from pokewatcher.data.structs import GameData
 
-# from pokewatcher.data.yellow.constants import (
-#     BATTLE_TYPE_LOST,
-#     BATTLE_TYPE_NONE,
-#     BATTLE_TYPE_TRAINER,
-#     BATTLE_TYPE_WILD,
-#     DEFAULT_PLAYER_NAME,
-#     SFX_SAVE_FILE,
-# )
+from pokewatcher.data.crystal.constants import (
+    BATTLE_MODE_NONE,
+    BATTLE_MODE_TRAINER,
+    BATTLE_MODE_WILD,
+    BATTLE_RESULT_DRAW,
+    BATTLE_RESULT_LOSE,
+    BATTLE_RESULT_WIN,
+    MAP_GROUPS,
+    SFX_SAVE_FILE,
+)
 import pokewatcher.events as events
 from pokewatcher.logic.fsm import GameState, transition
 
@@ -29,6 +31,64 @@ from pokewatcher.logic.fsm import GameState, transition
 ###############################################################################
 
 logger: Final[logging.Logger] = logging.getLogger(__name__)
+
+
+###############################################################################
+# Helper Functions
+###############################################################################
+
+
+def _press_new_game() -> GameState:
+logger.info('starting a new game')
+events.on_new_game.emit()
+return InOverworld()
+
+
+def _press_continue() -> GameState:
+logger.info('continue previous game')
+events.on_continue.emit()
+return InOverworld()
+
+
+def _reset_game() -> GameState:
+logger.info('game reset')
+events.on_reset.emit()
+return Initial()
+
+
+@define
+class MapTracker:
+    _map_group: int = 0
+    _map_number: int = 0
+    _changed: bool = True
+
+    @property
+    def map_group(self) -> int:
+        return self._map_group
+
+    @map_group.setter
+    def map_group(self, value: int):
+        self._map_group = value
+        self._changed = True
+
+    @property
+    def map_number(self) -> int:
+        return self._map_number
+
+    @map_number.setter
+    def map_number(self, value: int):
+        self._map_number = value
+        self._changed = True
+
+    def commit(self, data: GameData):
+        if self._changed:
+            group = MAP_GROUPS[self._map_group]
+            map = f'{self._map_number:02d}'
+            data.location = f'{group}/{map}'
+            logger.info(f'map changed: {data.location}')
+            events.on_map_changed.emit()
+            self._changed = False
+
 
 ###############################################################################
 # Interface
@@ -61,6 +121,13 @@ class CrystalState(GameState):
     wGameTimeFrames = transition  # noqa: N815
     wChannel5MusicID = transition  # noqa: N815
     wBattleLowHealthAlarm = transition  # noqa: N815
+    wBattleMode = transition  # noqa: N815
+    wBattleType = transition  # noqa: N815
+    wBattleResult = transition  # noqa: N815
+    wMapGroup = transition  # noqa: N815
+    wMapNumber = transition  # noqa: N815
+    wXCoord = transition  # noqa: N815
+    wYCoord = transition  # noqa: N815
 
 
 @define
@@ -92,7 +159,9 @@ class NewGameOrContinue(CrystalState):
 
 @define
 class MainMenuContinue(CrystalState):
-    _map_changed: bool = field(init=False, default=False, eq=False, repr=False)
+    map_tracker: MapTracker = field(init=False, factory=MapTracker, eq=False, repr=False)
+    _map_group_changed: bool = field(init=False, default=False, eq=False, repr=False)
+    _map_number_changed: bool = field(init=False, default=False, eq=False, repr=False)
     _x_changed: bool = field(init=False, default=False, eq=False, repr=False)
     _y_changed: bool = field(init=False, default=False, eq=False, repr=False)
     _time_changed: bool = field(init=False, default=False, eq=False, repr=False)
@@ -114,18 +183,29 @@ class MainMenuContinue(CrystalState):
             return _press_continue()
         return self
 
-    def wCurMap(self, prev: Any, value: str, _d: GameData) -> GameState:  # noqa: N815
-        logger.debug(f'map changed: {prev!r} -> {value!r}')
-        if not self._map_changed:
+    def wMapGroup(self, prev: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'map group changed: {prev!r} -> {value!r}')
+        self.map_tracker.map_group = value
+        if not self._map_group_changed:
             # first loaded map
-            self._map_changed = True
+            self._map_group_changed = True
+            return self
+        # already late
+        return _press_continue()
+
+    def wMapNumber(self, prev: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'map number changed: {prev!r} -> {value!r}')
+        self.map_tracker.map_number = value
+        if not self._map_number_changed:
+            # first loaded map
+            self._map_number_changed = True
             return self
         # already late
         return _press_continue()
 
     def wXCoord(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
-        # safety net in case we miss an update to wJoyIgnore
         logger.debug(f'player x coordinate changed: {prev} -> {value}')
+        self.map_tracker.commit(data)
         if not self._x_changed:
             # first loaded coordinates
             self._x_changed = True
@@ -134,8 +214,8 @@ class MainMenuContinue(CrystalState):
         return _press_continue()
 
     def wYCoord(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
-        # safety net in case we miss an update to wJoyIgnore
         logger.debug(f'player y coordinate changed: {prev} -> {value}')
+        self.map_tracker.commit(data)
         if not self._y_changed:
             # first loaded coordinates
             self._y_changed = True
@@ -155,31 +235,50 @@ class InGame(CrystalState):
 
 @define
 class InOverworld(InGame):
-    def wIsInBattle(self, _p: Any, value: Any, data: GameData) -> GameState:  # noqa: N815
-        if value == BATTLE_TYPE_WILD:
+    map_tracker: MapTracker = field(init=False, factory=MapTracker, eq=False, repr=False)
+
+    def wBattleMode(self, prev: Any, value: int, data: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'battle mode changed: {prev!r} -> {value!r}')
+        if value == BATTLE_MODE_WILD:
+            logger.info('wild battle started')
             data.battle.set_wild_battle()
+            data.battle.set_victory()
+            data.battle.ongoing = True
             events.on_battle_started.emit()
             return InBattle()
-        elif value == BATTLE_TYPE_TRAINER:
+        if value == BATTLE_MODE_TRAINER:
+            logger.info('trainer battle started')
             data.battle.set_trainer_battle()
+            data.battle.set_victory()
+            data.battle.ongoing = True
             events.on_battle_started.emit()
             return InBattle()
-        elif value == BATTLE_TYPE_LOST:
-            data.battle.set_defeat()
-            events.on_blackout.emit()
-        elif value != BATTLE_TYPE_NONE:
-            logger.warning(f'unknown battle type: {value}')
         return self
 
-    def wChannelSoundIDs_5(self, _p: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
+    def wChannel5MusicID(self, _p: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
         if value == SFX_SAVE_FILE:
             logger.info('saved game')
             events.on_save_game.emit()
         return self
 
-    def wCurMap(self, _p: Any, value: str, _d: GameData) -> GameState:  # noqa: N815
-        logger.info(f'map changed: {value}')
-        events.on_map_changed.emit()
+    def wMapGroup(self, prev: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'map group changed: {prev!r} -> {value!r}')
+        self.map_tracker.map_group = value
+        return self
+
+    def wMapNumber(self, prev: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'map number changed: {prev!r} -> {value!r}')
+        self.map_tracker.map_number = value
+        return self
+
+    def wXCoord(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'player x coordinate changed: {prev} -> {value}')
+        self.map_tracker.commit(data)
+        return self
+
+    def wYCoord(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'player y coordinate changed: {prev} -> {value}')
+        self.map_tracker.commit(data)
         return self
 
 
@@ -189,25 +288,30 @@ class InBattle(InGame):
     def is_battle_state(self) -> bool:
         return True
 
-    def wIsInBattle(self, _p: int, value: int, data: GameData) -> GameState:  # noqa: N815
-        if value == BATTLE_TYPE_NONE:
-            if data.battle.is_vs_wild:
-                data.battle.ongoing = False
-            else:
-                data.battle.set_defeat()
+    def wBattleMode(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'battle mode changed: {prev!r} -> {value!r}')
+        if value == self.BATTLE_MODE_NONE:
+            data.battle.ongoing = False
             events.on_battle_ended()
             return InOverworld()
-        if value == BATTLE_TYPE_LOST:
-            data.battle.set_defeat()
-            events.on_battle_ended()
-            return InOverworld()
-        elif value == BATTLE_TYPE_WILD or value == BATTLE_TYPE_TRAINER:
-            self.inconsistent('wIsInBattle', value)
         else:
-            logger.warning(f'unknown battle type: {value}')
+            self.inconsistent('wBattleMode', value)
         return self
 
-    def wLowHealthAlarmDisabled(self, _p: int, v: bool, data: GameData) -> GameState:  # noqa: N815
+    def wBattleResult(self, prev: int, value: int, data: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'battle result changed: {prev!r} -> {value!r}')
+        value = value & 0x03
+        if value == BATTLE_RESULT_WIN:
+            data.battle.set_victory()
+        elif value == BATTLE_RESULT_DRAW:
+            data.battle.set_draw()
+        elif value == BATTLE_RESULT_LOSE:
+            data.battle.set_defeat()
+        data.battle.ongoing = True
+        return self
+
+    def wBattleLowHealthAlarm(self, p: Any, v: bool, data: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'low health alarm changed: {p!r} -> {v!r}')
         if v:
             data.battle.set_victory()
             events.on_battle_ended.emit()
@@ -224,39 +328,17 @@ class VictorySequence(InGame):
     def is_battle_state(self) -> bool:
         return True
 
-    def wIsInBattle(self, _p: int, value: int, _d: GameData) -> GameState:  # noqa: N815
-        if value == BATTLE_TYPE_NONE:
+    def wBattleMode(self, prev: Any, value: int, _d: GameData) -> GameState:  # noqa: N815
+        logger.debug(f'battle mode changed: {prev!r} -> {value!r}')
+        if value == BATTLE_MODE_NONE:
             return InOverworld()
-        elif value in (BATTLE_TYPE_WILD, BATTLE_TYPE_TRAINER, BATTLE_TYPE_LOST):
-            self.inconsistent('wIsInBattle', value)
+        elif value == BATTLE_MODE_WILD or value == BATTLE_MODE_TRAINER:
+            self.inconsistent('wBattleMode', value)
         else:
-            logger.warning(f'unknown battle type: {value}')
+            logger.warning(f'unknown battle mode: {value}')
         return self
 
-    def wLowHealthAlarmDisabled(self, _p: int, v: bool, _d: GameData) -> GameState:  # noqa: N815
+    def wBattleLowHealthAlarm(self, _p: Any, v: bool, _d: GameData) -> GameState:  # noqa: N815
         if v:
-            self.inconsistent('wLowHealthAlarmDisabled', v)
+            self.inconsistent('wBattleLowHealthAlarm', v)
         return self
-
-
-###############################################################################
-# Helper Functions
-###############################################################################
-
-
-def _press_new_game() -> GameState:
-    logger.info('starting a new game')
-    events.on_new_game.emit()
-    return InOverworld()
-
-
-def _press_continue() -> GameState:
-    logger.info('continue previous game')
-    events.on_continue.emit()
-    return InOverworld()
-
-
-def _reset_game() -> GameState:
-    logger.info('game reset')
-    events.on_reset.emit()
-    return Initial()
