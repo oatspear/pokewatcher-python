@@ -133,7 +133,7 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     },
     P_SPECIES: {
         'type': 'string',
-        'key': 'name',
+        # 'key': 'name',
         'store': game_data.VAR_PARTY_MON1_SPECIES,
     },
     P_LEVEL: {
