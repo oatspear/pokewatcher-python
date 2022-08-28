@@ -19,6 +19,7 @@ from pokewatcher.data.crystal.constants import (
     BATTLE_RESULT_LOSE,
     BATTLE_RESULT_WIN,
     MAP_GROUPS,
+    MAP_NAMES,
     SFX_SAVE_FILE,
     TRAINER_CLASS_CHAMPION,
 )
@@ -66,9 +67,17 @@ class MapTracker:
         if self._changed:
             group = MAP_GROUPS.get(self._map_group)
             if group is None:
-                logger.warning(f'map changed to unknown group: {self._map_group!r}')
+                logger.warning(f'unknown map group: {self._map_group!r}')
                 group = 'UNKNOWN'
-            map = f'{self._map_number:02d}'
+            names = MAP_NAMES.get(group)
+            if not names:
+                logger.warning(f'map group {group} does not have any known maps')
+                map = f'{self._map_number:02d}'
+            else:
+                map = names.get(self._map_number)
+                if map is None:
+                    logger.warning(f'unknown map number ({group}): {self._map_number!r}')
+                    map = f'{self._map_number:02d}'
             data.location = f'{group}/{map}'
             logger.info(f'map changed: {data.location}')
             events.on_map_changed.emit()
