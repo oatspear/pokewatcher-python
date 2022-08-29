@@ -1,0 +1,193 @@
+%YAML 1.1
+---
+player.playerId:
+    type: int
+    bytes: true
+    label: wPlayerID
+    store: player.number
+player.name:
+    type: string
+    label: wPlayerName
+    store: player.name
+player.joypadIgnore:
+    type: int
+    bytes: true
+    label: wJoyIgnore
+screen.menu.currentItem:
+    type: int
+    bytes: true
+    label: wCurrentMenuItem
+gameTime.hours:
+    type: int
+    bytes: true
+    store: time.hours
+    label: wPlayTimeHours
+gameTime.minutes:
+    type: int
+    bytes: true
+    store: time.minutes
+    label: wPlayTimeMinutes
+gameTime.seconds:
+    type: int
+    bytes: true
+    store: time.seconds
+    label: wPlayTimeSeconds
+gameTime.frames:
+    type: int
+    bytes: true
+    store: time.frames
+    label: wPlayTimeFrames
+events.overworldFlags.countPlayTime:
+    type: bool
+    label: wd732_0
+player.team.0.species:
+    type: string
+    # key: name
+    store: player.team.slot1.species
+player.team.0.level:
+    type: int
+    bytes: true
+    store: player.team.slot1.level
+player.team.0.move1:
+    type: string
+    # bytes: true
+    store: player.team.slot1.move1
+player.team.0.move2:
+    type: string
+    # bytes: true
+    store: player.team.slot1.move2
+player.team.0.move3:
+    type: string
+    # bytes: true
+    store: player.team.slot1.move3
+player.team.0.move4:
+    type: string
+    # bytes: true
+    store: player.team.slot1.move4
+player.team.0.attack:
+    type: int
+    bytes: true
+    store: player.team.slot1.attack
+player.team.0.defense:
+    type: int
+    bytes: true
+    store: player.team.slot1.defense
+player.team.0.speed:
+    type: int
+    bytes: true
+    store: player.team.slot1.speed
+player.team.0.special:
+    type: int
+    bytes: true
+    store: player.team.slot1.special
+player.team.0.specialAttack:
+    type: int
+    bytes: true
+    store: player.team.slot1.sp_attack
+player.team.0.specialDefense:
+    type: int
+    bytes: true
+    store: player.team.slot1.sp_defense
+overworld.map:
+    type: string
+    store: location
+    processors:
+    - [prefix, Kanto/]
+    label: wCurMap
+overworld.x:
+    type: int
+    label: wXCoord
+overworld.y:
+    type: int
+    label: wYCoord
+audio.channel5:
+    type: int
+    bytes: true
+    label: wChannelSoundIDs_5
+battle.type:
+    type: int
+    bytes: true
+    label: wIsInBattle
+battle.trainer.class:
+    type: string
+    store: battle.trainer.trainer_class
+battle.trainer.number:
+    type: int
+    bytes: true
+    store: battle.trainer.number
+battle.lowHealthAlarm:
+    type: bool
+    bytes: true
+    label: wLowHealthAlarmDisabled
+battle.yourPokemon.modStageAttack:
+    type: int
+    store: battle.player.stages.attack
+    default: 0
+battle.yourPokemon.modStageDefense:
+    type: int
+    store: battle.player.stages.defense
+    default: 0
+battle.yourPokemon.modStageSpeed:
+    type: int
+    store: battle.player.stages.speed
+    default: 0
+battle.yourPokemon.modStageSpecial:
+    type: int
+    store: battle.player.stages.special
+    default: 0
+battle.yourPokemon.modStageAccuracy:
+    type: int
+    store: battle.player.stages.accuracy
+    default: 0
+battle.yourPokemon.modStageEvasion:
+    type: int
+    store: battle.player.stages.evasion
+    default: 0
+battle.yourPokemon.battleStatAttack:
+    type: int
+    bytes: true
+    store: battle.player.stats.attack
+battle.yourPokemon.battleStatDefense:
+    type: int
+    bytes: true
+    store: battle.player.stats.defense
+battle.yourPokemon.battleStatSpeed:
+    type: int
+    bytes: true
+    store: battle.player.stats.speed
+battle.yourPokemon.battleStatSpecial:
+    type: int
+    bytes: true
+    store: battle.player.stats.special
+player.badges.badge1:
+    type: bool
+    bytes: true
+    store: player.badges.badge1
+player.badges.badge2:
+    type: bool
+    bytes: true
+    store: player.badges.badge2
+player.badges.badge3:
+    type: bool
+    bytes: true
+    store: player.badges.badge3
+player.badges.badge4:
+    type: bool
+    bytes: true
+    store: player.badges.badge4
+player.badges.badge5:
+    type: bool
+    bytes: true
+    store: player.badges.badge5
+player.badges.badge6:
+    type: bool
+    bytes: true
+    store: player.badges.badge6
+player.badges.badge7:
+    type: bool
+    bytes: true
+    store: player.badges.badge7
+player.badges.badge8:
+    type: bool
+    bytes: true
+    store: player.badges.badge8
