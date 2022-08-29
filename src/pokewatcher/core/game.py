@@ -105,7 +105,7 @@ class GameInterface:
 
         self.fsm.state = Initial()
         config = None
-        config_path = properties.get(version)
+        config_path = properties.get(self.gamehook.game_name)
         if config_path:
             try:
                 path = Path(config_path).resolve(strict=True)
