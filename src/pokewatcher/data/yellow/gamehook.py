@@ -5,7 +5,7 @@
 # Imports
 ###############################################################################
 
-from typing import Any, Final, Mapping
+from typing import Any, Final, Optional, Mapping
 
 import logging
 
@@ -331,8 +331,13 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
 ###############################################################################
 
 
-def load_data_handler(data: GameData, fsm: StateMachine) -> DataHandler:
+def load_data_handler(
+    data: GameData,
+    fsm: StateMachine,
+    properties: Optional[Mapping[str, Any]] = None,
+) -> DataHandler:
     handler = DataHandler(data, fsm)
-    for prop, metadata in PROPERTIES.items():
+    properties = properties or PROPERTIES
+    for prop, metadata in properties.items():
         handler.configure_property(prop, metadata)
     return handler
