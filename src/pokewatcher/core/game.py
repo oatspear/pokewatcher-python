@@ -8,8 +8,10 @@
 from typing import Any, Final, Mapping, Optional
 
 import logging
+from pathlib import Path
 
 from attrs import define, field
+import yaml
 
 from pokewatcher.core.gamehook import GameHookBridge, GameHookError
 from pokewatcher.core.retroarch import RetroArchBridge
@@ -70,7 +72,7 @@ class GameInterface:
         self.retroarch.setup(retroarch)
         gamehook = settings['gamehook']
         self.gamehook.setup(gamehook)
-        self._load_data_handler()
+        self._load_data_handler(gamehook.get('properties', {}))
 
     def start(self):
         logger.info('starting low-level components')
@@ -88,7 +90,7 @@ class GameInterface:
         self.gamehook.cleanup()
         self.retroarch.cleanup()
 
-    def _load_data_handler(self):
+    def _load_data_handler(self, properties: Mapping[str, str]):
         logger.info('setting up data handlers')
 
         version = self.gamehook.game_name.lower()
@@ -102,5 +104,15 @@ class GameInterface:
             raise GameHookError.unknown_game(version)
 
         self.fsm.state = Initial()
-        handler = load_data_handler(self.data, self.fsm)
+        config = None
+        config_path = properties.get(version)
+        if config_path:
+            try:
+                path = Path(config_path).resolve(strict=True)
+                logger.info(f'loading game properties from {path}')
+                text = path.read_text(encoding='utf-8')
+                config = yaml.safe_load(text)
+            except IOError as e:
+                logger.error(f'unable to read GameHook properties file: {e}')
+        handler = load_data_handler(self.data, self.fsm, properties=config)
         self.gamehook.on_change = handler.on_property_changed
