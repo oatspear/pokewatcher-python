@@ -230,6 +230,9 @@ auto_save:
 gamehook:
   host: localhost
   port: 8085
+  properties:
+    Pokemon Yellow: gamehook-yellow-properties.yml
+    Pokemon Crystal: gamehook-crystal-properties.yml
 livesplit:
   enabled: false
   host: localhost
