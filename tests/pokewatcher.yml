@@ -66,107 +66,167 @@ auto_save:
     Pokemon Gold & Silver: Pokemon Crystal
     Pokemon Crystal:
       always:
-        New Bark:
-        - '01'
-        Cherrygrove:
-        - '01'
         Violet:
-        - '01'
+        - Gym
         Azalea:
-        - '01'
+        - Gym
         Goldenrod:
-        - '01'
+        - Gym
         Ecruteak:
-        - '01'
+        - Gym
         Olivine:
-        - '01'
+        - Gym
         Cianwood:
-        - '01'
+        - Gym
         Mahogany:
-        - '01'
-        Lake of Rage:
-        - '01'
+        - Gym
         Blackthorn:
-        - '01'
+        - Gym 1F
         Indigo:
-        - '01'
-        Pallet:
-        - '01'
+        - Pokemon Center 1F
+        - Will's Room
+        - Koga's Room
+        - Bruno's Room
+        - Karen's Room
+        - Lance's Room
         Viridian:
-        - '01'
+        - Gym
+        - Trainer House B1F
         Pewter:
-        - '01'
+        - Gym
         Cerulean:
-        - '01'
+        - Gym
         Vermilion:
-        - '01'
-        Lavender:
-        - '01'
+        - Gym
         Celadon:
-        - '01'
+        - Gym
         Saffron:
-        - '01'
+        - Gym
         Fuchsia:
-        - '01'
+        - Gym
         Cinnabar:
-        - '01'
+        - Seafoam Gym
         Dungeons:
-        - '01'
-        Silver:
-        - '01'
+        - Sprout Tower 3F
+        - Burned Tower 1F
+        - National Park Bug Contest
+        - Whirl Island Lugia Chamber
+        - Silver Cave Room 3
         Fast Ship:
-        - '01'
+        - Tin Tower Roof
       once:
         New Bark:
-        - '01'
+        - Route 26
+        - Route 27
+        - Route 29
         Cherrygrove:
-        - '01'
+        - City
+        - Mr. Pokemon's House
+        - Route 30
+        - Route 31
         Violet:
-        - '01'
+        - City
+        - Route 32
+        - Route 35
+        - Route 36
+        - Route 37
         Azalea:
-        - '01'
+        - Town
+        - Route 33
         Goldenrod:
-        - '01'
+        - City
+        - Route 34
         Ecruteak:
-        - '01'
+        - City
+        - Dance Theatre
         Olivine:
-        - '01'
+        - City
+        - Route 38
+        - Route 39
         Cianwood:
-        - '01'
+        - City
+        - Route 40
+        - Route 41
         Mahogany:
-        - '01'
+        - Town
+        - Route 42
+        - Route 44
         Lake of Rage:
-        - '01'
+        - Lake
+        - Route 43
         Blackthorn:
-        - '01'
+        - City
+        - Route 45
+        - Route 46
         Indigo:
-        - '01'
+        - Route 23
+        - Hall of Fame
         Pallet:
-        - '01'
+        - Town
+        - Route 1
         Viridian:
-        - '01'
+        - City
+        - Route 2
+        - Route 22
         Pewter:
-        - '01'
+        - City
+        - Route 3
         Cerulean:
-        - '01'
+        - City
+        - Route 4
+        - Route 9
+        - Route 10 North
+        - Route 24
+        - Route 25
         Vermilion:
-        - '01'
+        - City
+        - Route 6
+        - Route 11
         Lavender:
-        - '01'
+        - Town
+        - Route 8
+        - Route 12
+        - Route 10 South
         Celadon:
-        - '01'
+        - City
+        - Route 7
+        - Route 16
+        - Route 17
         Saffron:
-        - '01'
+        - City
+        - Route 5
         Fuchsia:
-        - '01'
+        - City
+        - Route 13
+        - Route 14
+        - Route 15
+        - Route 18
         Cinnabar:
-        - '01'
+        - Island
+        - Route 19
+        - Route 20
+        - Route 21
         Dungeons:
-        - '01'
+        - National Park
+        - Radio Tower 5F
+        - Slowpoke Well B1F
+        - Olivine Lighthouse 6F
+        - Team Rocket Base B1F
+        - Ilex Forest
+        - Goldenrod Underground
+        - Ice Path 1F
+        - Silver Cave Room 1
+        - Dragon's Den B1F
+        - Tohjo Falls
+        - Mount Moon
+        - Victory Road
         Silver:
-        - '01'
+        - Silver Cave Outside
+        - Route 28
         Fast Ship:
-        - '01'
+        - Olivine Port Passage
+        - Vermilion Port Passage
+        - '1F'
 gamehook:
   host: localhost
   port: 8085
