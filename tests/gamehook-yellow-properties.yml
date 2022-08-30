@@ -67,27 +67,27 @@ player.team.0.move4:
 player.team.0.attack:
     type: int
     bytes: true
-    store: player.team.slot1.attack
+    store: player.team.slot1.stats.attack
 player.team.0.defense:
     type: int
     bytes: true
-    store: player.team.slot1.defense
+    store: player.team.slot1.stats.defense
 player.team.0.speed:
     type: int
     bytes: true
-    store: player.team.slot1.speed
+    store: player.team.slot1.stats.speed
 player.team.0.special:
     type: int
     bytes: true
-    store: player.team.slot1.special
+    store: player.team.slot1.stats.special
 player.team.0.specialAttack:
     type: int
     bytes: true
-    store: player.team.slot1.sp_attack
+    store: player.team.slot1.stats.sp_attack
 player.team.0.specialDefense:
     type: int
     bytes: true
-    store: player.team.slot1.sp_defense
+    store: player.team.slot1.stats.sp_defense
 overworld.map:
     type: string
     store: location
