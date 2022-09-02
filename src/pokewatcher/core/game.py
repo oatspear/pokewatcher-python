@@ -16,7 +16,11 @@ import yaml
 from pokewatcher.core.gamehook import GameHookBridge, GameHookError
 from pokewatcher.core.retroarch import RetroArchBridge
 from pokewatcher.core.util import SimpleClock
+from pokewatcher.data.crystal.gamehook import load_data_handler as load_gen2_data_handler
+from pokewatcher.logic.crystal.fsm import Initial as InitialCrystalState
 from pokewatcher.data.structs import GameData
+from pokewatcher.data.yellow.gamehook import load_data_handler as load_gen1_data_handler
+from pokewatcher.logic.yellow.fsm import Initial as InitialYellowState
 from pokewatcher.logic.fsm import GameState, StateMachine
 
 ###############################################################################
@@ -95,21 +99,20 @@ class GameInterface:
 
         version = self.gamehook.game_name.lower()
         if 'yellow' in version:
-            from pokewatcher.data.yellow.gamehook import load_data_handler
-            from pokewatcher.logic.yellow.fsm import Initial
+            self.fsm.state = InitialYellowState()
+            load_data_handler = load_gen1_data_handler
         elif 'crystal' in version:
-            from pokewatcher.data.crystal.gamehook import load_data_handler
-            from pokewatcher.logic.crystal.fsm import Initial
+            self.fsm.state = InitialCrystalState()
+            load_data_handler = load_gen2_data_handler
         elif 'gold' in version and 'silver' in version:
-            from pokewatcher.data.crystal.gamehook import load_data_handler
-            from pokewatcher.logic.crystal.fsm import Initial
+            self.fsm.state = InitialCrystalState()
+            load_data_handler = load_gen2_data_handler
         elif 'red' in version and 'blue' in version:
-            from pokewatcher.data.yellow.gamehook import load_data_handler
-            from pokewatcher.logic.yellow.fsm import Initial
+            self.fsm.state = InitialYellowState()
+            load_data_handler = load_gen1_data_handler
         else:
             raise GameHookError.unknown_game(version)
 
-        self.fsm.state = Initial()
         config = None
         config_path = properties.get(self.gamehook.game_name)
         if config_path:
