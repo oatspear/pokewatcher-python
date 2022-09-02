@@ -17,11 +17,11 @@ from pokewatcher.core.gamehook import GameHookBridge, GameHookError
 from pokewatcher.core.retroarch import RetroArchBridge
 from pokewatcher.core.util import SimpleClock
 from pokewatcher.data.crystal.gamehook import load_data_handler as load_gen2_data_handler
-from pokewatcher.logic.crystal.fsm import Initial as InitialCrystalState
 from pokewatcher.data.structs import GameData
 from pokewatcher.data.yellow.gamehook import load_data_handler as load_gen1_data_handler
-from pokewatcher.logic.yellow.fsm import Initial as InitialYellowState
+from pokewatcher.logic.crystal.fsm import Initial as InitialCrystalState
 from pokewatcher.logic.fsm import GameState, StateMachine
+from pokewatcher.logic.yellow.fsm import Initial as InitialYellowState
 
 ###############################################################################
 # Constants
