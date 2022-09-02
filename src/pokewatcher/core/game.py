@@ -100,6 +100,12 @@ class GameInterface:
         elif 'crystal' in version:
             from pokewatcher.data.crystal.gamehook import load_data_handler
             from pokewatcher.logic.crystal.fsm import Initial
+        elif 'gold' in version and 'silver' in version:
+            from pokewatcher.data.crystal.gamehook import load_data_handler
+            from pokewatcher.logic.crystal.fsm import Initial
+        elif 'red' in version and 'blue' in version:
+            from pokewatcher.data.yellow.gamehook import load_data_handler
+            from pokewatcher.logic.yellow.fsm import Initial
         else:
             raise GameHookError.unknown_game(version)
 
