@@ -434,7 +434,133 @@ splitter:
     - class: RED
       name: Red
       number: 1
-    Pokemon Red and Blue: Pokemon Yellow
+    Pokemon Red and Blue:
+    - class: BROCK
+      name: Brock
+      number: 1
+    - class: MISTY
+      name: Misty
+      number: 1
+    - class: LASS
+      name: Oddish Lass
+      number: 10
+    - class: ROCKET
+      name: Rocket
+      number: 5
+    - class: LT.SURGE
+      name: Lt. Surge
+      number: 1
+    - class: JR TRAINER F
+      name: RTG1 - Wrapping Lass
+      number: 5
+    - class: POKEMANIAC
+      name: RTG2 - Pokemaniac 1
+      number: 7
+    - class: POKEMANIAC
+      name: RTG3 - Pokemaniac 2
+      number: 5
+    - class: JR TRAINER F
+      name: RTG4 - Status Jr Trainer
+      number: 10
+    - class: HIKER
+      name: RTG5 - Self-destructing Hiker
+      number: 9
+    - class: JR TRAINER F
+      name: RTG6 - Finisher
+      number: 18
+    - class: ERIKA
+      name: Erika
+      number: 1
+    - class: KOGA
+      name: Koga
+      number: 1
+    - class: BLAINE
+      name: Blaine
+      number: 1
+    - class: SABRINA
+      name: Sabrina
+      number: 1
+    - class: GIOVANNI
+      name: Giovanni (Silph)
+      number: 2
+    - class: GIOVANNI
+      name: Giovanni
+      number: 3
+    - class: LORELEI
+      name: Lorelei
+      number: 1
+    - class: BRUNO
+      name: Bruno
+      number: 1
+    - class: AGATHA
+      name: Agatha
+      number: 1
+    - class: LANCE
+      name: Lance
+      number: 1
+    - class: RIVAL1
+      name: Rival (Optional)
+      number: 4
+    - class: RIVAL1
+      name: Rival (Optional)
+      number: 5
+    - class: RIVAL1
+      name: Rival (Optional)
+      number: 6
+    - class: RIVAL1
+      name: Rival (Nugget Bridge)
+      number: 7
+    - class: RIVAL1
+      name: Rival (Nugget Bridge)
+      number: 8
+    - class: RIVAL1
+      name: Rival (Nugget Bridge)
+      number: 9
+    - class: RIVAL2
+      name: Rival (SS Anne)
+      number: 1
+    - class: RIVAL2
+      name: Rival (SS Anne)
+      number: 2
+    - class: RIVAL2
+      name: Rival (SS Anne)
+      number: 3
+    - class: RIVAL2
+      name: Rival (Pokemon Tower)
+      number: 4
+    - class: RIVAL2
+      name: Rival (Pokemon Tower)
+      number: 5
+    - class: RIVAL2
+      name: Rival (Pokemon Tower)
+      number: 6
+    - class: RIVAL2
+      name: Rival (Silph Co.)
+      number: 7
+    - class: RIVAL2
+      name: Rival (Silph Co.)
+      number: 8
+    - class: RIVAL2
+      name: Rival (Silph Co.)
+      number: 9
+    - class: RIVAL2
+      name: Rival (Final)
+      number: 10
+    - class: RIVAL2
+      name: Rival (Final)
+      number: 11
+    - class: RIVAL2
+      name: Rival (Final)
+      number: 12
+    - class: RIVAL3
+      name: Champion
+      number: 1
+    - class: RIVAL3
+      name: Champion
+      number: 2
+    - class: RIVAL3
+      name: Champion
+      number: 3
     Pokemon Yellow:
     - class: BROCK
       name: Brock
