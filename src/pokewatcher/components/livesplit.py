@@ -15,8 +15,7 @@ from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import TcpConnection, TimeInterval, TimeRecord
 from pokewatcher.errors import PokeWatcherComponentError
 
-# from pokewatcher.events import on_battle_ended
-from pokewatcher.events import on_champion_victory, on_new_game
+from pokewatcher.events import on_battle_ended, on_champion_victory, on_new_game
 
 ###############################################################################
 # Constants
@@ -60,8 +59,11 @@ class LiveSplitInterface:
         self.game.clock = LivesplitClock(socket)
 
         on_new_game.watch(self.on_new_game)
-        on_champion_victory.watch(self.on_champion_victory)
-        # on_battle_ended.watch(self.on_battle_ended)
+
+        if self.is_gen2():
+            on_battle_ended.watch(self.on_red_victory)
+        else:
+            on_champion_victory.watch(self.on_champion_victory)
 
     def start(self):
         logger.info('starting')
@@ -89,11 +91,16 @@ class LiveSplitInterface:
         logger.info('champion victory: pause timer')
         self.game.clock.request_pause()
 
-    # def on_battle_ended(self):
-    #     battle = self.game.data.battle
-    #     if not battle.is_vs_wild:
-    #         if 'RIVAL' in battle.trainer.trainer_class:
-    #             self.game.clock.request_pause()
+    def on_red_victory(self):
+        battle = self.game.data.battle
+        if not battle.is_vs_wild:
+            if battle.trainer.trainer_class == 'RED':
+                logger.info('Red victory: pause timer')
+                self.game.clock.request_pause()
+
+    def is_gen2(self) -> bool:
+        version = self.game.version.lower()
+        return 'crystal' in version or 'gold' in version or 'silver' in version
 
 
 @define
