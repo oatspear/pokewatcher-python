@@ -6,28 +6,34 @@ g3state() {
     return this.setGamestate(string, gamestate);
   }
   // NO POKEMON
-  else if (this.mapper.properties.player.name.bytes > 0
-      && this.mapper.properties.player.teamCount.value == 0
-      && this.gameStarted == false) {
+  else if (
+    this.mapper.properties.player.name.bytes > 0
+    && this.mapper.properties.player.teamCount.value == 0
+    && this.gameStarted == false
+  ) {
     string = "No Pokemon";
     gamestate = 2;
     return this.setGamestate(string, gamestate);
   }
   // OVERWORLD
-  else if (this.mapper.properties.player.name.bytes > 0
-      && this.mapper.properties.player.teamCount.value > 0
-      && this.gameStarted == true
-      || this.mapper.properties.battle.turnInfo.battleOutcome.bytes > 0
-      && this.mapper.properties.battle.turnInfo.battleBackgroundTiles.value == 0) {
+  else if (
+    this.mapper.properties.player.name.bytes > 0
+    && this.mapper.properties.player.teamCount.value > 0
+    && this.gameStarted == true
+    || this.mapper.properties.battle.turnInfo.battleOutcome.bytes > 0
+    && this.mapper.properties.battle.turnInfo.battleBackgroundTiles.value == 0
+  ) {
     string = "Overworld";
     gamestate = 3;
     return this.setGamestate(string, gamestate);
   }
   // POST-RESET
-  else if (this.mapper.properties.battle.turnInfo.battleOutcome.bytes == 0
-      && this.mapper.properties.battle.turnInfo.battleBackgroundTiles.value == 0
-      && this.mapper.properties?.player?.teamCount > 0
-      && this.gameStarted == true) {
+  else if (
+    this.mapper.properties.battle.turnInfo.battleOutcome.bytes == 0
+    && this.mapper.properties.battle.turnInfo.battleBackgroundTiles.value == 0
+    && this.mapper.properties?.player?.teamCount > 0
+    && this.gameStarted == true
+  ) {
     string = "Post-Reset";
     gamestate = 9;
     return this.setGamestate(string, gamestate);
