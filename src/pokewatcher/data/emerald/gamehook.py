@@ -33,7 +33,6 @@ P_MOVE4: Final[str] = 'player.team.0.move4'
 P_MON_ATK: Final[str] = 'player.team.0.attack'
 P_MON_DEF: Final[str] = 'player.team.0.defense'
 P_MON_SPD: Final[str] = 'player.team.0.speed'
-P_MON_SPC: Final[str] = 'player.team.0.special'
 P_MON_SPATK: Final[str] = 'player.team.0.specialAttack'
 P_MON_SPDEF: Final[str] = 'player.team.0.specialDefense'
 
@@ -72,54 +71,34 @@ P_BADGE7: Final[str] = 'player.badges.badge7'
 P_BADGE8: Final[str] = 'player.badges.badge8'
 
 PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
-    P_PLAYER_ID: {
-        'type': 'int',
-        'bytes': True,
-        'label': yellow.WRAM_PLAYER_ID,
-        'store': game_data.VAR_PLAYER_ID,
-    },
     P_PLAYER_NAME: {
         'type': 'string',
-        'label': yellow.WRAM_PLAYER_NAME,
+        'label': emerald.WRAM_PLAYER_NAME,
         'store': game_data.VAR_PLAYER_NAME,
     },
-    P_JOYPAD_IGNORE: {
+    P_TEAM_COUNT: {
         'type': 'int',
-        'bytes': True,
-        'label': yellow.WRAM_JOY_IGNORE,
-    },
-    P_CUR_MENU_ITEM: {
-        'type': 'int',
-        'bytes': True,
-        'label': yellow.WRAM_CURRENT_MENU_ITEM,
+        'label': emerald.WRAM_TEAM_COUNT,
     },
     P_GAME_TIME_HOURS: {
         'type': 'int',
         'bytes': True,
         'store': game_data.VAR_GAME_TIME_HOURS,
-        'label': yellow.WRAM_PLAY_TIME_HOURS,
     },
     P_GAME_TIME_MINUTES: {
         'type': 'int',
         'bytes': True,
         'store': game_data.VAR_GAME_TIME_MINUTES,
-        'label': yellow.WRAM_PLAY_TIME_MINUTES,
     },
     P_GAME_TIME_SECONDS: {
         'type': 'int',
         'bytes': True,
         'store': game_data.VAR_GAME_TIME_SECONDS,
-        'label': yellow.WRAM_PLAY_TIME_SECONDS,
     },
     P_GAME_TIME_FRAMES: {
         'type': 'int',
         'bytes': True,
         'store': game_data.VAR_GAME_TIME_FRAMES,
-        'label': yellow.WRAM_PLAY_TIME_FRAMES,
-    },
-    P_COUNT_GAME_TIME: {
-        'type': 'bool',
-        'label': yellow.WRAM_COUNT_PLAY_TIME,
     },
     P_SPECIES: {
         'type': 'string',
@@ -181,29 +160,6 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_PARTY_MON1_SP_DEFENSE,
     },
-    P_MAP: {
-        'type': 'string',
-        'store': game_data.VAR_MAP,
-        'processors': [
-            ['prefix', 'Kanto/'],
-        ],
-        'label': yellow.WRAM_CUR_MAP,
-    },
-    P_X_COORD: {
-        'type': 'int',
-        'label': yellow.WRAM_X_COORD,
-    },
-    P_Y_COORD: {
-        'type': 'int',
-        'label': yellow.WRAM_Y_COORD,
-    },
-    # P_AUDIO_SOUND: {},
-    P_AUDIO_CH5: {
-        'type': 'int',
-        'bytes': True,
-        'label': yellow.WRAM_AUDIO_CHANNEL5,
-    },
-    # P_AUDIO_CH6: {},
     P_BATTLE_TYPE: {
         'type': 'int',
         'bytes': True,
@@ -217,12 +173,6 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'type': 'int',
         'bytes': True,
         'store': game_data.VAR_BATTLE_TRAINER_ID,
-    },
-    # P_GYM_LEADER: {},
-    P_BATTLE_ALARM: {
-        'type': 'bool',
-        'bytes': True,
-        'label': yellow.WRAM_LOW_HEALTH_ALARM,
     },
     P_STAGE_ATK: {
         'type': 'int',
