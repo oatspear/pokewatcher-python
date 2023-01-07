@@ -264,6 +264,16 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_PLAYER_BADGE8,
     },
+    P_BATTLE_OUTCOME: {
+        'type': 'int',
+        'bytes': True,
+        'label': emerald.WRAM_BATTLE_OUTCOME,
+    },
+    P_BATTLE_BACKGROUND: {
+        'type': 'int',
+        'bytes': True,
+        'label': emerald.WRAM_BATTLE_BG_TILES,
+    },
 }
 
 ###############################################################################
