@@ -80,7 +80,7 @@ class NewGameOrContinue(EmeraldState):
         logger.debug(f'team count changed: {prev} -> {value}')
         if value > 0:
             logger.info('found saved game')
-            return MainMenuContinue()
+            return InOverworld()
         return self
 
 

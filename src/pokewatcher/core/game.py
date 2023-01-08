@@ -17,9 +17,11 @@ from pokewatcher.core.gamehook import GameHookBridge, GameHookError
 from pokewatcher.core.retroarch import RetroArchBridge
 from pokewatcher.core.util import SimpleClock
 from pokewatcher.data.crystal.gamehook import load_data_handler as load_gen2_data_handler
+from pokewatcher.data.emerald.gamehook import load_data_handler as load_gen3_data_handler
 from pokewatcher.data.structs import GameData
 from pokewatcher.data.yellow.gamehook import load_data_handler as load_gen1_data_handler
 from pokewatcher.logic.crystal.fsm import Initial as InitialCrystalState
+from pokewatcher.logic.emerald.fsm import Initial as InitialEmeraldState
 from pokewatcher.logic.fsm import GameState, StateMachine
 from pokewatcher.logic.yellow.fsm import Initial as InitialYellowState
 
@@ -107,6 +109,9 @@ class GameInterface:
         elif 'gold' in version and 'silver' in version:
             self.fsm.state = InitialCrystalState()
             load_data_handler = load_gen2_data_handler
+        elif 'emerald' in version:
+            self.fsm.state = InitialEmeraldState()
+            load_data_handler = load_gen3_data_handler
         elif 'red' in version and 'blue' in version:
             self.fsm.state = InitialYellowState()
             load_data_handler = load_gen1_data_handler

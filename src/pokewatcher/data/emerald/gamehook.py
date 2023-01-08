@@ -46,7 +46,8 @@ P_BATTLE_DIALOGUE: Final[str] = 'battle.turnInfo.battleDialogue'
 P_STAGE_ATK: Final[str] = 'battle.yourPokemon.modStageAttack'
 P_STAGE_DEF: Final[str] = 'battle.yourPokemon.modStageDefense'
 P_STAGE_SPD: Final[str] = 'battle.yourPokemon.modStageSpeed'
-P_STAGE_SPC: Final[str] = 'battle.yourPokemon.modStageSpecial'
+P_STAGE_SPATK: Final[str] = 'battle.yourPokemon.modStageSpecialAttack'
+P_STAGE_SPDEF: Final[str] = 'battle.yourPokemon.modStageSpecialDefense'
 P_STAGE_ACC: Final[str] = 'battle.yourPokemon.modStageAccuracy'
 P_STAGE_EVA: Final[str] = 'battle.yourPokemon.modStageEvasion'
 
@@ -145,11 +146,6 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_PARTY_MON1_SPEED,
     },
-    P_MON_SPC: {
-        'type': 'int',
-        'bytes': True,
-        'store': game_data.VAR_PARTY_MON1_SPECIAL,
-    },
     P_MON_SPATK: {
         'type': 'int',
         'bytes': True,
@@ -160,11 +156,11 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_PARTY_MON1_SP_DEFENSE,
     },
-    P_BATTLE_TYPE: {
-        'type': 'int',
-        'bytes': True,
-        'label': yellow.WRAM_BATTLE_TYPE,
-    },
+    # P_BATTLE_TYPE: {
+    #     'type': 'int',
+    #     'bytes': True,
+    #     'label': yellow.WRAM_BATTLE_TYPE,
+    # },
     P_TRAINER_CLASS: {
         'type': 'string',
         'store': game_data.VAR_BATTLE_TRAINER_CLASS,
@@ -189,9 +185,14 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'store': game_data.VAR_BATTLE_PLAYER_STAGE_SPEED,
         'default': 0,
     },
-    P_STAGE_SPC: {
+    P_STAGE_SPATK: {
         'type': 'int',
-        'store': game_data.VAR_BATTLE_PLAYER_STAGE_SPECIAL,
+        'store': game_data.VAR_BATTLE_PLAYER_STAGE_SP_ATTACK,
+        'default': 0,
+    },
+    P_STAGE_SPDEF: {
+        'type': 'int',
+        'store': game_data.VAR_BATTLE_PLAYER_STAGE_SP_DEFENSE,
         'default': 0,
     },
     P_STAGE_ACC: {
@@ -219,10 +220,15 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_SPEED,
     },
-    P_BATTLE_SPC: {
+    P_BATTLE_SPATK: {
         'type': 'int',
         'bytes': True,
-        'store': game_data.VAR_BATTLE_PLAYER_SPECIAL,
+        'store': game_data.VAR_BATTLE_PLAYER_SP_ATTACK,
+    },
+    P_BATTLE_SPDEF: {
+        'type': 'int',
+        'bytes': True,
+        'store': game_data.VAR_BATTLE_PLAYER_SP_DEFENSE,
     },
     P_BADGE1: {
         'type': 'bool',
