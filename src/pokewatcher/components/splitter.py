@@ -6,15 +6,18 @@
 ###############################################################################
 
 from types import SimpleNamespace
-from typing import Any, Final, List, Mapping, Optional
+from typing import Any, Final, List, Mapping, Optional, Set
 
+import asyncio
 from collections import Counter, defaultdict
+import json
 import logging
 from pathlib import Path
-from threading import Lock
+from threading import Lock, Thread
 
 from attrs import asdict, define, field
 from attrs.validators import instance_of
+import websockets
 
 from pokewatcher.core.game import GameInterface
 from pokewatcher.core.util import Attribute, TimeInterval, TimeRecord
@@ -41,6 +44,24 @@ DEFAULTS: Final[Mapping[str, Any]] = {
                 'realtime.end': 'Real Time',
                 'time': 'Game Time',
                 'resets': 'Resets',
+            },
+            'attributes': [
+                'rom',
+                'trainer_name',
+                'realtime.end',
+                'time',
+                'resets',
+            ],
+        },
+        'websocket': {
+            'host': 'localhost',
+            'port': 6789,
+            'labels': {
+                'rom': 'rom',
+                'trainer_name': 'trainerName',
+                'realtime.end': 'realTime',
+                'time': 'gameTime',
+                'resets': 'resets',
             },
             'attributes': [
                 'rom',
@@ -250,7 +271,6 @@ class TrackedBattle:
 
 @define
 class OutputHandler:
-    filepath: Path
     attributes: List[str] = field(validator=instance_of(list))
     labels: Mapping[str, str] = field(validator=instance_of(dict))
     records: List[BattleRecord] = field(init=False, factory=list, eq=False, repr=False)
@@ -261,12 +281,14 @@ class OutputHandler:
         settings: Mapping[str, Any],
         data: Mapping[str, Any],
         default_labels: Mapping[str, str],
-    ) -> 'CsvHandler':
-        filepath = Path(settings.get('path', 'splits.csv').format(**data))
+    ) -> 'OutputHandler':
         attributes = settings.get('attributes', [])
         labels = dict(default_labels)
         labels.update(settings.get('labels', {}))
-        return cls(filepath, attributes, labels)
+        return cls(attributes=attributes, labels=labels)
+
+    def cleanup(self):
+        pass
 
     def add_record(self, data: SimpleNamespace):
         rec = [Attribute.of(data, attr).get() for attr in self.attributes]
@@ -288,6 +310,21 @@ class OutputHandler:
 
 @define
 class CsvHandler(OutputHandler):
+    filepath: Path = field(default=Path('splits.csv'), validator=instance_of(Path))
+
+    @classmethod
+    def from_settings(
+        cls,
+        settings: Mapping[str, Any],
+        data: Mapping[str, Any],
+        default_labels: Mapping[str, str],
+    ) -> 'CsvHandler':
+        filepath = Path(settings.get('path', 'splits.csv').format(**data))
+        attributes = settings.get('attributes', [])
+        labels = dict(default_labels)
+        labels.update(settings.get('labels', {}))
+        return cls(attributes=attributes, labels=labels, filepath=filepath)
+
     def _store(self):
         if not self.filepath.exists():
             self._write_headers()
@@ -306,6 +343,87 @@ class CsvHandler(OutputHandler):
         logger.debug(f'write CSV entries:\n{text}')
         with self.filepath.open(mode='a', encoding='utf-8') as f:
             f.write(text)
+
+
+@define
+class WebSocketHandler(OutputHandler):
+    host: str = field(default='localhost', validator=instance_of(str))
+    port: int = field(default=6789, validator=instance_of(int))
+    loop: asyncio.AbstractEventLoop = field(factory=asyncio.new_event_loop)
+    _clients: Set[Any] = field(factory=set, init=False, hash=False, repr=False)
+
+    def __attrs_post_init__(self):
+        logger.debug(f'initializing websocket server on {self.host}:{self.port}')
+        # t = Thread(target=start_background_loop, args=(self.loop,), daemon=True)
+        t = Thread(target=self._start_background_loop, daemon=True)
+        t.start()
+        asyncio.run_coroutine_threadsafe(self._run_websocket_server(), loop)
+
+    @classmethod
+    def from_settings(
+        cls,
+        settings: Mapping[str, Any],
+        data: Mapping[str, Any],
+        default_labels: Mapping[str, str],
+    ) -> 'WebSocketHandler':
+        host = settings.get('host', 'localhost')
+        port = settings.get('port', 6789)
+        attributes = settings.get('attributes', [])
+        labels = dict(default_labels)
+        labels.update(settings.get('labels', {}))
+        return cls(attributes=attributes, labels=labels, host=host, port=port)
+
+    def cleanup(self):
+        self.loop.stop()
+
+    def _store(self):
+        # if not self.filepath.exists():
+        #     self._write_headers()
+        # self._write_contents()
+        task = asyncio.run_coroutine_threadsafe(fetch_all_urls(URLS), loop)
+        # wait for result
+        r = task.result()
+
+    async def _write_records(self):
+        contents = list(','.join(map(str, r)) for r in self.records)
+        contents.append('')
+        text = '\n'.join(contents)
+        logger.debug(f'write CSV entries:\n{text}')
+        with self.filepath.open(mode='a', encoding='utf-8') as f:
+            f.write(text)
+
+    def _start_background_loop(self):
+        asyncio.set_event_loop(self.loop)
+        self.loop.run_forever()
+
+    async def _run_websocket_server(self):
+        async with websockets.serve(self._connection_handler, self.host, self.port):
+            await asyncio.Future()  # run forever
+
+    async def _connection_handler(self, websocket):
+        self._clients.add(websocket)
+        try:
+            records = list(self.records)
+            for record in records:
+                await self._write_record(record)
+            await websocket.wait_closed()
+            # NOTE: the except beloew is needed if we do a websocket.recv() loop
+            # instead of websocket.wait_closed()
+        # except websockets.ConnectionClosedOK:
+        #     pass
+        finally:
+            self._clients.remove(websocket)
+
+    async def _write_record(self, record, ws):
+        await websocket.send(json.dumps(event))
+        await asyncio.sleep(0)
+
+    def _record_to_dict(self, record: BattleRecord) -> Mapping[str, Any]:
+        data = {}
+        for i, key in enumerate(self.attributes):
+            label = self.labels.get(key, key)
+            data[label] = record[i]
+        return data
 
 
 ###############################################################################
@@ -348,8 +466,11 @@ class SplitComponent:
                 handler.store_records()
 
     def cleanup(self):
+        # runs in main thread
         logger.info('cleaning up')
-        return
+        with self._lock:
+            for handler in self._outputs:
+                handler.cleanup()
 
     def on_battle_started(self):
         battle = self.game.data.battle

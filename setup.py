@@ -79,6 +79,7 @@ setup(
         'requests>=2.28',
         'signalrcore<=1.0',
         'simpleobsws>=1.0',
+        'websockets>=10.0',
     ],
     extras_require={
         'dev': ['pytest', 'tox'],
