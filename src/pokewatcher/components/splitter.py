@@ -395,7 +395,7 @@ class WebSocketHandler(OutputHandler):
             # payload = self._record_to_json(record)
             # websockets.broadcast(self.clients, message)
             for websocket in self.clients:
-                await self._write_record(record)
+                await self._write_record(record, websocket)
 
     def _start_background_loop(self):
         asyncio.set_event_loop(self.loop)
@@ -411,7 +411,7 @@ class WebSocketHandler(OutputHandler):
             # send initial data
             records = list(self.history)
             for record in records:
-                await self._write_record(record)
+                await self._write_record(record, websocket)
             # keep the connection open
             await websocket.wait_closed()
             # NOTE: the except below is needed if we do a websocket.recv() loop
