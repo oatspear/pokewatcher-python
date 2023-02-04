@@ -295,14 +295,6 @@ class OutputHandler:
         self.records.append(rec)
 
     def store_records(self):
-        if self.records:
-            try:
-                self._store()
-                self.records = []
-            except OSError as e:
-                logger.error(f'unable to write to {self.filepath}: {e}')
-
-    def _store(self):
         # to override
         for rec in self.records:
             logger.debug(f'store record: {rec}')
@@ -325,10 +317,15 @@ class CsvHandler(OutputHandler):
         labels.update(settings.get('labels', {}))
         return cls(attributes=attributes, labels=labels, filepath=filepath)
 
-    def _store(self):
-        if not self.filepath.exists():
-            self._write_headers()
-        self._write_contents()
+    def store_records(self):
+        if self.records:
+            try:
+                if not self.filepath.exists():
+                    self._write_headers()
+                self._write_contents()
+                self.records = []
+            except OSError as e:
+                logger.error(f'unable to write to {self.filepath}: {e}')
 
     def _write_headers(self):
         logger.debug(f'write CSV headers for {self.filepath}')
@@ -350,7 +347,8 @@ class WebSocketHandler(OutputHandler):
     host: str = field(default='localhost', validator=instance_of(str))
     port: int = field(default=6789, validator=instance_of(int))
     loop: asyncio.AbstractEventLoop = field(factory=asyncio.new_event_loop)
-    _clients: Set[Any] = field(factory=set, init=False, hash=False, repr=False)
+    history: List[BattleRecord] = field(init=False, factory=list, eq=False, repr=False)
+    clients: Set[Any] = field(init=False, factory=set, eq=False, repr=False)
 
     def __attrs_post_init__(self):
         logger.debug(f'initializing websocket server on {self.host}:{self.port}')
@@ -376,21 +374,28 @@ class WebSocketHandler(OutputHandler):
     def cleanup(self):
         self.loop.stop()
 
-    def _store(self):
-        # if not self.filepath.exists():
-        #     self._write_headers()
-        # self._write_contents()
-        task = asyncio.run_coroutine_threadsafe(fetch_all_urls(URLS), loop)
-        # wait for result
-        r = task.result()
+    def store_records(self):
+        # manipulate collections while the main thread is holding the lock
+        if self.records:
+            records = self.records
+            self.records = []
+            logger.debug(f'broadcasting new splits to clients:\n{records}')
+            task = asyncio.run_coroutine_threadsafe(self._broadcast(records), loop)
+            # do not wait for result
+            # r = task.result()
+            self.history.extend(records)
 
-    async def _write_records(self):
-        contents = list(','.join(map(str, r)) for r in self.records)
-        contents.append('')
-        text = '\n'.join(contents)
-        logger.debug(f'write CSV entries:\n{text}')
-        with self.filepath.open(mode='a', encoding='utf-8') as f:
-            f.write(text)
+    async def _broadcast(self, records):
+        # It is probably better to call send asynchronously on each connection.
+        # From websockets docs:
+        #   `broadcast()` pushes the message synchronously to all connections
+        #   even if their write buffers are overflowing.
+        # With send we can yield control and ensure async execution.
+        for record in records:
+            # payload = self._record_to_json(record)
+            # websockets.broadcast(self.clients, message)
+            for websocket in self.clients:
+                await self._write_record(record)
 
     def _start_background_loop(self):
         asyncio.set_event_loop(self.loop)
@@ -401,29 +406,32 @@ class WebSocketHandler(OutputHandler):
             await asyncio.Future()  # run forever
 
     async def _connection_handler(self, websocket):
-        self._clients.add(websocket)
+        self.clients.add(websocket)
         try:
-            records = list(self.records)
+            # send initial data
+            records = list(self.history)
             for record in records:
                 await self._write_record(record)
+            # keep the connection open
             await websocket.wait_closed()
-            # NOTE: the except beloew is needed if we do a websocket.recv() loop
+            # NOTE: the except below is needed if we do a websocket.recv() loop
             # instead of websocket.wait_closed()
         # except websockets.ConnectionClosedOK:
         #     pass
         finally:
-            self._clients.remove(websocket)
+            self.clients.remove(websocket)
 
-    async def _write_record(self, record, ws):
-        await websocket.send(json.dumps(event))
+    async def _write_record(self, record, websocket):
+        payload = self._record_to_json(record)
+        await websocket.send(payload)
         await asyncio.sleep(0)
 
-    def _record_to_dict(self, record: BattleRecord) -> Mapping[str, Any]:
+    def _record_to_json(self, record: BattleRecord) -> str:
         data = {}
         for i, key in enumerate(self.attributes):
             label = self.labels.get(key, key)
             data[label] = record[i]
-        return data
+        return json.dumps(data)
 
 
 ###############################################################################
@@ -495,8 +503,10 @@ class SplitComponent:
         time_end = self.game.clock.get_current_time()
         self._tracked.realtime.end = time_end
         duration = time_end - time_start
+        game_time = self.game.data.time
         logger.info(f'end of tracked battle vs {name} ({trainer_class} {trainer_id})')
-        logger.info(f'started at {time_start}, ended at {time_end}, lasted {duration}')
+        logger.info(f'split time - {time_end}')
+        logger.info(f'game time  - {game_time}')
         if self.game.data.battle.is_victory:
             logger.info('result: victory')
             self._record_victory()
