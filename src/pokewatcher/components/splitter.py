@@ -553,6 +553,14 @@ class SplitComponent:
             except TypeError as e:
                 logger.error(str(e))
 
+        conf = output.get('websocket')
+        if conf is not None:
+            try:
+                handler = WebSocketHandler.from_settings(conf, data, self.default_labels)
+                self._outputs.append(handler)
+            except TypeError as e:
+                logger.error(str(e))
+
     def _record_victory(self):
         assert self._tracked is not None
         data = self.game.data_dict()
