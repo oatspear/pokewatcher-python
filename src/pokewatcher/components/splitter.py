@@ -355,7 +355,7 @@ class WebSocketHandler(OutputHandler):
         # t = Thread(target=start_background_loop, args=(self.loop,), daemon=True)
         t = Thread(target=self._start_background_loop, daemon=True)
         t.start()
-        asyncio.run_coroutine_threadsafe(self._run_websocket_server(), loop)
+        asyncio.run_coroutine_threadsafe(self._run_websocket_server(), self.loop)
 
     @classmethod
     def from_settings(
@@ -380,7 +380,7 @@ class WebSocketHandler(OutputHandler):
             records = self.records
             self.records = []
             logger.debug(f'broadcasting new splits to clients:\n{records}')
-            task = asyncio.run_coroutine_threadsafe(self._broadcast(records), loop)
+            task = asyncio.run_coroutine_threadsafe(self._broadcast(records), self.loop)
             # do not wait for result
             # r = task.result()
             self.history.extend(records)
