@@ -330,6 +330,43 @@ splitter:
         time: Game Time
         trainer_name: Trainer
       path: '{rom}.csv'
+    websocket:
+      host: localhost
+      port: 6789
+      attributes:
+      - rom
+      - player.team.slot1.species
+      - trainer_name
+      - realtime.start
+      - realtime.end
+      - time
+      - player.team.slot1.level
+      - resets
+      - realtime.end.hours
+      - realtime.end.minutes
+      - realtime.end.seconds
+      - realtime.end.millis
+      - player.team.slot1.move1
+      - player.team.slot1.move2
+      - player.team.slot1.move3
+      - player.team.slot1.move4
+      - previous.team.slot1.stats.attack
+      - previous.team.slot1.stats.defense
+      - previous.team.slot1.stats.sp_attack
+      - previous.team.slot1.stats.sp_defense
+      - previous.team.slot1.stats.speed
+      - battle.player.stages.attack
+      - battle.player.stages.defense
+      - battle.player.stages.sp_attack
+      - battle.player.stages.sp_defense
+      - battle.player.stages.speed
+      - battle.player.stages.accuracy
+      - battle.player.stages.evasion
+      - battle.player.stats.attack
+      - battle.player.stats.defense
+      - battle.player.stats.sp_attack
+      - battle.player.stats.sp_defense
+      - battle.player.stats.speed
   trainers:
     Pokemon Crystal:
     - class: RIVAL1
