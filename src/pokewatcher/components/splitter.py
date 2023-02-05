@@ -377,7 +377,7 @@ class WebSocketHandler(OutputHandler):
     def store_records(self):
         # manipulate collections while the main thread is holding the lock
         if self.records:
-            print(f'[MAIN][{get_native_id()}] store records')
+            # print(f'[MAIN][{get_native_id()}] store records')
             records = self.records
             self.records = []
             logger.debug(f'broadcasting new splits to clients:\n{records}')
@@ -385,7 +385,7 @@ class WebSocketHandler(OutputHandler):
             # do not wait for result
             # r = task.result()
             self.history.extend(records)
-            print(f'[MAIN][{get_native_id()}] store records done')
+            # print(f'[MAIN][{get_native_id()}] store records done')
 
     async def _broadcast(self, records):
         # It is probably better to call send asynchronously on each connection.
@@ -393,7 +393,7 @@ class WebSocketHandler(OutputHandler):
         #   `broadcast()` pushes the message synchronously to all connections
         #   even if their write buffers are overflowing.
         # With send we can yield control and ensure async execution.
-        print(f'[THREAD][{get_native_id()}] broadcast records')
+        # print(f'[THREAD][{get_native_id()}] broadcast records')
         for record in records:
             payload = self._record_to_json(record)
             # websockets.broadcast(self.clients, message)
@@ -401,32 +401,33 @@ class WebSocketHandler(OutputHandler):
                 await self._send_message(payload, websocket)
 
     def _start_background_loop(self):
-        print(f'[THREAD][{get_native_id()}] starting')
+        # print(f'[THREAD][{get_native_id()}] starting')
         asyncio.set_event_loop(self.loop)
         self.loop.run_forever()
 
     async def _run_websocket_server(self):
-        print(f'[THREAD][{get_native_id()}] running server')
+        # print(f'[THREAD][{get_native_id()}] running server')
         stop = self.loop.create_future()
         try:
             async with websockets.serve(self._connection_handler, self.host, self.port):
                 # await asyncio.Future()  # run forever
                 await stop
         except GeneratorExit:
-            print(f'[THREAD][{get_native_id()}] GeneratorExit - server closed')
+            # print(f'[THREAD][{get_native_id()}] GeneratorExit - server closed')
+            pass
 
     async def _connection_handler(self, websocket):
-        print(f'[THREAD][{get_native_id()}] new connection')
+        # print(f'[THREAD][{get_native_id()}] new connection')
         self.clients.add(websocket)
         try:
             # send initial data
             records = list(self.history)
-            print(f'[THREAD][{get_native_id()}] send history')
+            # print(f'[THREAD][{get_native_id()}] send history')
             for record in records:
                 payload = self._record_to_json(record)
                 await self._send_message(payload, websocket)
             # keep the connection open
-            print(f'[THREAD][{get_native_id()}] keep connection open')
+            # print(f'[THREAD][{get_native_id()}] keep connection open')
             # await websocket.wait_closed()
             async for msg in websocket:
                 pass  # keep alive mechanism
@@ -439,24 +440,24 @@ class WebSocketHandler(OutputHandler):
             self.clients.remove(websocket)
 
     async def _send_message(self, payload, websocket):
-        print(f'[THREAD][{get_native_id()}] send message')
+        # print(f'[THREAD][{get_native_id()}] send message')
         try:
-            print(f'[THREAD][{get_native_id()}] send message (send)')
+            # print(f'[THREAD][{get_native_id()}] send message (send)')
             await websocket.send(payload)
-            print(f'[THREAD][{get_native_id()}] send message (sleep)')
+            # print(f'[THREAD][{get_native_id()}] send message (sleep)')
             await asyncio.sleep(0)
         except websockets.ConnectionClosed:
             pass
-        print(f'[THREAD][{get_native_id()}] send message (done)')
+        # print(f'[THREAD][{get_native_id()}] send message (done)')
 
     def _record_to_json(self, record: BattleRecord) -> str:
         data = {}
-        print(f'[THREAD][{get_native_id()}] record to JSON')
+        # print(f'[THREAD][{get_native_id()}] record to JSON')
         for i, key in enumerate(self.attributes):
             label = self.labels.get(key, key)
             data[label] = str(record[i])
-        print(f'[THREAD][{get_native_id()}] record to JSON (done)')
-        print(data)
+        # print(f'[THREAD][{get_native_id()}] record to JSON (done)')
+        # print(data)
         return json.dumps(data)
 
 
