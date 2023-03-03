@@ -133,6 +133,7 @@ VAR_MAP: Final[str] = 'location'
 VAR_MAP_ID: Final[str] = 'current_map.name'
 VAR_MAP_GROUP: Final[str] = 'current_map.group'
 
+VAR_BATTLE_VS_WILD: Final[str] = 'battle.is_vs_wild'
 VAR_BATTLE_ONGOING: Final[str] = 'battle.ongoing'
 VAR_BATTLE_RESULT: Final[str] = 'battle.result'
 
