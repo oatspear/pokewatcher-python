@@ -552,7 +552,7 @@ class SplitComponent:
 
     def _register_trainer(self, data: Mapping[str, Any]):
         trainer_class = data['class']
-        trainer_id = data['number']
+        trainer_id = data.get('number', 0)
         name = data['name']
         logger.debug(f'watch trainer battle: {trainer_class} {trainer_id} ({name})')
         trainers = self.trainers[trainer_class]
