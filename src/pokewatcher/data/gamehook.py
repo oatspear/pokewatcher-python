@@ -58,6 +58,10 @@ def _pp_modulo(arg: Any) -> Callable:
     return lambda value: value % arg
 
 
+def _pp_negate() -> Callable:
+    return lambda value: not value
+
+
 PROCESSORS: Final[Mapping[str, Callable]] = {
     'prefix': _pp_prefix,
     'suffix': _pp_suffix,
@@ -66,6 +70,7 @@ PROCESSORS: Final[Mapping[str, Callable]] = {
     'multiply': _pp_multiply,
     'divide': _pp_divide,
     'modulo': _pp_modulo,
+    'negate': _pp_negate,
 }
 
 
