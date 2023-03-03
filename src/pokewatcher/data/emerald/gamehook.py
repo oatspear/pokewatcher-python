@@ -36,9 +36,9 @@ P_MON_SPD: Final[str] = 'player.team.0.speed'
 P_MON_SPATK: Final[str] = 'player.team.0.specialAttack'
 P_MON_SPDEF: Final[str] = 'player.team.0.specialDefense'
 
-P_BATTLE_TYPE: Final[str] = 'battle.type'
-P_TRAINER_CLASS: Final[str] = 'battle.trainer.class'
-P_TRAINER_NUMBER: Final[str] = 'battle.trainer.number'
+P_BATTLE_TYPE_TRAINER: Final[str] = 'battle.type.trainer'
+P_TRAINER_CLASS: Final[str] = 'battle.trainer.opponentA'
+P_TRAINER_NUMBER: Final[str] = 'battle.trainer.opponentAId'
 P_BATTLE_OUTCOME: Final[str] = 'battle.turnInfo.battleOutcome'
 P_BATTLE_BACKGROUND: Final[str] = 'battle.turnInfo.battleBackgroundTiles'
 P_BATTLE_DIALOGUE: Final[str] = 'battle.turnInfo.battleDialogue'
@@ -70,6 +70,9 @@ P_BADGE5: Final[str] = 'player.badges.badge5'
 P_BADGE6: Final[str] = 'player.badges.badge6'
 P_BADGE7: Final[str] = 'player.badges.badge7'
 P_BADGE8: Final[str] = 'player.badges.badge8'
+
+P_POINTERS_CALLBACK1: Final[str] = 'pointers.callback1'
+P_POINTERS_CALLBACK2: Final[str] = 'pointers.callback2'
 
 PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     P_PLAYER_NAME: {
@@ -156,20 +159,23 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'store': game_data.VAR_PARTY_MON1_SP_DEFENSE,
     },
-    # P_BATTLE_TYPE: {
-    #     'type': 'int',
-    #     'bytes': True,
-    #     'label': yellow.WRAM_BATTLE_TYPE,
-    # },
+    P_BATTLE_TYPE_TRAINER: {
+        'type': 'bool',
+        # 'bytes': True,
+        'processors': [
+            ['negate'],
+        ],
+        'store': game_data.VAR_BATTLE_VS_WILD,
+    },
     P_TRAINER_CLASS: {
         'type': 'string',
         'store': game_data.VAR_BATTLE_TRAINER_CLASS,
     },
-    P_TRAINER_NUMBER: {
-        'type': 'int',
-        'bytes': True,
-        'store': game_data.VAR_BATTLE_TRAINER_ID,
-    },
+    # P_TRAINER_NUMBER: {
+    #     'type': 'int',
+    #     'bytes': True,
+    #     'store': game_data.VAR_BATTLE_TRAINER_ID,
+    # },
     P_STAGE_ATK: {
         'type': 'int',
         'store': game_data.VAR_BATTLE_PLAYER_STAGE_ATTACK,
@@ -279,6 +285,20 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'type': 'int',
         'bytes': True,
         'label': emerald.WRAM_BATTLE_BG_TILES,
+    },
+    P_POINTERS_CALLBACK1: {
+        'type': 'int',
+        'bytes': True,
+        'default': 0,
+        'little_endian': True,
+        'label': emerald.WRAM_CALLBACK1,
+    },
+    P_POINTERS_CALLBACK2: {
+        'type': 'int',
+        'bytes': True,
+        'default': 0,
+        'little_endian': True,
+        'label': emerald.WRAM_CALLBACK2,
     },
 }
 

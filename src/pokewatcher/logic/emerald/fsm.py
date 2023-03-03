@@ -12,10 +12,26 @@ import logging
 from attrs import define, field
 
 from pokewatcher.data.emerald.constants import (
+    BATTLE_RESULT_CAUGHT,
+    BATTLE_RESULT_DRAW,
+    BATTLE_RESULT_FORFEITED,
     BATTLE_RESULT_LOSE,
+    BATTLE_RESULT_NO_SAFARI_BALLS,
     BATTLE_RESULT_NONE,
+    BATTLE_RESULT_POKEMON_FLED,
+    BATTLE_RESULT_POKEMON_TELEPORTED,
     BATTLE_RESULT_RUN,
+    BATTLE_RESULT_TELEPORTED,
     BATTLE_RESULT_WIN,
+    MAIN_STATE_NONE,
+    MAIN_STATE_OVERWORLD,
+    MAIN_STATE_BATTLE,
+    SUBSTATE_NONE,
+    SUBSTATE_OVERWORLD,
+    SUBSTATE_BATTLE,
+    SUBSTATE_BATTLE_ANIMATION,
+    SUBSTATE_INTRO_CINEMATIC,
+    SUBSTATE_TRANSITION_OVERWORLD,
 )
 from pokewatcher.data.structs import GameData
 import pokewatcher.events as events
@@ -38,6 +54,17 @@ def _reset_game() -> GameState:
     return Initial()
 
 
+def _go_to_battle(data: GameData) -> GameState:
+    logger.info('battle started')
+    logger.info(f'vs wild: {data.battle.is_vs_wild}')
+    logger.info(f'trainer: {data.battle.trainer.trainer_class}')
+    #data.battle.set_wild_battle()
+    #data.battle.set_victory()
+    data.battle.ongoing = True
+    events.on_battle_started.emit()
+    return InBattle()
+
+
 ###############################################################################
 # Interface
 ###############################################################################
@@ -48,6 +75,8 @@ class EmeraldState(GameState):
     team_count = transition
     battle_outcome = transition
     battle_bg_tiles = transition
+    callback1 = transition
+    callback2 = transition
     # wGameTimeHours = transition  # noqa: N815
     # wGameTimeMinutes = transition  # noqa: N815
     # wGameTimeSeconds = transition  # noqa: N815
@@ -65,72 +94,103 @@ class EmeraldState(GameState):
 
 @define
 class Initial(EmeraldState):
-    def player_name(self, prev: str, value: str, _data: GameData) -> GameState:
-        logger.debug(f'player name changed: {prev} -> {value}')
-        if not value:
-            return _reset_game()
-        if not prev:
-            return NewGameOrContinue()
-        return self
-
-
-@define
-class NewGameOrContinue(EmeraldState):
-    def team_count(self, prev: int, value: int, _data: GameData) -> GameState:
-        logger.debug(f'team count changed: {prev} -> {value}')
-        if value > 0:
-            logger.info('found saved game')
+    def callback1(self, prev: int, value: int, data: GameData) -> GameState:
+        logger.debug(f'callback1 changed: {prev} -> {value}')
+        if value == MAIN_STATE_OVERWORLD:
+            # logger.info('Initial -> Overworld')
             return InOverworld()
+        if value == MAIN_STATE_BATTLE:
+            # logger.info('Initial -> Battle')
+            return _go_to_battle(data)
         return self
+
+
+# @define
+# class NewGameOrContinue(EmeraldState):
+#     def team_count(self, prev: int, value: int, _data: GameData) -> GameState:
+#         logger.debug(f'team count changed: {prev} -> {value}')
+#         if value > 0:
+#             logger.info('found saved game')
+#             return InOverworld()
+#         return self
 
 
 @define
 class InGame(EmeraldState):
-    def player_name(self, prev: str, value: str, _data: GameData) -> GameState:
-        logger.debug(f'player name changed: {prev} -> {value}')
-        if not value:
-            return _reset_game()
-        return self
+    @property
+    def is_battle_state(self) -> bool:
+        return False
 
 
 @define
 class InOverworld(InGame):
-    def battle_bg_tiles(self, prev: int, value: int, data: GameData) -> GameState:
-        logger.debug(f'battle background tiles changed: {prev} -> {value}')
-        if value != 0:
-            logger.info('battle started')
-            #data.battle.set_wild_battle()
-            #data.battle.set_victory()
-            data.battle.ongoing = True
-            events.on_battle_started.emit()
-            return InBattle()
+    maybe_reset: bool = False
+
+    def callback1(self, prev: int, value: int, data: GameData) -> GameState:
+        logger.debug(f'callback1 changed: {prev} -> {value}')
+        self.maybe_reset = value == MAIN_STATE_NONE
+        if value == MAIN_STATE_BATTLE:
+            # logger.info('Overworld -> Battle')
+            return _go_to_battle(data)
+        return self
+
+    def callback2(self, prev: int, value: int, data: GameData) -> GameState:
+        logger.debug(f'callback2 changed: {prev} -> {value}')
+        if self.maybe_reset and value == SUBSTATE_INTRO_CINEMATIC:
+            return _reset_game()
         return self
 
 
 @define
 class InBattle(InGame):
+    maybe_reset: bool = False
+
     @property
     def is_battle_state(self) -> bool:
         return True
 
-    def battle_bg_tiles(self, prev: int, value: int, data: GameData) -> GameState:
-        logger.debug(f'battle background tiles changed: {prev} -> {value}')
-        if value == 0:
-            data.battle.ongoing = False
-            events.on_battle_ended()
-            return InOverworld()
+    # def battle_bg_tiles(self, prev: int, value: int, data: GameData) -> GameState:
+    #     logger.debug(f'battle background tiles changed: {prev} -> {value}')
+    #     if value == 0:
+    #         data.battle.ongoing = False
+    #         events.on_battle_ended()
+    #         return InOverworld()
+    #     else:
+    #         self.inconsistent('battle_bg_tiles', value)
+    #     return self
+
+    def callback1(self, prev: int, value: int, data: GameData) -> GameState:
+        logger.debug(f'callback1 changed: {prev} -> {value}')
+        if value == MAIN_STATE_NONE:
+            self.maybe_reset = True
         else:
-            self.inconsistent('battle_bg_tiles', value)
+            self.maybe_reset = False
+            if value != MAIN_STATE_BATTLE:
+                # logger.info('Battle -> Overworld (via callback1)')
+                data.battle.ongoing = False
+                events.on_battle_ended()
+                return InOverworld()
+        return self
+
+    def callback2(self, prev: int, value: int, data: GameData) -> GameState:
+        logger.debug(f'callback2 changed: {prev} -> {value}')
+        if self.maybe_reset and value == SUBSTATE_INTRO_CINEMATIC:
+            data.battle.set_defeat()
+            return _reset_game()
         return self
 
     def battle_outcome(self, prev: int, value: int, data: GameData) -> GameState:
         logger.debug(f'battle outcome changed: {prev} -> {value}')
-        value = value & 0x07
-        if value == BATTLE_RESULT_WIN:
+        # value = value & 0x07
+        if value == BATTLE_RESULT_WIN or value == BATTLE_RESULT_CAUGHT:
             data.battle.set_victory()
-        elif value == BATTLE_RESULT_RUN:
-            data.battle.set_draw()
-        elif value == BATTLE_RESULT_LOSE:
+        elif value == BATTLE_RESULT_LOSE or value == BATTLE_RESULT_FORFEITED:
             data.battle.set_defeat()
-        data.battle.ongoing = True
+        elif value != BATTLE_RESULT_NONE:
+            data.battle.set_draw()
+        if not data.battle.ongoing:
+            # logger.info('Battle -> Overworld (via outcome)')
+            events.on_battle_ended()
+            return InOverworld()
+        # data.battle.ongoing = True
         return self

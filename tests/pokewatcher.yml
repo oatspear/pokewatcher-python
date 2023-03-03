@@ -707,3 +707,16 @@ splitter:
     - class: RIVAL3
       name: Champion
       number: 3
+    Pokemon Emerald:
+    - class: RIVAL_BRENDAN_ROUTE_103_MUDKIP
+      name: Rival 1
+    - class: RIVAL_BRENDAN_ROUTE_103_TREECKO
+      name: Rival 1
+    - class: RIVAL_BRENDAN_ROUTE_103_TORCHIC
+      name: Rival 1
+    - class: RIVAL_MAY_ROUTE_103_MUDKIP
+      name: Rival 1
+    - class: RIVAL_MAY_ROUTE_103_TREECKO
+      name: Rival 1
+    - class: RIVAL_MAY_ROUTE_103_TORCHIC
+      name: Rival 1
