@@ -11,6 +11,13 @@ from typing import Final, Mapping, Tuple
 # Constants
 ###############################################################################
 
+TRAINER_CLASSES_FINAL_BATTLE: Final[Tuple[str]] = (
+    'RIVAL_STEVEN',
+    'CHAMPION_FIRST_SQUIRTLE',
+    'CHAMPION_FIRST_BULBASAUR',
+    'CHAMPION_FIRST_CHARMANDER',
+)
+
 BATTLE_DIALOGUE_IN_BATTLE: Final[int] = 0x12
 BATTLE_RESULT_NONE: Final[int] = 0x00
 BATTLE_RESULT_WIN: Final[int] = 0x01

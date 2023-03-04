@@ -233,6 +233,8 @@ gamehook:
   properties:
     Pokemon Yellow: gamehook-yellow-properties.yml
     Pokemon Crystal: gamehook-crystal-properties.yml
+    Pokemon Emerald: gamehook-emerald-properties.yml
+    Pokemon FireRed & LeafGreen: gamehook-emerald-properties.yml
 livesplit:
   enabled: false
   host: localhost
@@ -708,15 +710,146 @@ splitter:
       name: Champion
       number: 3
     Pokemon Emerald:
+    - class: MAGMA_LEADER_MAXIE_MAGMA_HIDEOUT
+      name: Maxie (Magma Hideout)
+    - class: MAGMA_LEADER_MAXIE_MT_CHIMNEY
+      name: Maxie (Mt. Chimney)
+    - class: AQUA_LEADER_ARCHIE
+      name: Archie
+    - class: LEADER_ROXANNE_1
+      name: Roxanne
+    - class: LEADER_BRAWLY_1
+      name: Brawly
+    - class: LEADER_WATTSON_1
+      name: Wattson
+    - class: LEADER_FLANNERY_1
+      name: Flannery
+    - class: LEADER_NORMAN_1
+      name: Norman
+    - class: LEADER_WINONA_1
+      name: Winona
+    - class: LEADER_TATE_AND_LIZA_1
+      name: Tate and Liza
+    - class: LEADER_JUAN_1
+      name: Juan
+    - class: ELITE_FOUR_SIDNEY
+      name: Sidney
+    - class: ELITE_FOUR_PHOEBE
+      name: Phoebe
+    - class: ELITE_FOUR_GLACIA
+      name: Glacia
+    - class: ELITE_FOUR_DRAKE
+      name: Drake
+    - class: CHAMPION_WALLACE
+      name: Wallace
+    - class: RIVAL_STEVEN
+      name: Steven
     - class: RIVAL_BRENDAN_ROUTE_103_MUDKIP
       name: Rival 1
+    - class: RIVAL_BRENDAN_ROUTE_110_MUDKIP
+      name: Rival 2
+    - class: RIVAL_BRENDAN_ROUTE_119_MUDKIP
+      name: Rival 3
     - class: RIVAL_BRENDAN_ROUTE_103_TREECKO
       name: Rival 1
+    - class: RIVAL_BRENDAN_ROUTE_110_TREECKO
+      name: Rival 2
+    - class: RIVAL_BRENDAN_ROUTE_119_TREECKO
+      name: Rival 3
     - class: RIVAL_BRENDAN_ROUTE_103_TORCHIC
       name: Rival 1
+    - class: RIVAL_BRENDAN_ROUTE_110_TORCHIC
+      name: Rival 2
+    - class: RIVAL_BRENDAN_ROUTE_119_TORCHIC
+      name: Rival 3
     - class: RIVAL_MAY_ROUTE_103_MUDKIP
       name: Rival 1
+    - class: RIVAL_MAY_ROUTE_110_MUDKIP
+      name: Rival 2
+    - class: RIVAL_MAY_ROUTE_119_MUDKIP
+      name: Rival 3
     - class: RIVAL_MAY_ROUTE_103_TREECKO
       name: Rival 1
+    - class: RIVAL_MAY_ROUTE_110_TREECKO
+      name: Rival 2
+    - class: RIVAL_MAY_ROUTE_119_TREECKO
+      name: Rival 3
     - class: RIVAL_MAY_ROUTE_103_TORCHIC
       name: Rival 1
+    - class: RIVAL_MAY_ROUTE_110_TORCHIC
+      name: Rival 2
+    - class: RIVAL_MAY_ROUTE_119_TORCHIC
+      name: Rival 3
+    Pokemon FireRed & LeafGreen:
+    - class: LEADER_BROCK
+      name: Brock
+    - class: LEADER_MISTY
+      name: Misty
+    - class: LEADER_LT_SURGE
+      name: Lt. Surge
+    - class: LEADER_ERIKA
+      name: Erika
+    - class: LEADER_KOGA
+      name: Koga
+    - class: LEADER_BLAINE
+      name: Blaine
+    - class: LEADER_SABRINA
+      name: Sabrina
+    - class: LEADER_GIOVANNI
+      name: Giovanni
+    - class: RIVAL_OAKS_LAB_SQUIRTLE
+      name: Rival (Oak's Lab)
+    - class: RIVAL_OAKS_LAB_BULBASAUR
+      name: Rival (Oak's Lab)
+    - class: RIVAL_OAKS_LAB_CHARMANDER
+      name: Rival (Oak's Lab)
+    - class: RIVAL_ROUTE22_EARLY_SQUIRTLE
+      name: Rival (Optional)
+    - class: RIVAL_ROUTE22_EARLY_BULBASAUR
+      name: Rival (Optional)
+    - class: RIVAL_ROUTE22_EARLY_CHARMANDER
+      name: Rival (Optional)
+    - class: RIVAL_CERULEAN_SQUIRTLE
+      name: Rival (Nugget Bridge)
+    - class: RIVAL_CERULEAN_BULBASAUR
+      name: Rival (Nugget Bridge)
+    - class: RIVAL_CERULEAN_CHARMANDER
+      name: Rival (Nugget Bridge)
+    - class: RIVAL_SS_ANNE_SQUIRTLE
+      name: Rival (SS Anne)
+    - class: RIVAL_SS_ANNE_BULBASAUR
+      name: Rival (SS Anne)
+    - class: RIVAL_SS_ANNE_CHARMANDER
+      name: Rival (SS Anne)
+    - class: RIVAL_POKENON_TOWER_SQUIRTLE
+      name: Rival (Pokemon Tower)
+    - class: RIVAL_POKENON_TOWER_BULBASAUR
+      name: Rival (Pokemon Tower)
+    - class: RIVAL_POKENON_TOWER_CHARMANDER
+      name: Rival (Pokemon Tower)
+    - class: RIVAL_SILPH_SQUIRTLE
+      name: Rival (Silph Co.)
+    - class: RIVAL_SILPH_BULBASAUR
+      name: Rival (Silph Co.)
+    - class: RIVAL_SILPH_CHARMANDER
+      name: Rival (Silph Co.)
+    - class: RIVAL_ROUTE22_LATE_SQUIRTLE
+      name: Rival (Final)
+    - class: RIVAL_ROUTE22_LATE_BULBASAUR
+      name: Rival (Final)
+    - class: RIVAL_ROUTE22_LATE_CHARMANDER
+      name: Rival (Final)
+    - class: ELITE_FOUR_LORELEI
+      name: Lorelei
+    - class: ELITE_FOUR_BRUNO
+      name: Bruno
+    - class: ELITE_FOUR_AGATHA
+      name: Agatha
+    - class: ELITE_FOUR_LANCE
+      name: Lance
+    - class: CHAMPION_FIRST_SQUIRTLE
+      name: Champion
+    - class: CHAMPION_FIRST_BULBASAUR
+      name: Champion
+    - class: CHAMPION_FIRST_CHARMANDER
+      name: Champion

@@ -112,6 +112,9 @@ class GameInterface:
         elif 'emerald' in version:
             self.fsm.state = InitialEmeraldState()
             load_data_handler = load_gen3_data_handler
+        elif 'firered' in version:
+            self.fsm.state = InitialEmeraldState()
+            load_data_handler = load_gen3_data_handler
         elif 'red' in version and 'blue' in version:
             self.fsm.state = InitialYellowState()
             load_data_handler = load_gen1_data_handler

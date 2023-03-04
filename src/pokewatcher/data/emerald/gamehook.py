@@ -51,11 +51,11 @@ P_STAGE_SPDEF: Final[str] = 'battle.yourPokemon.modStageSpecialDefense'
 P_STAGE_ACC: Final[str] = 'battle.yourPokemon.modStageAccuracy'
 P_STAGE_EVA: Final[str] = 'battle.yourPokemon.modStageEvasion'
 
-P_BATTLE_ATK: Final[str] = 'battle.yourPokemon.battleStatAttack'
-P_BATTLE_DEF: Final[str] = 'battle.yourPokemon.battleStatDefense'
-P_BATTLE_SPD: Final[str] = 'battle.yourPokemon.battleStatSpeed'
-P_BATTLE_SPATK: Final[str] = 'battle.yourPokemon.battleStatSpecialAttack'
-P_BATTLE_SPDEF: Final[str] = 'battle.yourPokemon.battleStatSpecialDefense'
+P_BATTLE_ATK: Final[str] = 'battle.yourPokemon.attack'
+P_BATTLE_DEF: Final[str] = 'battle.yourPokemon.defense'
+P_BATTLE_SPD: Final[str] = 'battle.yourPokemon.speed'
+P_BATTLE_SPATK: Final[str] = 'battle.yourPokemon.specialAttack'
+P_BATTLE_SPDEF: Final[str] = 'battle.yourPokemon.specialDefense'
 
 P_GAME_TIME_HOURS: Final[str] = 'gameTime.hours'
 P_GAME_TIME_MINUTES: Final[str] = 'gameTime.minutes'
@@ -136,27 +136,27 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     },
     P_MON_ATK: {
         'type': 'int',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PARTY_MON1_ATTACK,
     },
     P_MON_DEF: {
         'type': 'int',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PARTY_MON1_DEFENSE,
     },
     P_MON_SPD: {
         'type': 'int',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PARTY_MON1_SPEED,
     },
     P_MON_SPATK: {
         'type': 'int',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PARTY_MON1_SP_ATTACK,
     },
     P_MON_SPDEF: {
         'type': 'int',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PARTY_MON1_SP_DEFENSE,
     },
     P_BATTLE_TYPE_TRAINER: {
@@ -213,67 +213,67 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     },
     P_BATTLE_ATK: {
         'type': 'int',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_ATTACK,
     },
     P_BATTLE_DEF: {
         'type': 'int',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_DEFENSE,
     },
     P_BATTLE_SPD: {
         'type': 'int',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_SPEED,
     },
     P_BATTLE_SPATK: {
         'type': 'int',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_SP_ATTACK,
     },
     P_BATTLE_SPDEF: {
         'type': 'int',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_BATTLE_PLAYER_SP_DEFENSE,
     },
     P_BADGE1: {
         'type': 'bool',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PLAYER_BADGE1,
     },
     P_BADGE2: {
         'type': 'bool',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PLAYER_BADGE2,
     },
     P_BADGE3: {
         'type': 'bool',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PLAYER_BADGE3,
     },
     P_BADGE4: {
         'type': 'bool',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PLAYER_BADGE4,
     },
     P_BADGE5: {
         'type': 'bool',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PLAYER_BADGE5,
     },
     P_BADGE6: {
         'type': 'bool',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PLAYER_BADGE6,
     },
     P_BADGE7: {
         'type': 'bool',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PLAYER_BADGE7,
     },
     P_BADGE8: {
         'type': 'bool',
-        'bytes': True,
+        # 'bytes': True,
         'store': game_data.VAR_PLAYER_BADGE8,
     },
     P_BATTLE_OUTCOME: {

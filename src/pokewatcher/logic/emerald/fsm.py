@@ -32,6 +32,7 @@ from pokewatcher.data.emerald.constants import (
     SUBSTATE_BATTLE_ANIMATION,
     SUBSTATE_INTRO_CINEMATIC,
     SUBSTATE_TRANSITION_OVERWORLD,
+    TRAINER_CLASSES_FINAL_BATTLE,
 )
 from pokewatcher.data.structs import GameData
 import pokewatcher.events as events
@@ -56,10 +57,8 @@ def _reset_game() -> GameState:
 
 def _go_to_battle(data: GameData) -> GameState:
     logger.info('battle started')
-    logger.info(f'vs wild: {data.battle.is_vs_wild}')
-    logger.info(f'trainer: {data.battle.trainer.trainer_class}')
-    #data.battle.set_wild_battle()
-    #data.battle.set_victory()
+    # logger.info(f'vs wild: {data.battle.is_vs_wild}')
+    # logger.info(f'trainer: {data.battle.trainer.trainer_class}')
     data.battle.ongoing = True
     events.on_battle_started.emit()
     return InBattle()
@@ -183,14 +182,22 @@ class InBattle(InGame):
         logger.debug(f'battle outcome changed: {prev} -> {value}')
         # value = value & 0x07
         if value == BATTLE_RESULT_WIN or value == BATTLE_RESULT_CAUGHT:
-            data.battle.set_victory()
-        elif value == BATTLE_RESULT_LOSE or value == BATTLE_RESULT_FORFEITED:
-            data.battle.set_defeat()
-        elif value != BATTLE_RESULT_NONE:
-            data.battle.set_draw()
-        if not data.battle.ongoing:
             # logger.info('Battle -> Overworld (via outcome)')
-            events.on_battle_ended()
+            data.battle.set_victory()
+            events.on_battle_ended.emit()
+            if not data.battle.is_vs_wild:
+                if data.battle.trainer.trainer_class in TRAINER_CLASSES_FINAL_BATTLE:
+                    events.on_champion_victory.emit()
+            return InOverworld()
+        elif value == BATTLE_RESULT_LOSE or value == BATTLE_RESULT_FORFEITED:
+            # logger.info('Battle -> Overworld (via outcome)')
+            data.battle.set_defeat()
+            events.on_battle_ended.emit()
+            return InOverworld()
+        elif value != BATTLE_RESULT_NONE:
+            # logger.info('Battle -> Overworld (via outcome)')
+            data.battle.set_draw()
+            events.on_battle_ended.emit()
             return InOverworld()
         # data.battle.ongoing = True
         return self
