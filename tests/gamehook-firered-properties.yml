@@ -1,0 +1,169 @@
+%YAML 1.1
+---
+player.name:
+    type: string
+    label: player_name
+    store: player.name
+player.teamCount:
+    type: int
+    label: team_count
+gameTime.hours:
+    type: int
+    bytes: true
+    store: time.hours
+gameTime.minutes:
+    type: int
+    bytes: true
+    store: time.minutes
+gameTime.seconds:
+    type: int
+    bytes: true
+    store: time.seconds
+gameTime.frames:
+    type: int
+    bytes: true
+    store: time.frames
+player.team.0.species:
+    type: string
+    # key: name
+    store: player.team.slot1.species
+player.team.0.level:
+    type: int
+    bytes: true
+    store: player.team.slot1.level
+player.team.0.move1:
+    type: string
+    # bytes: true
+    store: player.team.slot1.move1
+player.team.0.move2:
+    type: string
+    # bytes: true
+    store: player.team.slot1.move2
+player.team.0.move3:
+    type: string
+    # bytes: true
+    store: player.team.slot1.move3
+player.team.0.move4:
+    type: string
+    # bytes: true
+    store: player.team.slot1.move4
+player.team.0.attack:
+    type: int
+    # bytes: true
+    store: player.team.slot1.stats.attack
+player.team.0.defense:
+    type: int
+    # bytes: true
+    store: player.team.slot1.stats.defense
+player.team.0.speed:
+    type: int
+    # bytes: true
+    store: player.team.slot1.stats.speed
+player.team.0.specialAttack:
+    type: int
+    # bytes: true
+    store: player.team.slot1.stats.sp_attack
+player.team.0.specialDefense:
+    type: int
+    # bytes: true
+    store: player.team.slot1.stats.sp_defense
+battle.type.trainer:
+    type: bool
+    processors:
+    - - negate
+    store: battle.is_vs_wild
+battle.trainer.opponent:
+    type: string
+    store: battle.trainer.trainer_class
+battle.outcome:
+    type: int
+    bytes: true
+    label: battle_outcome
+battle.yourPokemon.modStageAttack:
+    type: int
+    store: battle.player.stages.attack
+    default: 0
+battle.yourPokemon.modStageDefense:
+    type: int
+    store: battle.player.stages.defense
+    default: 0
+battle.yourPokemon.modStageSpeed:
+    type: int
+    store: battle.player.stages.speed
+    default: 0
+battle.yourPokemon.modStageSpecial:
+    type: int
+    store: battle.player.stages.special
+    default: 0
+battle.yourPokemon.modStageAccuracy:
+    type: int
+    store: battle.player.stages.accuracy
+    default: 0
+battle.yourPokemon.modStageEvasion:
+    type: int
+    store: battle.player.stages.evasion
+    default: 0
+battle.yourPokemon.attack:
+    type: int
+    # bytes: true
+    store: battle.player.stats.attack
+battle.yourPokemon.defense:
+    type: int
+    # bytes: true
+    store: battle.player.stats.defense
+battle.yourPokemon.speed:
+    type: int
+    # bytes: true
+    store: battle.player.stats.speed
+battle.yourPokemon.specialAttack:
+    type: int
+    # bytes: true
+    store: battle.player.stats.sp_attack
+battle.yourPokemon.specialDefense:
+    type: int
+    # bytes: true
+    store: battle.player.stats.sp_defense
+player.badges.badge1:
+    type: bool
+    # bytes: true
+    store: player.badges.badge1
+player.badges.badge2:
+    type: bool
+    # bytes: true
+    store: player.badges.badge2
+player.badges.badge3:
+    type: bool
+    # bytes: true
+    store: player.badges.badge3
+player.badges.badge4:
+    type: bool
+    # bytes: true
+    store: player.badges.badge4
+player.badges.badge5:
+    type: bool
+    # bytes: true
+    store: player.badges.badge5
+player.badges.badge6:
+    type: bool
+    # bytes: true
+    store: player.badges.badge6
+player.badges.badge7:
+    type: bool
+    # bytes: true
+    store: player.badges.badge7
+player.badges.badge8:
+    type: bool
+    # bytes: true
+    store: player.badges.badge8
+pointers.callback1:
+    type: int
+    bytes: true
+    default: 0
+    little_endian: true
+    label: callback1
+pointers.callback2:
+    type: int
+    bytes: true
+    default: 0
+    little_endian: true
+    label: callback2
