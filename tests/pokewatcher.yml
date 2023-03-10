@@ -234,7 +234,7 @@ gamehook:
     Pokemon Yellow: gamehook-yellow-properties.yml
     Pokemon Crystal: gamehook-crystal-properties.yml
     Pokemon Emerald: gamehook-emerald-properties.yml
-    Pokemon FireRed & LeafGreen: gamehook-emerald-properties.yml
+    Pokemon FireRed & LeafGreen: gamehook-firered-properties.yml
 livesplit:
   enabled: false
   host: localhost

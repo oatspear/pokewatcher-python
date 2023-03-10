@@ -279,11 +279,6 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'bytes': True,
         'label': firered.WRAM_BATTLE_OUTCOME,
     },
-    P_BATTLE_BACKGROUND: {
-        'type': 'int',
-        'bytes': True,
-        'label': firered.WRAM_BATTLE_BG_TILES,
-    },
     P_POINTERS_CALLBACK1: {
         'type': 'int',
         'bytes': True,
