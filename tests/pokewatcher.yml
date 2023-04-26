@@ -227,6 +227,20 @@ auto_save:
         - Olivine Port Passage
         - Vermilion Port Passage
         - '1F'
+    Pokemon Emerald:
+      always:
+        Hoenn:
+        - PALLET_TOWN
+      once:
+        Hoenn:
+        - OLDALE_TOWN
+    Pokemon FireRed & LeafGreen:
+      always:
+        Kanto:
+        - PALLET_TOWN
+      once:
+        Kanto:
+        - VIRIDIAN_CITY
 gamehook:
   host: localhost
   port: 8085

@@ -167,3 +167,9 @@ pointers.callback2:
     default: 0
     little_endian: true
     label: callback2
+overworld.mapName:
+    type: string
+    label: current_map
+    store: location
+    processors:
+    - [prefix, Hoenn/]

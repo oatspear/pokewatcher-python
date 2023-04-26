@@ -76,6 +76,7 @@ class EmeraldState(GameState):
     battle_bg_tiles = transition
     callback1 = transition
     callback2 = transition
+    current_map = transition
     # wGameTimeHours = transition  # noqa: N815
     # wGameTimeMinutes = transition  # noqa: N815
     # wGameTimeSeconds = transition  # noqa: N815
@@ -85,8 +86,6 @@ class EmeraldState(GameState):
     # wBattleMode = transition  # noqa: N815
     # wBattleType = transition  # noqa: N815
     # wBattleResult = transition  # noqa: N815
-    # wMapGroup = transition  # noqa: N815
-    # wMapNumber = transition  # noqa: N815
     # wXCoord = transition  # noqa: N815
     # wYCoord = transition  # noqa: N815
 
@@ -137,6 +136,11 @@ class InOverworld(InGame):
         logger.debug(f'callback2 changed: {prev} -> {value}')
         if self.maybe_reset and value == SUBSTATE_INTRO_CINEMATIC:
             return _reset_game()
+        return self
+
+    def current_map(self, _p: Any, value: str, _d: GameData) -> GameState:
+        logger.info(f'map changed: {value}')
+        events.on_map_changed.emit()
         return self
 
 
