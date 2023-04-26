@@ -7,6 +7,7 @@
 
 from typing import Any, Dict, Final, List, Optional, Tuple
 
+from collections import defaultdict
 import logging
 
 from attrs import asdict, define, field
@@ -388,6 +389,10 @@ class GameTime:
         return self.formatted(zeroes=True, frames=True)
 
 
+def dict_of_dicts() -> Dict[str, Any]:
+    return defaultdict(dict_of_dicts)
+
+
 @define
 class GameData:
     player: PlayerData = field(factory=PlayerData)
@@ -396,6 +401,7 @@ class GameData:
     battle: BattleData = field(factory=BattleData)
     dex: List[MonSpecies] = field(factory=list, repr=False)
     maps: Dict[str, GameMap] = field(factory=dict, repr=False)
+    custom: Dict[str, Any] = field(factory=dict_of_dicts)
 
     @property
     def current_map(self) -> Optional[GameMap]:
