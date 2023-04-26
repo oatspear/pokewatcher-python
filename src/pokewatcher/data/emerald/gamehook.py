@@ -74,6 +74,8 @@ P_BADGE8: Final[str] = 'player.badges.badge8'
 P_POINTERS_CALLBACK1: Final[str] = 'pointers.callback1'
 P_POINTERS_CALLBACK2: Final[str] = 'pointers.callback2'
 
+P_MAP_NAME: Final[str] = 'overworld.mapName'
+
 PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     P_PLAYER_NAME: {
         'type': 'string',
@@ -299,6 +301,14 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
         'default': 0,
         'little_endian': True,
         'label': emerald.WRAM_CALLBACK2,
+    },
+    P_MAP_NAME: {
+        'type': 'string',
+        'store': game_data.VAR_MAP,
+        'processors': [
+            ['prefix', 'Hoenn/'],
+        ],
+        'label': emerald.WRAM_CUR_MAP,
     },
 }
 
