@@ -45,17 +45,26 @@ class Attribute:
             self.path = self.name
 
     def get(self) -> Any:
-        return getattr(self.obj, self.name)
+        try:
+            return getattr(self.obj, self.name)
+        except AttributeError:
+            return self.obj[self.name]
 
     def set(self, value: Any) -> None:
-        setattr(self.obj, self.name, value)
+        try:
+            self.obj[self.name] = value
+        except TypeError:
+            setattr(self.obj, self.name, value)
 
     @classmethod
     def of(cls, obj: Any, path: str) -> 'Attribute':
         parts = path.split('.')
         for attr in parts[:-1]:
-            obj = getattr(obj, attr)
-        assert hasattr(obj, parts[-1])
+            try:
+                obj = getattr(obj, attr)
+            except AttributeError:
+                obj = obj[attr]
+        # assert hasattr(obj, parts[-1])
         return cls(obj, parts[-1], path=path)
 
 
