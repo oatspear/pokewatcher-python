@@ -268,6 +268,7 @@ retroarch:
 save_backup:
   check_interval: 3.0
   dest_dir: .
+  create_dir: true
   enabled: true
   file_name_format: '{rom} - lvl{player.team.slot1.level}-{realtime}-{location}.srm'
   min_backup_interval: 1.0

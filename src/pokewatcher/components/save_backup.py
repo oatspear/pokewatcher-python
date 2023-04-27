@@ -36,6 +36,7 @@ DEFAULTS: Final[Mapping[str, Any]] = {
     'min_backup_interval': 1.0,
     'file_name_format': '{rom} - {realtime}.srm',
     'dest_dir': '.',
+    'create_dir': False,
 }
 
 ###############################################################################
@@ -64,6 +65,9 @@ class SaveFileBackupComponent:
         self.min_backup_interval = settings.get('min_backup_interval', MIN_BACKUP_INTERVAL)
         self.file_name_format = settings.get('file_name_format', FILE_NAME_FORMAT)
         self.dest_dir = Path(settings.get('dest_dir', '.')).resolve(strict=True)
+        if settings.get('create_dir', False):
+            self.dest_dir = self.dest_dir / (self.game.rom or 'rom')
+            self.dest_dir.mkdir(parents=True, exist_ok=True)
         on_save_game.watch(self.on_save_game)
 
     def start(self):
@@ -102,6 +106,7 @@ class SaveFileBackupComponent:
             data['location'].replace(' ', '').replace('-', '').replace('/', '').replace("'", '')
         )
 
+        time_string = '00000'
         if '{realtime}' in self.file_name_format:
             tr = self.game.clock.get_current_time()
             time_string = tr.formatted(zeroes=True, millis=True)
