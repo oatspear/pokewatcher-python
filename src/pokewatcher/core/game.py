@@ -72,6 +72,7 @@ class GameInterface:
             'time': self.data.time,
             'location': self.data.location,
             'battle': self.data.battle,
+            'custom': self.data.custom,
         }
 
     def setup(self, settings: Mapping[str, Any]):
