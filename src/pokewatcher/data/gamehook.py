@@ -151,7 +151,7 @@ class DataHandler:
         attr = metadata.get('store')
         default = metadata.get('default')
         if attr:
-            self.store(prop, attr, default=default)
+            self.store(prop, attr, default=default, data_type=data_type)
 
         label = metadata.get('label')
         if label is not None:
@@ -185,12 +185,27 @@ class DataHandler:
             except TypeError as e:
                 logger.error(f'{prop}: processor {func}: {e}')
 
-    def store(self, prop: str, path: str, default: Any = None):
+    def store(self, prop: str, path: str, default: Any = None, data_type: str = ''):
         logger.debug(f'data store: {prop} -> {path}')
         ghp = self.ensure_property(prop)
         ghp.attribute = Attribute.of(self.data, path)
         ghp.previous = ghp.attribute.get()
-        ghp.default = default
+        if default is not None:
+            ghp.default = default
+            ghp.attribute.set(default)
+        elif prop.startswith('custom'):
+            if data_type == 'int':
+                ghp.default = 0
+                ghp.attribute.set(0)
+            elif data_type == 'bool':
+                ghp.default = False
+                ghp.attribute.set(False)
+            elif data_type == 'string':
+                ghp.default = ''
+                ghp.attribute.set('')
+            elif data_type == 'float':
+                ghp.default = 0.0
+                ghp.attribute.set(0.0)
 
     def transition(self, prop: str, label: str):
         logger.debug(f'transition label: {prop} -> {label}')
