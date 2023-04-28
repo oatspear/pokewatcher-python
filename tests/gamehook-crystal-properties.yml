@@ -198,3 +198,291 @@ player.badges.badge8:
   type: bool
   bytes: true
   store: player.badges.badge8
+patch.time.frameCount:
+  type: int
+  store: custom.patch.time.frameCount
+  default: 0
+patch.time.oWFrameCount:
+  type: int
+  store: custom.patch.time.oWFrameCount
+  default: 0
+patch.time.battleFrameCount:
+  type: int
+  store: custom.patch.time.battleFrameCount
+  default: 0
+patch.time.menuFrameCount:
+  type: int
+  store: custom.patch.time.menuFrameCount
+  default: 0
+patch.time.introsFrameCount:
+  type: int
+  store: custom.patch.time.introsFrameCount
+  default: 0
+patch.saves.saveCount:
+  type: int
+  store: custom.patch.saves.saveCount
+  default: 0
+patch.saves.reloadCount:
+  type: int
+  store: custom.patch.saves.reloadCount
+  default: 0
+patch.saves.clockResetCount:
+  type: int
+  store: custom.patch.saves.clockResetCount
+  default: 0
+patch.steps.stepsCount:
+  type: int
+  store: custom.patch.steps.stepsCount
+  default: 0
+patch.steps.stepsCountWalk:
+  type: int
+  store: custom.patch.steps.stepsCountWalk
+  default: 0
+patch.steps.stepsCountBike:
+  type: int
+  store: custom.patch.steps.stepsCountBike
+  default: 0
+patch.steps.stepsCountSurf:
+  type: int
+  store: custom.patch.steps.stepsCountSurf
+  default: 0
+patch.steps.bonks:
+  type: int
+  store: custom.patch.steps.bonks
+  default: 0
+patch.battles.battles:
+  type: int
+  store: custom.patch.battles.battles
+  default: 0
+patch.battles.trainerBattles:
+  type: int
+  store: custom.patch.battles.trainerBattles
+  default: 0
+patch.battles.wildBattles:
+  type: int
+  store: custom.patch.battles.wildBattles
+  default: 0
+patch.battles.battlesFled:
+  type: int
+  store: custom.patch.battles.battlesFled
+  default: 0
+patch.battles.failedRuns:
+  type: int
+  store: custom.patch.battles.failedRuns
+  default: 0
+patch.battle_info.damage.totalDamageDealt:
+  type: int
+  store: custom.patch.battle_info.damage.totalDamageDealt
+  default: 0
+patch.battle_info.damage.actualDamageDealt:
+  type: int
+  store: custom.patch.battle_info.damage.actualDamageDealt
+  default: 0
+patch.battle_info.damage.totalDamageTaken:
+  type: int
+  store: custom.patch.battle_info.damage.totalDamageTaken
+  default: 0
+patch.battle_info.damage.actualDamageTaken:
+  type: int
+  store: custom.patch.battle_info.damage.actualDamageTaken
+  default: 0
+patch.battle_info.hits.ownMovesHit:
+  type: int
+  store: custom.patch.battle_info.hits.ownMovesHit
+  default: 0
+patch.battle_info.hits.ownMovesMissed:
+  type: int
+  store: custom.patch.battle_info.hits.ownMovesMissed
+  default: 0
+patch.battle_info.hits.enemyMovesHit:
+  type: int
+  store: custom.patch.battle_info.hits.enemyMovesHit
+  default: 0
+patch.battle_info.hits.enemyMovesMissed:
+  type: int
+  store: custom.patch.battle_info.hits.enemyMovesMissed
+  default: 0
+patch.battle_info.hits.ownMovesSE:
+  type: int
+  store: custom.patch.battle_info.hits.ownMovesSE
+  default: 0
+patch.battle_info.hits.ownMovesNVE:
+  type: int
+  store: custom.patch.battle_info.hits.ownMovesNVE
+  default: 0
+patch.battle_info.hits.enemyMovesSE:
+  type: int
+  store: custom.patch.battle_info.hits.enemyMovesSE
+  default: 0
+patch.battle_info.hits.enemyMovesNVE:
+  type: int
+  store: custom.patch.battle_info.hits.enemyMovesNVE
+  default: 0
+patch.battle_info.hits.criticalsDealt:
+  type: int
+  store: custom.patch.battle_info.hits.criticalsDealt
+  default: 0
+patch.battle_info.hits.oHKOsDealt:
+  type: int
+  store: custom.patch.battle_info.hits.oHKOsDealt
+  default: 0
+patch.battle_info.hits.criticalsTaken:
+  type: int
+  store: custom.patch.battle_info.hits.criticalsTaken
+  default: 0
+patch.battle_info.hits.oHKOsTaken:
+  type: int
+  store: custom.patch.battle_info.hits.oHKOsTaken
+  default: 0
+patch.battle_info.status.wasConfused:
+  type: int
+  store: custom.patch.battle_info.status.wasConfused
+  default: 0
+patch.battle_info.status.enemyBecameConfused:
+  type: int
+  store: custom.patch.battle_info.status.enemyBecameConfused
+  default: 0
+patch.battle_info.status.wasParalyzed:
+  type: int
+  store: custom.patch.battle_info.status.wasParalyzed
+  default: 0
+patch.battle_info.status.enemyWasParalyzed:
+  type: int
+  store: custom.patch.battle_info.status.enemyWasParalyzed
+  default: 0
+patch.battle_info.status.wasBurned:
+  type: int
+  store: custom.patch.battle_info.status.wasBurned
+  default: 0
+patch.battle_info.status.enemyWasBurned:
+  type: int
+  store: custom.patch.battle_info.status.enemyWasBurned
+  default: 0
+patch.battle_info.status.wasFrozen:
+  type: int
+  store: custom.patch.battle_info.status.wasFrozen
+  default: 0
+patch.battle_info.status.enemyWasFrozen:
+  type: int
+  store: custom.patch.battle_info.status.enemyWasFrozen
+  default: 0
+patch.battle_info.status.wasPoisoned:
+  type: int
+  store: custom.patch.battle_info.status.wasPoisoned
+  default: 0
+patch.battle_info.status.enemyWasPoisoned:
+  type: int
+  store: custom.patch.battle_info.status.enemyWasPoisoned
+  default: 0
+patch.battle_info.status.wasBadlyPoisoned:
+  type: int
+  store: custom.patch.battle_info.status.wasBadlyPoisoned
+  default: 0
+patch.battle_info.status.enemyWasBadlyPoisoned:
+  type: int
+  store: custom.patch.battle_info.status.enemyWasBadlyPoisoned
+  default: 0
+patch.battle_info.status.fellAsleep:
+  type: int
+  store: custom.patch.battle_info.status.fellAsleep
+  default: 0
+patch.battle_info.status.enemyFellAsleep:
+  type: int
+  store: custom.patch.battle_info.status.enemyFellAsleep
+  default: 0
+patch.battle_info.status.playerTurnsConfused:
+  type: int
+  store: custom.patch.battle_info.status.playerTurnsConfused
+  default: 0
+patch.battle_info.status.playerTurnsConfusedHitSelf:
+  type: int
+  store: custom.patch.battle_info.status.playerTurnsConfusedHitSelf
+  default: 0
+patch.battle_info.status.playerTurnsParalyzed:
+  type: int
+  store: custom.patch.battle_info.status.playerTurnsParalyzed
+  default: 0
+patch.battle_info.status.playerTurnsParalyzedFully:
+  type: int
+  store: custom.patch.battle_info.status.playerTurnsParalyzedFully
+  default: 0
+patch.battle_info.status.enemyTurnsConfused:
+  type: int
+  store: custom.patch.battle_info.status.enemyTurnsConfused
+  default: 0
+patch.battle_info.status.enemyTurnsConfusedHitSelf:
+  type: int
+  store: custom.patch.battle_info.status.enemyTurnsConfusedHitSelf
+  default: 0
+patch.battle_info.status.enemyTurnsParalyzed:
+  type: int
+  store: custom.patch.battle_info.status.enemyTurnsParalyzed
+  default: 0
+patch.battle_info.status.enemyTurnsParalyzedFully:
+  type: int
+  store: custom.patch.battle_info.status.enemyTurnsParalyzedFully
+  default: 0
+patch.battle_info.heals.playerHPHealed:
+  type: int
+  store: custom.patch.battle_info.heals.playerHPHealed
+  default: 0
+patch.battle_info.heals.enemyHPHealed:
+  type: int
+  store: custom.patch.battle_info.heals.enemyHPHealed
+  default: 0
+patch.battle_info.playerPokemonFainted:
+  type: int
+  store: custom.patch.battle_info.playerPokemonFainted
+  default: 0
+patch.battle_info.enemyPokemonFainted:
+  type: int
+  store: custom.patch.battle_info.enemyPokemonFainted
+  default: 0
+patch.battle_info.experienceGained:
+  type: int
+  store: custom.patch.battle_info.experienceGained
+  default: 0
+patch.battle_info.switchouts:
+  type: int
+  store: custom.patch.battle_info.switchouts
+  default: 0
+patch.money.moneyMade:
+  type: int
+  store: custom.patch.money.moneyMade
+  default: 0
+patch.money.moneySpent:
+  type: int
+  store: custom.patch.money.moneySpent
+  default: 0
+patch.money.moneyLost:
+  type: int
+  store: custom.patch.money.moneyLost
+  default: 0
+patch.info.itemsPickedUp:
+  type: int
+  store: custom.patch.info.itemsPickedUp
+  default: 0
+patch.info.itemsBought:
+  type: int
+  store: custom.patch.info.itemsBought
+  default: 0
+patch.info.itemsSold:
+  type: int
+  store: custom.patch.info.itemsSold
+  default: 0
+patch.catching.ballsThrown:
+  type: int
+  store: custom.patch.catching.ballsThrown
+  default: 0
+patch.catching.pokemonCaughtInBalls:
+  type: int
+  store: custom.patch.catching.pokemonCaughtInBalls
+  default: 0
+patch.catching.numPokemaniacsFought:
+  type: int
+  store: custom.patch.catching.numPokemaniacsFought
+  default: 0
+patch.movesLearnt:
+  type: int
+  store: custom.patch.movesLearnt
+  default: 0

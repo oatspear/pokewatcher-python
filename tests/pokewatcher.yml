@@ -312,6 +312,78 @@ splitter:
       - battle.player.stats.sp_attack
       - battle.player.stats.sp_defense
       - battle.player.stats.speed
+      - custom.patch.time.frameCount
+      - custom.patch.time.oWFrameCount
+      - custom.patch.time.battleFrameCount
+      - custom.patch.time.menuFrameCount
+      - custom.patch.time.introsFrameCount
+      - custom.patch.saves.saveCount
+      - custom.patch.saves.reloadCount
+      - custom.patch.saves.clockResetCount
+      - custom.patch.steps.stepsCount
+      - custom.patch.steps.stepsCountWalk
+      - custom.patch.steps.stepsCountBike
+      - custom.patch.steps.stepsCountSurf
+      - custom.patch.steps.bonks
+      - custom.patch.battles.battles
+      - custom.patch.battles.trainerBattles
+      - custom.patch.battles.wildBattles
+      - custom.patch.battles.battlesFled
+      - custom.patch.battles.failedRuns
+      - custom.patch.battle_info.damage.totalDamageDealt
+      - custom.patch.battle_info.damage.actualDamageDealt
+      - custom.patch.battle_info.damage.totalDamageTaken
+      - custom.patch.battle_info.damage.actualDamageTaken
+      - custom.patch.battle_info.hits.ownMovesHit
+      - custom.patch.battle_info.hits.ownMovesMissed
+      - custom.patch.battle_info.hits.enemyMovesHit
+      - custom.patch.battle_info.hits.enemyMovesMissed
+      - custom.patch.battle_info.hits.ownMovesSE
+      - custom.patch.battle_info.hits.ownMovesNVE
+      - custom.patch.battle_info.hits.enemyMovesSE
+      - custom.patch.battle_info.hits.enemyMovesNVE
+      - custom.patch.battle_info.hits.criticalsDealt
+      - custom.patch.battle_info.hits.oHKOsDealt
+      - custom.patch.battle_info.hits.criticalsTaken
+      - custom.patch.battle_info.hits.oHKOsTaken
+      - custom.patch.battle_info.status.wasConfused
+      - custom.patch.battle_info.status.enemyBecameConfused
+      - custom.patch.battle_info.status.wasParalyzed
+      - custom.patch.battle_info.status.enemyWasParalyzed
+      - custom.patch.battle_info.status.wasBurned
+      - custom.patch.battle_info.status.enemyWasBurned
+      - custom.patch.battle_info.status.wasFrozen
+      - custom.patch.battle_info.status.enemyWasFrozen
+      - custom.patch.battle_info.status.wasPoisoned
+      - custom.patch.battle_info.status.enemyWasPoisoned
+      - custom.patch.battle_info.status.wasBadlyPoisoned
+      - custom.patch.battle_info.status.enemyWasBadlyPoisoned
+      - custom.patch.battle_info.status.fellAsleep
+      - custom.patch.battle_info.status.enemyFellAsleep
+      - custom.patch.battle_info.status.playerTurnsConfused
+      - custom.patch.battle_info.status.playerTurnsConfusedHitSelf
+      - custom.patch.battle_info.status.playerTurnsParalyzed
+      - custom.patch.battle_info.status.playerTurnsParalyzedFully
+      - custom.patch.battle_info.status.enemyTurnsConfused
+      - custom.patch.battle_info.status.enemyTurnsConfusedHitSelf
+      - custom.patch.battle_info.status.enemyTurnsParalyzed
+      - custom.patch.battle_info.status.enemyTurnsParalyzedFully
+      - custom.patch.battle_info.heals.playerHPHealed
+      - custom.patch.battle_info.heals.enemyHPHealed
+      - custom.patch.battle_info.playerPokemonFainted
+      - custom.patch.battle_info.enemyPokemonFainted
+      - custom.patch.battle_info.experienceGained
+      - custom.patch.battle_info.switchouts
+      - custom.patch.money.moneyMade
+      - custom.patch.money.moneySpent
+      - custom.patch.money.moneyLost
+      - custom.patch.info.itemsPickedUp
+      - custom.patch.info.itemsBought
+      - custom.patch.info.itemsSold
+      - custom.patch.catching.ballsThrown
+      - custom.patch.catching.pokemonCaughtInBalls
+      - custom.patch.catching.numPokemaniacsFought
+      - custom.patch.movesLearnt
       labels:
         battle.player.stages.accuracy: Accuracy Stage
         battle.player.stages.attack: Attack Stage
@@ -346,6 +418,78 @@ splitter:
         rom: ROM
         time: Game Time
         trainer_name: Trainer
+        custom.patch.time.frameCount: Frame Count
+        custom.patch.time.oWFrameCount: Overworld Frame Count
+        custom.patch.time.battleFrameCount: Battle Frame Count
+        custom.patch.time.menuFrameCount: Menu Frame Count
+        custom.patch.time.introsFrameCount: Intro Frame Count
+        custom.patch.saves.saveCount: Save Count
+        custom.patch.saves.reloadCount: Reload Count
+        custom.patch.saves.clockResetCount: Clock Reset Count
+        custom.patch.steps.stepsCount: Steps Count
+        custom.patch.steps.stepsCountWalk: Steps Count Walk
+        custom.patch.steps.stepsCountBike: Steps Count Bike
+        custom.patch.steps.stepsCountSurf: Steps Count Surf
+        custom.patch.steps.bonks: Bonks
+        custom.patch.battles.battles: Battles
+        custom.patch.battles.trainerBattles: Trainer Battles
+        custom.patch.battles.wildBattles: Wild Battles
+        custom.patch.battles.battlesFled: Battles Fled
+        custom.patch.battles.failedRuns: Failed Runs
+        custom.patch.battle_info.damage.totalDamageDealt: Total Damage Dealt
+        custom.patch.battle_info.damage.actualDamageDealt:  Actual Damage Dealt
+        custom.patch.battle_info.damage.totalDamageTaken: Total Damage Taken
+        custom.patch.battle_info.damage.actualDamageTaken: Actual Damage Taken
+        custom.patch.battle_info.hits.ownMovesHit: Own Moves Hit
+        custom.patch.battle_info.hits.ownMovesMissed: Own Moves Missed
+        custom.patch.battle_info.hits.enemyMovesHit: Enemy Moves Hit
+        custom.patch.battle_info.hits.enemyMovesMissed: Enemy Moves Missed
+        custom.patch.battle_info.hits.ownMovesSE: Own Moves Super Effective
+        custom.patch.battle_info.hits.ownMovesNVE: Own Moves Not Very Effective
+        custom.patch.battle_info.hits.enemyMovesSE: Enemy Moves Super Effective
+        custom.patch.battle_info.hits.enemyMovesNVE: Enemy Moves Not Very Effective
+        custom.patch.battle_info.hits.criticalsDealt: Criticals Dealt
+        custom.patch.battle_info.hits.oHKOsDealt: OHKOs Dealt
+        custom.patch.battle_info.hits.criticalsTaken: Criticals Taken
+        custom.patch.battle_info.hits.oHKOsTaken: OHKOs Taken
+        custom.patch.battle_info.status.wasConfused: Was Confused
+        custom.patch.battle_info.status.enemyBecameConfused: Enemy Became Confused
+        custom.patch.battle_info.status.wasParalyzed: Was Paralyzed
+        custom.patch.battle_info.status.enemyWasParalyzed: Enemy Was Paralyzed
+        custom.patch.battle_info.status.wasBurned: Was Burned
+        custom.patch.battle_info.status.enemyWasBurned: Enemy Was Burned
+        custom.patch.battle_info.status.wasFrozen: Was Frozen
+        custom.patch.battle_info.status.enemyWasFrozen: Enemy Was Frozen
+        custom.patch.battle_info.status.wasPoisoned: Was Poisoned
+        custom.patch.battle_info.status.enemyWasPoisoned: Enemy Was Poisoned
+        custom.patch.battle_info.status.wasBadlyPoisoned: Was Badly Poisoned
+        custom.patch.battle_info.status.enemyWasBadlyPoisoned: Enemy Was Badly Poisoned
+        custom.patch.battle_info.status.fellAsleep: Fell Asleep
+        custom.patch.battle_info.status.enemyFellAsleep: Enemy Fell Asleep
+        custom.patch.battle_info.status.playerTurnsConfused: Player Turns Confused
+        custom.patch.battle_info.status.playerTurnsConfusedHitSelf: Player Turns Confused Hit Self
+        custom.patch.battle_info.status.playerTurnsParalyzed: Player Turns Paralyzed
+        custom.patch.battle_info.status.playerTurnsParalyzedFully: Player Turns Paralyzed Fully
+        custom.patch.battle_info.status.enemyTurnsConfused: Enemy Turns Confused
+        custom.patch.battle_info.status.enemyTurnsConfusedHitSelf: Enemy Turns Confused Hit Self
+        custom.patch.battle_info.status.enemyTurnsParalyzed: Enemy Turns Paralyzed
+        custom.patch.battle_info.status.enemyTurnsParalyzedFully: Enemy Turns Paralyzed Fully
+        custom.patch.battle_info.heals.playerHPHealed: Player HP Healed
+        custom.patch.battle_info.heals.enemyHPHealed: Enemy HP Healed
+        custom.patch.battle_info.playerPokemonFainted: Player Pokemon Fainted
+        custom.patch.battle_info.enemyPokemonFainted: Enemy Pokemon Fainted
+        custom.patch.battle_info.experienceGained: Experience Gained
+        custom.patch.battle_info.switchouts: Switchouts
+        custom.patch.money.moneyMade: Money Made
+        custom.patch.money.moneySpent: Money Spent
+        custom.patch.money.moneyLost: Money Lost
+        custom.patch.info.itemsPickedUp: Items Picked Up
+        custom.patch.info.itemsBought: Items Bought
+        custom.patch.info.itemsSold: Items Sold
+        custom.patch.catching.ballsThrown: Balls Thrown
+        custom.patch.catching.pokemonCaughtInBalls: Pokemon Caught In Balls
+        custom.patch.catching.numPokemaniacsFought: Num Pokemaniacs Fought
+        custom.patch.movesLearnt: Moves Learnt
       path: '{rom}.csv'
     websocket:
       host: localhost
