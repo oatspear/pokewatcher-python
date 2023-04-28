@@ -458,7 +458,7 @@ splitter:
     - class: KAREN
       name: Karen
       number: 1
-    - class: Champion
+    - class: CHAMPION
       name: Champion
       number: 1
     - class: SABRINA
@@ -487,6 +487,12 @@ splitter:
       number: 1
     - class: RED
       name: Red
+      number: 1
+    - class: EXECUTIVE M
+      name: Executive Petrel
+      number: 3
+    - class: EXECUTIVE M
+      name: Executive Archer
       number: 1
     Pokemon Red and Blue:
     - class: BROCK
