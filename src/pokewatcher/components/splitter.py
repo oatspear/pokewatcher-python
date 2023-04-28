@@ -222,6 +222,16 @@ DEFAULTS: Final[Mapping[str, Any]] = {
                 'number': 1,
                 'name': 'Red',
             },
+            {
+                'class': 'EXECUTIVE M',
+                'number': 3,
+                'name': 'Executive Petrel',
+            },
+            {
+                'class': 'EXECUTIVE M',
+                'number': 1,
+                'name': 'Executive Archer',
+            },
         ],
     },
 }
@@ -511,7 +521,8 @@ class SplitComponent:
         battle = self.game.data.battle
         if not battle.is_vs_wild:
             trainer_class = battle.trainer.trainer_class
-            trainers = self.trainers[trainer_class]
+            class_key = trainer_class.casefold()
+            trainers = self.trainers[class_key]
             trainer_id = battle.trainer.number
             name = trainers.get(trainer_id)
             if name is not None:
@@ -555,7 +566,8 @@ class SplitComponent:
         trainer_id = data.get('number', 0)
         name = data['name']
         logger.debug(f'watch trainer battle: {trainer_class} {trainer_id} ({name})')
-        trainers = self.trainers[trainer_class]
+        class_key = trainer_class.casefold()
+        trainers = self.trainers[class_key]
         previous = trainers.get(trainer_id)
         if previous is not None:
             logger.warning(f'multiple entries for {trainer_class} {trainer_id}: {previous} {name}')
