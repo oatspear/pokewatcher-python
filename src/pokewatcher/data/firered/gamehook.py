@@ -73,6 +73,7 @@ P_POINTERS_CALLBACK1: Final[str] = 'pointers.callback1'
 P_POINTERS_CALLBACK2: Final[str] = 'pointers.callback2'
 
 P_MAP_NAME: Final[str] = 'overworld.mapName'
+P_CURRENT_SOUND: Final[str] = 'audio.currentSound'
 
 PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
     P_PLAYER_NAME: {
@@ -302,6 +303,13 @@ PROPERTIES: Final[Mapping[str, Mapping[str, Any]]] = {
             ['prefix', 'Kanto/'],
         ],
         'label': firered.WRAM_CUR_MAP,
+    },
+    P_CURRENT_SOUND: {
+        'type': 'int',
+        'bytes': True,
+        'default': 0,
+        'little_endian': True,
+        'label': firered.WRAM_CUR_SOUND,
     },
 }
 
