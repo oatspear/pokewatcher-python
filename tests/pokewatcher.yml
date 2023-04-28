@@ -230,7 +230,7 @@ auto_save:
     Pokemon Emerald:
       always:
         Hoenn:
-        - PALLET_TOWN
+        - LITTLEROOT_TOWN
       once:
         Hoenn:
         - OLDALE_TOWN
