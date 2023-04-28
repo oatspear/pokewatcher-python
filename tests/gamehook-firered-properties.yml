@@ -173,6 +173,12 @@ overworld.mapName:
   store: location
   processors:
   - [prefix, Kanto/]
+audio.currentSound:
+  type: int
+  bytes: true
+  default: 0
+  little_endian: true
+  label: current_sound
 patch.time.frameCount:
   type: int
   store: custom.patch.time.frameCount
