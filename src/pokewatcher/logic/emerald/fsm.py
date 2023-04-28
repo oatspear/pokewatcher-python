@@ -26,6 +26,7 @@ from pokewatcher.data.emerald.constants import (
     MAIN_STATE_NONE,
     MAIN_STATE_OVERWORLD,
     MAIN_STATE_BATTLE,
+    SFX_SAVE_FILE,
     SUBSTATE_NONE,
     SUBSTATE_OVERWORLD,
     SUBSTATE_BATTLE,
@@ -77,6 +78,7 @@ class EmeraldState(GameState):
     callback1 = transition
     callback2 = transition
     current_map = transition
+    current_sound = transition
     # wGameTimeHours = transition  # noqa: N815
     # wGameTimeMinutes = transition  # noqa: N815
     # wGameTimeSeconds = transition  # noqa: N815
@@ -141,6 +143,12 @@ class InOverworld(InGame):
     def current_map(self, _p: Any, value: str, _d: GameData) -> GameState:
         logger.info(f'map changed: {value}')
         events.on_map_changed.emit()
+        return self
+
+    def current_sound(self, _p: Any, value: int, _d: GameData) -> GameState:
+        if value == SFX_SAVE_FILE:
+            logger.info('saved game')
+            events.on_save_game.emit()
         return self
 
 
