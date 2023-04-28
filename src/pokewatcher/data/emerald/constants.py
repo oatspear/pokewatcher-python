@@ -42,6 +42,8 @@ SUBSTATE_BATTLE_ANIMATION: Final[int] = 134766161
 SUBSTATE_TRANSITION_OVERWORLD: Final[int] = 134766589
 SUBSTATE_INTRO_CINEMATIC: Final[int] = 135711745
 
+SFX_SAVE_FILE: Final[int] = 0xC4CD8F08
+
 WRAM_PLAYER_NAME: Final[str] = 'player_name'
 WRAM_TEAM_COUNT: Final[str] = 'team_count'
 WRAM_BATTLE_OUTCOME: Final[str] = 'battle_outcome'
@@ -49,3 +51,4 @@ WRAM_BATTLE_BG_TILES: Final[str] = 'battle_bg_tiles'
 WRAM_CALLBACK1: Final[str] = 'callback1'
 WRAM_CALLBACK2: Final[str] = 'callback2'
 WRAM_CUR_MAP: Final[str] = 'current_map'
+WRAM_CUR_SOUND: Final[str] = 'current_sound'
