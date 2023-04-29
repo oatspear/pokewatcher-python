@@ -273,40 +273,40 @@ class BadgeData:
         )
 
     def __getitem__(self, i: Any) -> bool:
-        if i == 0:
+        if i == 0 or i == 'badge1':
             return self.badge1
-        if i == 1:
+        if i == 1 or i == 'badge2':
             return self.badge2
-        if i == 2:
+        if i == 2 or i == 'badge3':
             return self.badge3
-        if i == 3:
+        if i == 3 or i == 'badge4':
             return self.badge4
-        if i == 4:
+        if i == 4 or i == 'badge5':
             return self.badge5
-        if i == 5:
+        if i == 5 or i == 'badge6':
             return self.badge6
-        if i == 6:
+        if i == 6 or i == 'badge7':
             return self.badge7
-        if i == 7:
+        if i == 7 or i == 'badge8':
             return self.badge8
         raise IndexError(f'expected 0 <= i < 8; got {i}')
 
     def __setitem__(self, i: Any, value: bool):
-        if i == 0:
+        if i == 0 or i == 'badge1':
             self.badge1 = value
-        elif i == 1:
+        elif i == 1 or i == 'badge2':
             self.badge2 = value
-        elif i == 2:
+        elif i == 2 or i == 'badge3':
             self.badge3 = value
-        elif i == 3:
+        elif i == 3 or i == 'badge4':
             self.badge4 = value
-        elif i == 4:
+        elif i == 4 or i == 'badge5':
             self.badge5 = value
-        elif i == 5:
+        elif i == 5 or i == 'badge6':
             self.badge6 = value
-        elif i == 6:
+        elif i == 6 or i == 'badge7':
             self.badge7 = value
-        elif i == 7:
+        elif i == 7 or i == 'badge8':
             self.badge8 = value
         else:
             raise IndexError(f'expected 0 <= i < 8; got {i}')

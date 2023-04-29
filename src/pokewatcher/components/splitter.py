@@ -32,6 +32,8 @@ logger: Final = logging.getLogger(__name__)
 
 BattleRecord = List[Any]
 
+SPLITS_DIR: Final[str] = 'splits'
+
 DEFAULTS: Final[Mapping[str, Any]] = {
     'enabled': True,
     'labels': {},
@@ -321,7 +323,14 @@ class CsvHandler(OutputHandler):
         data: Mapping[str, Any],
         default_labels: Mapping[str, str],
     ) -> 'CsvHandler':
-        filepath = Path(settings.get('path', 'splits.csv').format(**data))
+        # filepath = Path(settings.get('path', 'splits.csv').format(**data))
+        filepath = settings.get('path', '').format(**data)
+        if filepath:
+            filepath = Path(filepath)
+        else:
+            filepath = Path(SPLITS_DIR)
+            filepath.mkdir(parents=True, exist_ok=True)
+            filepath = filepath / 'splits.csv'
         attributes = settings.get('attributes', [])
         labels = dict(default_labels)
         labels.update(settings.get('labels', {}))

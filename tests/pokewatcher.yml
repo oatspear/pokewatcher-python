@@ -267,7 +267,7 @@ retroarch:
   timeout: 3.0
 save_backup:
   check_interval: 3.0
-  dest_dir: .
+  dest_dir: saves
   create_dir: true
   enabled: true
   file_name_format: '{rom} - lvl{player.team.slot1.level}-{realtime}-{location}.srm'
@@ -490,7 +490,7 @@ splitter:
         custom.patch.catching.pokemonCaughtInBalls: Pokemon Caught In Balls
         custom.patch.catching.numPokemaniacsFought: Num Pokemaniacs Fought
         custom.patch.movesLearnt: Moves Learnt
-      path: '{rom}.csv'
+      path: 'splits/{rom}.csv'
     websocket:
       host: localhost
       port: 6789
