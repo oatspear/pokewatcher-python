@@ -27,6 +27,7 @@ from pokewatcher.data.emerald.constants import (
     MAIN_STATE_OVERWORLD,
     MAIN_STATE_BATTLE,
     SFX_SAVE_FILE,
+    SFX_SAVE_FILE2,
     SUBSTATE_NONE,
     SUBSTATE_OVERWORLD,
     SUBSTATE_BATTLE,
@@ -146,7 +147,7 @@ class InOverworld(InGame):
         return self
 
     def current_sound(self, _p: Any, value: int, _d: GameData) -> GameState:
-        if value == SFX_SAVE_FILE:
+        if value == SFX_SAVE_FILE or value == SFX_SAVE_FILE2:
             logger.info('saved game')
             events.on_save_game.emit()
         return self

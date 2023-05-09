@@ -43,6 +43,7 @@ SUBSTATE_TRANSITION_OVERWORLD: Final[int] = 134766589
 SUBSTATE_INTRO_CINEMATIC: Final[int] = 135711745
 
 SFX_SAVE_FILE: Final[int] = 0xC4CD8F08
+SFX_SAVE_FILE2: Final[int] = 143642052
 
 WRAM_PLAYER_NAME: Final[str] = 'player_name'
 WRAM_TEAM_COUNT: Final[str] = 'team_count'
